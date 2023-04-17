@@ -1,6 +1,7 @@
 import argparse
 from pathlib import Path
 
+
 def get_args():
     """Parses and returns the arguments"""
     parser = argparse.ArgumentParser()
@@ -8,6 +9,7 @@ def get_args():
     parser.add_argument("gltf", help="Path to the destination glTF file")
 
     return parser.parse_args()
+
 
 if __name__ == "__main__":
     args = get_args()
