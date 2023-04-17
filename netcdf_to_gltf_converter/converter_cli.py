@@ -17,6 +17,6 @@ if __name__ == "__main__":
     args = get_args()
     netcdf = Path(args.netcdf)
     gltf = Path(args.gltf)
-    
+
     converter = Converter(netcdf, gltf)
     converter.run()

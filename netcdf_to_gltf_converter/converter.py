@@ -10,11 +10,11 @@ class Converter:
         Args:
             netcdf (Path): Path to the source NetCDF file
             gltf (Path): Path to the destination glTF file
-            
+
         Raises:
             ValueError: When the NetCDF file does not exist.
         """
-        
+
         if not netcdf.is_file():
             raise ValueError(f"NetCDF file does not exist: {netcdf}")
 
