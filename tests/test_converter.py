@@ -13,4 +13,4 @@ class TestConverter:
         with pytest.raises(ValueError) as error:
             _ = Converter(netcdf, gltf)
             
-        assert str(error.value) == r"NetCDF file does not exist: path\to\file.netcdf"
+        assert str(error.value) == rf"NetCDF file does not exist: {netcdf}"
