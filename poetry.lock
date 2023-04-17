@@ -51,6 +51,24 @@ jupyter = ["ipython (>=7.8.0)", "tokenize-rt (>=3.2.0)"]
 uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
+name = "cf-xarray"
+version = "0.8.0"
+description = "A convenience wrapper for using CF attributes on xarray objects"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "cf_xarray-0.8.0-py3-none-any.whl", hash = "sha256:a537d41b33bf96b67301ad86dfdc50a5a5f870af2bb465830d057a35ea32ba24"},
+    {file = "cf_xarray-0.8.0.tar.gz", hash = "sha256:9a3ac6fd109cfd13405a9f602676fadda884465ecd6250a53cd142a38459d86a"},
+]
+
+[package.dependencies]
+xarray = "*"
+
+[package.extras]
+all = ["matplotlib", "pint", "regex", "rich", "shapely"]
+
+[[package]]
 name = "cftime"
 version = "1.6.2"
 description = "Time-handling functionality from netcdf4-python"
@@ -637,4 +655,4 @@ viz = ["matplotlib", "nc-time-axis", "seaborn"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "3b1aaf9121e5232b813e32897cec46a0489f86e260d44f39307a3949d8c858d6"
+content-hash = "279e18e3c424516dcfb5e4ee2d328647a0897fceaae15c36906d6d7833d0714a"
