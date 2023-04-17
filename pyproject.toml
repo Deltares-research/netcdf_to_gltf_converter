@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "netcdf-to-gltf-converter"
+version = "0.1.0"
+description = "Tool that converts D-HYDRO map output NetCDF data to the glTF file format"
+authors = ["Deltares"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "netcdf_to_gltf_converter"}]
+repository = "https://github.com/Deltares/netcdf_to_gltf_converter"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
