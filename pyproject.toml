@@ -12,6 +12,9 @@ repository = "https://github.com/Deltares/netcdf_to_gltf_converter"
 python = "^3.9"
 
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
