@@ -11,6 +11,9 @@ class Converter:
             netcdf (Path): Path to the source NetCDF file
             gltf (Path): Path to the destination glTF file
         """
+        if not netcdf.is_file():
+            raise ValueError(f"NetCDF file does not exist: {netcdf}")
+        
         self._netcdf = netcdf
         self._gltf = gltf
 
