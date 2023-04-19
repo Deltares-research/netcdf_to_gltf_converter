@@ -1,5 +1,7 @@
 from typing import List
+
 import numpy as np
+
 
 class Vec3:
     def __init__(self, x: float, y: float, z: float) -> None:
@@ -13,7 +15,7 @@ class Vec3:
         self.x = x
         self.y = y
         self.z = z
-      
+
     def as_list(self):
         return [self.x, self.y, self.z]
 
@@ -40,7 +42,7 @@ class Triangle:
         self.node_index_1 = node_index_1
         self.node_index_2 = node_index_2
         self.node_index_3 = node_index_3
-        
+
     def as_list(self):
         return [self.node_index_1, self.node_index_2, self.node_index_3]
 
@@ -51,11 +53,11 @@ class TriangularMesh:
 
         Args:
             nodes (List[Node]): The nodes in the mesh.
-            triangles (List[Triangle]): The triangles in the mesh each containing the three node indices that define the triangle shape and position. 
+            triangles (List[Triangle]): The triangles in the mesh each containing the three node indices that define the triangle shape and position.
         """
         self.nodes = nodes
         self.triangles = triangles
-   
+
     def nodes_positions_as_array(self) -> np.ndarray:
         """Gets a two-dimensional array where each row contains three values that represent the x, y and z positions of a node.
         Note that this array is not cached and will be rebuilt with each call.
