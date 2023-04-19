@@ -56,22 +56,22 @@ class TriangularMesh:
         self.nodes = nodes
         self.triangles = triangles
    
-    def nodes_positions_as_array(self) -> np.array:
+    def nodes_positions_as_array(self) -> np.ndarray:
         """Gets a two-dimensional array where each row contains three values that represent the x, y and z positions of a node.
         Note that this array is not cached and will be rebuilt with each call.
 
         Returns:
-            np.array: A two-dimensional numpy array with data type 'float32'.
+            np.ndarray: A two-dimensional numpy array with data type 'float32'.
         """
         positions = [node.position.as_list() for node in self.nodes]
         return np.array(positions, dtype="float32")
 
-    def triangles_as_array(self) -> np.array:
+    def triangles_as_array(self) -> np.ndarray:
         """Gets a two-dimensional array where each row contains three values that represent the node indices of a triangle.
         Note that this array is not cached and will be rebuilt with each call.
 
         Returns:
-            np.array: A two-dimensional numpy array with data type 'uint8'.
+            np.ndarray: A two-dimensional numpy array with data type 'uint8'.
         """
         triangles = [triangle.as_list() for triangle in self.triangles]
         return np.array(triangles, dtype="uint8")
