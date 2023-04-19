@@ -1,5 +1,5 @@
 from netcdf_to_gltf_converter.geometries import Node, Triangle, TriangularMesh, Vec3
-
+import numpy as np
 
 class TestVec3:
     def test_initializer(self):
@@ -74,3 +74,30 @@ class TestTriangularMesh:
 
         assert triangular_mesh.nodes == nodes
         assert triangular_mesh.triangles == triangles
+        
+    def test_nodes_positions_as_array(self):
+        nodes = [
+            Node(position=Vec3(0, 0, 1)),
+            Node(position=Vec3(1, 0, 2)),
+            Node(position=Vec3(1, 1, 3)),
+            Node(position=Vec3(0, 1, 4)),
+        ]
+
+        triangles = [
+            Triangle(0, 1, 2),
+            Triangle(0, 2, 3),
+        ]
+
+        triangular_mesh = TriangularMesh(nodes, triangles)
+        
+        array = triangular_mesh.nodes_positions_as_array()
+
+        exp_array = [
+            [0, 0, 1],
+            [1, 0, 2],
+            [1, 1, 3],
+            [0, 1, 4]
+        ]
+
+        assert np.array_equal(array, exp_array)
+        assert array.dtype == "float32"
