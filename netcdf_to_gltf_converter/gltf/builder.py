@@ -44,8 +44,7 @@ class GLTFBuilder:
         self._add_buffer_view(nodes_binary_blob, buffer_index, target=ARRAY_BUFFER)
         
         self._gltf.set_binary_blob(self._binary_blob)
-        
-        self._gltf.save("blah.gltf")
+
         
     def _add_mesh(self):
         # Add node index to scene
