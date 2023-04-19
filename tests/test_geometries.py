@@ -44,6 +44,16 @@ class TestTriangle:
         triangle.node_index_1 == node_index_1
         triangle.node_index_2 == node_index_2
         triangle.node_index_3 == node_index_3
+        
+    def test_as_list(self):
+        node_index_1 = 0
+        node_index_2 = 2
+        node_index_3 = 4
+        triangle = Triangle(node_index_1, node_index_2, node_index_3)
+        
+        as_list = triangle.as_list()
+        
+        assert as_list == [node_index_1, node_index_2, node_index_3]
 
 
 class TestTriangularMesh:

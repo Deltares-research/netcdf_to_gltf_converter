@@ -40,6 +40,9 @@ class Triangle:
         self.node_index_1 = node_index_1
         self.node_index_2 = node_index_2
         self.node_index_3 = node_index_3
+        
+    def as_list(self):
+        return [self.node_index_1, self.node_index_2, self.node_index_3]
 
 
 class TriangularMesh:
