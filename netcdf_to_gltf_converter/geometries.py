@@ -20,7 +20,7 @@ class Node:
         """Initialize a Node with the given arguments.
 
         Args:
-            position (Vec3): The position described by a 3D vector.
+            position (Vec3): The position of the node defined by the x, y and z direction.
         """
         self.position = position
 
