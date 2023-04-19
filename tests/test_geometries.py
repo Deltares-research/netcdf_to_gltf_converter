@@ -101,3 +101,28 @@ class TestTriangularMesh:
 
         assert np.array_equal(array, exp_array)
         assert array.dtype == "float32"
+
+    def test_triangles_as_array(self):
+        nodes = [
+            Node(position=Vec3(0, 0, 1)),
+            Node(position=Vec3(1, 0, 2)),
+            Node(position=Vec3(1, 1, 3)),
+            Node(position=Vec3(0, 1, 4)),
+        ]
+
+        triangles = [
+            Triangle(0, 1, 2),
+            Triangle(0, 2, 3),
+        ]
+
+        triangular_mesh = TriangularMesh(nodes, triangles)
+        
+        array = triangular_mesh.triangles_as_array()
+
+        exp_array = [
+            [0, 1, 2],
+            [0, 2, 3]
+        ]
+
+        assert np.array_equal(array, exp_array)
+        assert array.dtype == "uint8"
