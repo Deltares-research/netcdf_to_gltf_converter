@@ -12,8 +12,18 @@ class TestVec3:
         assert vec3.x == x
         assert vec3.y == y
         assert vec3.z == z
-
-
+        
+    def test_as_list(self):
+        x = 1.23
+        y = 2.34
+        z = 3.45
+        vec3 = Vec3(x, y, z)
+        
+        as_list = vec3.as_list()
+        
+        assert as_list == [x, y, z] 
+        
+        
 class TestNode:
     def test_initializer(self):
         position = Vec3(1.23, 2.34, 3.45)

@@ -13,6 +13,9 @@ class Vec3:
         self.x = x
         self.y = y
         self.z = z
+      
+    def as_list(self):
+        return [self.x, self.y, self.z]
 
 
 class Node:
