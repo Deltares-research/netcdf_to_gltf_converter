@@ -1,5 +1,4 @@
 from typing import Any, List
-import numpy as np
 from pygltflib import (
     ARRAY_BUFFER,
     ELEMENT_ARRAY_BUFFER,
@@ -33,12 +32,28 @@ class GLTFBuilder:
         Assumption: the GLTF will contain only one scene.
         """
 
+        # Create GLTF root object
         self._gltf = GLTF2()
+        
+        # Add single scene to the gltf scenes
         scene = Scene()
         scene_index = add(self._gltf.scenes, scene)
+        
+        # Set only scene as default scene
         self._gltf.scene = scene_index
         self._scene = scene
-
+        
+        # Add mesh to gltf meshes
+        mesh = Mesh()
+        self._mesh_index = add(self._gltf.meshes, mesh)
+        
+        # Add node to gltf nodes
+        node = Node(mesh=self._mesh_index)
+        node_index = add(self._gltf.nodes, node)
+        
+        # Add node index to scene
+        add(self._scene.nodes, node_index)
+        
         self._binary_blob = b""
 
     def add_triangular_mesh(self, triangular_mesh: TriangularMesh):
@@ -115,23 +130,12 @@ class GLTFBuilder:
         # After all buffer views are added, set the total byte length of the buffer
         buffer.byteLength = buffer_view.byteOffset + buffer_view.byteLength
 
-        # Add mesh to gltf meshes
-        mesh = Mesh()
-        mesh_index = add(self._gltf.meshes, mesh)
-        
-        # Add node to gltf nodes
-        node = Node(mesh=mesh_index)
-        node_index = add(self._gltf.nodes, node)
-        
-        # Add node index to scene
-        add(self._scene.nodes, node_index)
-
         # Add primitive to mesh primitives
         primitive = Primitive(
             attributes=Attributes(POSITION=position_accessor_index),
             indices=indices_accessor_index,
         )
-        add(mesh.primitives, primitive)
+        add(self._gltf.meshes[self._mesh_index].primitives, primitive)
 
         self._gltf.set_binary_blob(self._binary_blob)
 
