@@ -43,9 +43,9 @@ class TestTriangle:
 
         triangle = Triangle(node_index_1, node_index_2, node_index_3)
 
-        triangle.node_index_1 == node_index_1
-        triangle.node_index_2 == node_index_2
-        triangle.node_index_3 == node_index_3
+        assert triangle.node_index_1 == node_index_1
+        assert triangle.node_index_2 == node_index_2
+        assert triangle.node_index_3 == node_index_3
 
     def test_as_list(self):
         node_index_1 = 0
