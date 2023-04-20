@@ -1,6 +1,6 @@
 [![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![ci](https://github.com/Deltares/netcdf_to_gltf_converter/actions/workflows/tests.yml/badge.svg)](https://github.com/Deltares/netcdf_to_gltf_converter/actions/workflows/tests.yml)
-[![quality gate](https://sonarcloud.io/api/project_badges/measure?project=netcdf_to_gltf_converter&metric=alert_status)](https://sonarcloud.io/dashboard?id=netcdf_to_gltf_converter)
+[![quality gate](https://sonarcloud.io/api/project_badges/measure?project=Deltares_netcdf_to_gltf_converter&metric=alert_status)](https://sonarcloud.io/dashboard?id=Deltares_netcdf_to_gltf_converter)
 
 # D-HYDRO NetCDF output to glTF converter
 
