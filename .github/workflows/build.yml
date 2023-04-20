@@ -61,8 +61,8 @@ jobs:
           git commit -am "autoformat: isort & black" && git push || true
 
       - name: SonarCloud Scan
-          if: ${{ (matrix.os == 'ubuntu-latest') }}
-          uses: SonarSource/sonarcloud-github-action@master
-          env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        if: ${{ (matrix.os == 'ubuntu-latest') }}
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
