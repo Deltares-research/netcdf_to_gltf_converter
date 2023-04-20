@@ -1,3 +1,7 @@
+[![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![ci](https://github.com/Deltares/netcdf_to_gltf_converter/actions/workflows/tests.yml/badge.svg)](https://github.com/Deltares/netcdf_to_gltf_converter/actions/workflows/tests.yml)
+[![quality gate](https://sonarcloud.io/api/project_badges/measure?project=netcdf_to_gltf_converter&metric=alert_status)](https://sonarcloud.io/dashboard?id=netcdf_to_gltf_converter)
+
 # D-HYDRO NetCDF output to glTF converter
 
 This is a tool that converts D-HYDRO map output results that are stored in the NetCDF file format to the glTF file format. The goal is to allow users who work with D-HYDRO results to view their data in 3D renderers using the glTF format.
