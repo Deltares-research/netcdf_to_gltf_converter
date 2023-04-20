@@ -73,7 +73,7 @@ class TriangularMesh:
         Note that this array is not cached and will be rebuilt with each call.
 
         Returns:
-            np.ndarray: A two-dimensional numpy array with data type 'uint8'.
+            np.ndarray: A two-dimensional numpy array with data type 'uint16'.
         """
         triangles = [triangle.as_list() for triangle in self.triangles]
-        return np.array(triangles, dtype="uint8")
+        return np.array(triangles, dtype="uint16")
