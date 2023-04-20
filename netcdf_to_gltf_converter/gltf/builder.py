@@ -121,7 +121,7 @@ class GLTFBuilder:
         min_xyz = nodes.min(axis=0).tolist()
 
         accessor = Accessor(
-            bufferView=1,
+            bufferView=buffer_view_index,
             componentType=FLOAT,
             count=len(nodes),
             type=VEC3,
