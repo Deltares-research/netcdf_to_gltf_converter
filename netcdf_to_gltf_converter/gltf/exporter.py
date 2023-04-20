@@ -1,12 +1,13 @@
 from pathlib import Path
+
 from pygltflib import GLTF2
 
-class Exporter():
-    
+
+class Exporter:
     @staticmethod
     def export(gltf: GLTF2, file: Path):
         """Export the GLTF object to file.
-        
+
         If a file at the provided path already exists, it will be overwritten.
 
         Args:
@@ -18,8 +19,10 @@ class Exporter():
         """
         file_extension = file.suffix.lower()
         if file_extension == ".gltf":
-            gltf.save(file) 
+            gltf.save(file)
         elif file_extension == ".glb":
             gltf.save_binary(file)
         else:
-            raise ValueError(f"GLTF file cannot be exported: unsupported file type '{file.suffix}'. Supported: .gltf, .glb")
+            raise ValueError(
+                f"GLTF file cannot be exported: unsupported file type '{file.suffix}'. Supported: .gltf, .glb"
+            )
