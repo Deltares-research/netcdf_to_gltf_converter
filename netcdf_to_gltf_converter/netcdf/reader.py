@@ -24,20 +24,15 @@ class MeshType(str, Enum):
     """2D mesh"""
 
 
-class Variable:
-    def __init__(self, data: xr.DataArray):
-        self._data = data
-
-
 class Dataset:
     def __init__(self, dataset: xr.Dataset) -> None:
         self._ds = dataset
 
-    def get_water_depth_2d(self) -> Variable:
+    def get_water_depth_2d(self) -> xr.DataArray:
         ds_mesh2d: xr.Dataset = self._ds.filter_by_attrs(mesh=MeshType.mesh2d)
         ds_water_depth: xr.DataArray = ds_mesh2d.cf[StandardName.water_depth]
 
-        return Variable(data=ds_water_depth)
+        return ds_water_depth
 
 
 class Reader:
