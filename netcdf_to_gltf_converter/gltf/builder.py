@@ -134,3 +134,11 @@ class GLTFBuilder:
         add(mesh.primitives, primitive)
 
         self._gltf.set_binary_blob(self._binary_blob)
+
+    def finish(self) -> GLTF2:
+        """Finish the GLTF build and return the results
+
+        Returns:
+            GLTF2: The created GLTF2 object.
+        """
+        return self._gltf
