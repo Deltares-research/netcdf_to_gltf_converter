@@ -19,8 +19,10 @@ class Exporter:
         """
         file_extension = file_path.suffix.lower()
         if file_extension == ".gltf":
-            gltf.save(file_path) 
+            gltf.save(file_path)
         elif file_extension == ".glb":
             gltf.save_binary(file_path)
         else:
-            raise ValueError(f"GLTF file cannot be exported: unsupported file type '{file_path.suffix}'. Supported: .gltf, .glb")
+            raise ValueError(
+                f"GLTF file cannot be exported: unsupported file type '{file_path.suffix}'. Supported: .gltf, .glb"
+            )
