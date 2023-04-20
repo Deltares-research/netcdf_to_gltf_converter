@@ -1,12 +1,13 @@
 from pathlib import Path
+
 from pygltflib import GLTF2
 
-class Exporter():
-    
+
+class Exporter:
     @staticmethod
     def export(gltf: GLTF2, file_path: Path):
         """Export the GLTF object to file.
-        
+
         If a file at the provided path already exists, it will be overwritten.
 
         Args:

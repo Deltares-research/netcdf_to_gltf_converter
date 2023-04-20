@@ -1,13 +1,13 @@
 from pathlib import Path
 
 import pytest
-from netcdf_to_gltf_converter.gltf.exporter import Exporter
 from pygltflib import GLTF2
 
+from netcdf_to_gltf_converter.gltf.exporter import Exporter
 from tests.utils import get_temp_file
 
 
-class TestExporter():
+class TestExporter:
     def test_export_with_invalid_file_type(self):
         gltf = GLTF2()
         file_path = Path("file.invalid")
