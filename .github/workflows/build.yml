@@ -1,9 +1,14 @@
-name: tests
+name: Build
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
-  tests:
+  build:
     strategy:
       fail-fast: false
       matrix:
@@ -42,7 +47,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Run tests
-        run: poetry run pytest --cov . --cov-report xml:coverage-reports/coverage.xml --junitxml=xunit-reports/xunit-result.xml
+        run: poetry run pytest --cov . --cov-report xml:.coverage-reports/coverage.xml
 
       - name: Autoformat code
         if: ${{ (matrix.os == 'ubuntu-latest') }}
@@ -54,3 +59,10 @@ jobs:
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
           git checkout $GITHUB_HEAD_REF
           git commit -am "autoformat: isort & black" && git push || true
+
+      - name: SonarCloud Scan
+        if: ${{ (matrix.os == 'ubuntu-latest') }}
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
