@@ -1,9 +1,10 @@
 import random
 from typing import List
 
+from pygltflib import gltf_asdict
+
 from netcdf_to_gltf_converter.geometries import Node, Triangle, TriangularMesh, Vec3
 from netcdf_to_gltf_converter.gltf.builder import GLTFBuilder
-from pygltflib import gltf_asdict
 
 
 def create_triangular_mesh(n: int, seed: int = 10):

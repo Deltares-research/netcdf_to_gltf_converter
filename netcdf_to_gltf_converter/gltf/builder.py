@@ -1,4 +1,5 @@
 from typing import Any, List
+
 from pygltflib import (
     ARRAY_BUFFER,
     ELEMENT_ARRAY_BUFFER,
@@ -21,9 +22,11 @@ from netcdf_to_gltf_converter.geometries import TriangularMesh
 
 PADDING_BYTE = b"\x00"
 
+
 def add(list: List[Any], item: Any) -> int:
     list.append(item)
     return len(list) - 1
+
 
 class GLTFBuilder:
     def __init__(self) -> None:
@@ -34,26 +37,26 @@ class GLTFBuilder:
 
         # Create GLTF root object
         self._gltf = GLTF2()
-        
+
         # Add single scene to the gltf scenes
         scene = Scene()
         scene_index = add(self._gltf.scenes, scene)
-        
+
         # Set only scene as default scene
         self._gltf.scene = scene_index
         self._scene = scene
-        
+
         # Add mesh to gltf meshes
         mesh = Mesh()
         self._mesh_index = add(self._gltf.meshes, mesh)
-        
+
         # Add node to gltf nodes
         node = Node(mesh=self._mesh_index)
         node_index = add(self._gltf.nodes, node)
-        
+
         # Add node index to scene
         add(self._scene.nodes, node_index)
-        
+
         self._binary_blob = b""
 
     def add_triangular_mesh(self, triangular_mesh: TriangularMesh):
@@ -62,17 +65,17 @@ class GLTFBuilder:
         Args:
             triangular_mesh (TriangularMesh): The triangular mesh.
         """
-        
+
         # Prepare data
         triangles = triangular_mesh.triangles_as_array()
         triangles_binary_blob = triangles.flatten().tobytes()
         nodes = triangular_mesh.nodes_positions_as_array()
         nodes_binary_blob = nodes.tobytes()
-        
+
         # Add a buffer to the gltf buffers
         buffer = Buffer()
         buffer_index = add(self._gltf.buffers, buffer)
-        
+
         # Add a buffer view for the indices to the gltf buffer views
         byte_length = len(triangles_binary_blob)
         buffer_view = BufferView(
@@ -83,7 +86,7 @@ class GLTFBuilder:
         )
         buffer_view_index = add(self._gltf.bufferViews, buffer_view)
         self._binary_blob += triangles_binary_blob
-        
+
         # Add an accessor for the indices to the gltf accessors
         accessor = Accessor(
             bufferView=buffer_view_index,
@@ -112,7 +115,7 @@ class GLTFBuilder:
         )
         buffer_view_index = add(self._gltf.bufferViews, buffer_view)
         self._binary_blob += nodes_binary_blob
-        
+
         # Add an accessor for the vertices to the gltf accessors
         max_xyz = nodes.max(axis=0).tolist()
         min_xyz = nodes.min(axis=0).tolist()
@@ -126,7 +129,7 @@ class GLTFBuilder:
             min=min_xyz,
         )
         position_accessor_index = add(self._gltf.accessors, accessor)
-        
+
         # After all buffer views are added, set the total byte length of the buffer
         buffer.byteLength = buffer_view.byteOffset + buffer_view.byteLength
 
