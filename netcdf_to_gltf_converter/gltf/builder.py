@@ -73,8 +73,8 @@ class GLTFBuilder:
         nodes_binary_blob = nodes.tobytes()
 
         # Add a buffer to the gltf buffers
-        buffer = Buffer()
-        buffer_index = add(self._gltf.buffers, buffer)
+        buffer_ = Buffer()
+        buffer_index = add(self._gltf.buffers, buffer_)
 
         # Add a buffer view for the indices to the gltf buffer views
         byte_length = len(triangles_binary_blob)
@@ -131,7 +131,7 @@ class GLTFBuilder:
         position_accessor_index = add(self._gltf.accessors, accessor)
 
         # After all buffer views are added, set the total byte length of the buffer
-        buffer.byteLength = buffer_view.byteOffset + buffer_view.byteLength
+        buffer_.byteLength = buffer_view.byteOffset + buffer_view.byteLength
 
         # Add primitive to mesh primitives
         primitive = Primitive(
