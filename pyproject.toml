@@ -11,7 +11,7 @@ repository = "https://github.com/Deltares/netcdf_to_gltf_converter"
 [tool.poetry.dependencies]
 python = "^3.9"
 pygltflib = "^1.15.5"
-numpy = "^1.24.2"
+numpy = "^1.23.5"
 
 
 [tool.poetry.group.dev.dependencies]
