@@ -76,4 +76,4 @@ class TriangularMesh:
             np.ndarray: A two-dimensional numpy array with data type 'uint16'.
         """
         triangles = [triangle.as_list() for triangle in self.triangles]
-        return np.array(triangles, dtype="uint16")
+        return np.array(triangles, dtype="uint32")

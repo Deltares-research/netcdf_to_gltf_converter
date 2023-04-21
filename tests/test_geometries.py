@@ -119,4 +119,4 @@ class TestTriangularMesh:
         exp_array = [[0, 1, 2], [0, 2, 3]]
 
         assert np.array_equal(array, exp_array)
-        assert array.dtype == "uint16"
+        assert array.dtype == "uint32"

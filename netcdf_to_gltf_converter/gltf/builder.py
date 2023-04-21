@@ -6,7 +6,7 @@ from pygltflib import (
     FLOAT,
     GLTF2,
     SCALAR,
-    UNSIGNED_SHORT,
+    UNSIGNED_INT,
     VEC3,
     Accessor,
     Attributes,
@@ -90,7 +90,7 @@ class GLTFBuilder:
         # Add an accessor for the indices to the gltf accessors
         accessor = Accessor(
             bufferView=buffer_view_index,
-            componentType=UNSIGNED_SHORT,
+            componentType=UNSIGNED_INT,
             count=triangles.size,
             type=SCALAR,
             max=[int(triangles.max())],
