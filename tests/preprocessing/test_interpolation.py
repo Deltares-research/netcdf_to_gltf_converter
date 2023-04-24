@@ -1,7 +1,7 @@
 import numpy as np
 
-from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator
-
+from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
+from tests.preprocessing.utils import Factory
 
 class TestInterpolator:
     def test_interpolate_nearest(self):
@@ -9,16 +9,13 @@ class TestInterpolator:
             [[0.75, 0.25], [1.74, 0.75], [0.25, 1.25], [1.25, 1.175]], dtype="float32"
         )
         data_values = np.array([1, 2, 3, 4], dtype="float32")
-        points_to_interpolate = np.array(
-            [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1], [0, 2], [1, 2], [2, 2]],
-            dtype="float32",
-        )
+        grid = Factory.create_rectilinear_ugrid2d()
 
         interpolated_values = Interpolator.interpolate_nearest(
-            data_points, data_values, points_to_interpolate
+            data_points, data_values, grid, location=Location.nodes
         )
 
-        exp_interpolated_values = [1, 1, 2, 3, 4, 2, 3, 4, 4]
+        exp_interpolated_values = [[0,0,1], [1,0,1], [2,0,2], [0,1,3], [1,1,4], [2,1,2], [0,2,3], [1,2,4], [2,2,4]]
 
         assert np.array_equal(interpolated_values, exp_interpolated_values)
 
@@ -27,25 +24,22 @@ class TestInterpolator:
             [[1.0, 0.5], [2.0, 1.0], [1.0, 2.0], [0.5, 1.0]], dtype="float32"
         )
         data_values = np.array([1, 2, 3, 4], dtype="float32")
-        points_to_interpolate = np.array(
-            [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1], [0, 2], [1, 2], [2, 2]],
-            dtype="float32",
-        )
+        grid = Factory.create_rectilinear_ugrid2d()
 
         interpolated_values = Interpolator.interpolate_linear(
-            data_points, data_values, points_to_interpolate
+            data_points, data_values, grid, location=Location.nodes
         )
 
         exp_interpolated_values = [
-            float("nan"),
-            float("nan"),
-            float("nan"),
-            float("nan"),
-            1.6666666666666665,
-            2.0,
-            float("nan"),
-            3.0,
-            float("nan"),
+            [0,0,float("nan")],
+            [1,0,float("nan")],
+            [2,0,float("nan")],
+            [0,1,float("nan")],
+            [1,1,1.6666666666666665],
+            [2,1,2.0],
+            [0,2,float("nan")],
+            [1,2,3.0],
+            [2,2,float("nan")],
         ]
 
         assert np.array_equal(
