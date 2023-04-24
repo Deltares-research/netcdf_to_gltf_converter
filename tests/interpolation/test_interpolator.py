@@ -4,7 +4,7 @@ from netcdf_to_gltf_converter.interpolation.interpolator import Interpolator
 
 
 class TestInterpolator:
-    def test_interpolate_linear(self):
+    def test_interpolate_nearest(self):
         data_points = np.array(
             [[0.75, 0.25], [1.74, 0.75], [0.25, 1.25], [1.25, 1.175]], dtype="float32"
         )
@@ -14,7 +14,7 @@ class TestInterpolator:
             dtype="float32",
         )
 
-        interpolated_values = Interpolator.interpolate_linear(
+        interpolated_values = Interpolator.interpolate_nearest(
             data_points, data_values, points_to_interpolate
         )
 

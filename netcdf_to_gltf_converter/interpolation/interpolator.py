@@ -5,7 +5,7 @@ from scipy import interpolate
 class Interpolator:
     """Class to interpolate data values onto a set of coordinates."""
 
-    def interpolate_linear(
+    def interpolate_nearest(
         data_points: np.ndarray,
         data_values: np.ndarray,
         points_to_interpolate: np.ndarray,
