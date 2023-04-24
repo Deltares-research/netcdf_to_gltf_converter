@@ -18,6 +18,17 @@ class Vec3:
 
     def as_list(self):
         return [self.x, self.y, self.z]
+    
+    def from_array(array: np.ndarray) -> 'Vec3':
+        """Create a Vec3 from the given data.
+
+        Args:
+            array (np.ndarray): The vector values, a 1D ndarray of floats with shape (3, ) containing the three vector values.
+
+        Returns:
+            Vec3: The constructed Vec3 object.
+        """
+        return Vec3(x=array[0], y=array[1], z=array[2])
 
 
 class Node:
@@ -46,6 +57,17 @@ class Triangle:
     def as_list(self):
         return [self.node_index_1, self.node_index_2, self.node_index_3]
 
+    def from_array(array: np.ndarray) -> 'Triangle':
+        """Create a Triangle from the given data.
+
+        Args:
+            array (np.ndarray): The node indices of the triangle, a 1D ndarray of floats with shape (3, ) containing the three node indices.
+
+        Returns:
+            Vec3: The constructed Vec3 object.
+        """
+        return Triangle(node_index_1=array[0], node_index_2=array[1], node_index_3=array[2])
+        
 
 class TriangularMesh:
     def __init__(self, nodes: List[Node], triangles: List[Triangle]) -> None:
@@ -77,3 +99,21 @@ class TriangularMesh:
         """
         triangles = [triangle.as_list() for triangle in self.triangles]
         return np.array(triangles, dtype="uint32")
+    
+    def from_arrays(nodes_arr: np.ndarray, indices_arr: np.ndarray) -> 'TriangularMesh':
+        """Create a triangular mesh from the given data.
+
+        Args:
+            vertices (np.ndarray): The node coordinates, a 2D ndarray of floats with shape (n, 3) where each row contains the x, y and z coordinate.
+            indices (np.ndarray): The face node indices, a 2D ndarray of floats with shape (m, 3) where each row contains three node indices that define the triangle shape and position.      Returns:
+            
+        Returns:
+            TriangularMesh: The constructed triangular mesh object.
+        """
+        
+        nodes = [Node(Vec3.from_array(vertex))for vertex in nodes_arr]
+        triangles = [Triangle.from_array(triangle_indices) for triangle_indices in indices_arr]
+        
+        return TriangularMesh(nodes, triangles)
+        
+        
