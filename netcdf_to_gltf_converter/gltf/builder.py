@@ -1,4 +1,5 @@
 from typing import Any, List
+
 import numpy as np
 from pygltflib import (
     ARRAY_BUFFER,
@@ -96,7 +97,9 @@ class GLTFBuilder:
         nodes = triangular_mesh.nodes_positions_as_array()
         nodes_binary_blob = nodes.tobytes()
 
-        indices_accessor_index = self._add_accessor_to_bufferview(triangles, self._indices_buffer_view, UNSIGNED_INT, SCALAR)
+        indices_accessor_index = self._add_accessor_to_bufferview(
+            triangles, self._indices_buffer_view, UNSIGNED_INT, SCALAR
+        )
 
         # Add a buffer view for the vertices to the gltf buffer views
         byte_offset = (
@@ -143,17 +146,18 @@ class GLTFBuilder:
 
         self._gltf.set_binary_blob(self._binary_blob)
 
-    def _add_accessor_to_bufferview(self, data: np.ndarray, buffer_view: BufferView, component_type: int, type: str) -> int:
-
+    def _add_accessor_to_bufferview(
+        self, data: np.ndarray, buffer_view: BufferView, component_type: int, type: str
+    ) -> int:
         data_binary_blob = data.flatten().tobytes()
-        
+
         byte_length = len(data_binary_blob)
         buffer_view.byteLength += byte_length
         self._binary_blob += data_binary_blob
 
         max = [int(data.max())]
         min = [int(data.min())]
-        
+
         accessor = Accessor(
             bufferView=self._gltf.bufferViews.index(buffer_view),
             componentType=component_type,
@@ -163,9 +167,9 @@ class GLTFBuilder:
             min=min,
         )
         self._gltf.accessors.append(accessor)
-        
+
         return self._gltf.accessors.index(accessor)
-        
+
     def finish(self) -> GLTF2:
         """Finish the GLTF build and return the results
 
