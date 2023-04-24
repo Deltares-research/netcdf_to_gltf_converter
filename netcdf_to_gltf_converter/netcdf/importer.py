@@ -1,13 +1,13 @@
-import random
 from enum import Enum
 from pathlib import Path
-from typing import List
-
+import xugrid as xu
 import xarray as xr
 import xugrid as xu
 
-from netcdf_to_gltf_converter.geometries import Node, Triangle, TriangularMesh, Vec3
+from netcdf_to_gltf_converter.geometries import TriangularMesh
+from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 
+from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 
 class MeshType(str, Enum):
     """Enum containg the valid mesh types as stored in the "mesh" attribute of a data variable."""
@@ -46,47 +46,23 @@ class Importer:
             ds_mesh2d, StandardName.water_depth
         )
 
-        return ds_water_depth
-
-    def _get_nodes_from_ugrid2d(grid: xu.Ugrid2d) -> List[Node]:
-        nodes: List[Node] = []
-        for i in range(grid.n_node):
-            x = grid.node_x[i]
-            y = grid.node_y[i]
-            z = random.random()
-
-            node = Node(position=Vec3(x, y, z))
-            nodes.append(node)
-
-        return nodes
-
-    def _get_triangles_from_ugrid2d(grid: xu.Ugrid2d) -> List[Triangle]:
-        triangles: List[Triangle] = []
-
-        for face_node_indices in grid.face_node_connectivity:
-            assert len(face_node_indices) == 3
-
-            i1 = face_node_indices[0]
-            i2 = face_node_indices[1]
-            i3 = face_node_indices[2]
-
-            triangle = Triangle(i1, i2, i3)
-            triangles.append(triangle)
-
-        return triangles
+        return ds_water_depth    
 
     @staticmethod
     def import_from(file_path: Path) -> TriangularMesh:
-        ugrid_ds: xu.UgridDataset = xu.open_dataset(str(file_path))
         ds = xr.open_dataset(str(file_path))
-
-        ds_water_depth = Importer._get_water_depth_2d(ugrid_ds)
-
         ugrid2d = xu.Ugrid2d.from_dataset(ds, MeshType.mesh2d)
-        triangulated_ugrid2d = ugrid2d.triangulate()
-
-        nodes = Importer._get_nodes_from_ugrid2d(triangulated_ugrid2d)
-        triangles = Importer._get_triangles_from_ugrid2d(triangulated_ugrid2d)
-
-        triangular_mesh = TriangularMesh(nodes=nodes, triangles=triangles)
+              
+        triangulated_grid = Triangulator.triangulate(ugrid2d)
+        
+        ds_water_depth = Importer._get_water_depth_2d(ds)
+        
+        ds_water_depth_for_time = ds_water_depth.isel(time=2)
+        x_data_values = ds_water_depth_for_time.coords['Mesh2d_face_x'].data
+        y_data_values = ds_water_depth_for_time.coords['Mesh2d_face_y'].data
+        data_values = ds_water_depth_for_time['Mesh2d_waterdepth'].data
+        
+        interpolated_data_points = Interpolator.interpolate_nearest(x_data_values, y_data_values, data_values, triangulated_grid, Location.nodes)
+        
+        triangular_mesh = TriangularMesh.from_arrays(interpolated_data_points, triangulated_grid.face_node_connectivity)
         return triangular_mesh
