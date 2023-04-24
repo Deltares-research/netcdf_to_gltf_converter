@@ -63,6 +63,15 @@ class GLTFBuilder:
         self._geometry_buffer = Buffer()
         self._gltf.buffers.append(self._geometry_buffer)
 
+        self._indices_buffer_view = BufferView(
+            buffer=self._gltf.buffers.index(self._geometry_buffer),
+            byteOffset=0,
+            target=ELEMENT_ARRAY_BUFFER,
+        )
+        self._gltf.bufferViews.append(self._indices_buffer_view)
+        
+        self._vertices_buffer_view = BufferView()
+        
         self._binary_blob = b""
 
     def add_triangular_mesh(self, triangular_mesh: TriangularMesh):
@@ -80,18 +89,12 @@ class GLTFBuilder:
         
         # Add a buffer view for the indices to the gltf buffer views
         byte_length = len(triangles_binary_blob)
-        indices_buffer_view = BufferView(
-            buffer=self._gltf.buffers.index(self._geometry_buffer),
-            byteOffset=0,
-            byteLength=byte_length,
-            target=ELEMENT_ARRAY_BUFFER,
-        )
-        indices_buffer_view_index = add(self._gltf.bufferViews, indices_buffer_view)
+        self._indices_buffer_view.byteLength = byte_length
         self._binary_blob += triangles_binary_blob
 
         # Add an accessor for the indices to the gltf accessors
         indices_accessor = Accessor(
-            bufferView=indices_buffer_view_index,
+            bufferView=self._gltf.bufferViews.index(self._indices_buffer_view),
             componentType=UNSIGNED_INT,
             count=triangles.size,
             type=SCALAR,
@@ -101,7 +104,7 @@ class GLTFBuilder:
         indices_accessor_index = add(self._gltf.accessors, indices_accessor)
 
         # Add a buffer view for the vertices to the gltf buffer views
-        byte_offset = indices_buffer_view.byteOffset + indices_buffer_view.byteLength
+        byte_offset = self._indices_buffer_view.byteOffset + self._indices_buffer_view.byteLength
         n_padding_bytes = byte_offset % 4
         if n_padding_bytes != 0:
             byte_offset += n_padding_bytes
