@@ -58,7 +58,7 @@ class GLTFBuilder:
 
         # Add node index to scene
         self._scene.nodes.append(self._node_index)
-        
+
         # Add a geometry buffer for the mesh to the scene
         self._geometry_buffer = Buffer()
         self._gltf.buffers.append(self._geometry_buffer)
@@ -71,7 +71,7 @@ class GLTFBuilder:
             target=ELEMENT_ARRAY_BUFFER,
         )
         self._gltf.bufferViews.append(self._indices_buffer_view)
-        
+
         # Add buffer view for the vertex positions
         self._positions_buffer_view = BufferView(
             buffer=self._gltf.buffers.index(self._geometry_buffer),
@@ -79,9 +79,9 @@ class GLTFBuilder:
             target=ARRAY_BUFFER,
         )
         self._gltf.bufferViews.append(self._positions_buffer_view)
-        
+
         self._vertices_buffer_view = BufferView()
-        
+
         self._binary_blob = b""
 
     def add_triangular_mesh(self, triangular_mesh: TriangularMesh):
@@ -94,12 +94,14 @@ class GLTFBuilder:
         # Prepare data
         triangles = triangular_mesh.triangles_as_array()
         nodes = triangular_mesh.nodes_positions_as_array()
-        nodes_binary_blob = nodes.flatten().tobytes()
-        
+        nodes_binary_blob = nodes.tobytes()
+
         indices_accessor_index = self._add_accessor_to_bufferview(triangles, self._indices_buffer_view, UNSIGNED_INT, SCALAR)
 
         # Add a buffer view for the vertices to the gltf buffer views
-        byte_offset = self._indices_buffer_view.byteOffset + self._indices_buffer_view.byteLength
+        byte_offset = (
+            self._indices_buffer_view.byteOffset + self._indices_buffer_view.byteLength
+        )
         n_padding_bytes = byte_offset % 4
         if n_padding_bytes != 0:
             byte_offset += n_padding_bytes
@@ -127,7 +129,10 @@ class GLTFBuilder:
         positions_accessor_index = add(self._gltf.accessors, positions_accessor)
 
         # After all buffer views are added, set the total byte length of the buffer
-        self._geometry_buffer.byteLength = self._positions_buffer_view.byteOffset + self._positions_buffer_view.byteLength
+        self._geometry_buffer.byteLength = (
+            self._positions_buffer_view.byteOffset
+            + self._positions_buffer_view.byteLength
+        )
 
         # Add primitive to mesh primitives
         primitive = Primitive(
