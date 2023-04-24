@@ -9,12 +9,13 @@ packages = [{include = "netcdf_to_gltf_converter"}]
 repository = "https://github.com/Deltares/netcdf_to_gltf_converter"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9, <3.12"
 pygltflib = "^1.15.5"
 numpy = "^1.23.5"
 netcdf4 = "^1.6.3"
 h5netcdf = "^1.1.0"
 meshkernel = "^2.0.2"
+scipy = "^1.10.1"
 
 
 [tool.poetry.group.dev.dependencies]
