@@ -24,7 +24,7 @@ class TestInterpolator:
 
     def test_interpolate_linear(self):
         data_points = np.array(
-            [[1.0,0.5], [2.0,1.0], [1.0,2.0], [0.5,1.0]], dtype="float32"
+            [[1.0, 0.5], [2.0, 1.0], [1.0, 2.0], [0.5, 1.0]], dtype="float32"
         )
         data_values = np.array([1, 2, 3, 4], dtype="float32")
         points_to_interpolate = np.array(
@@ -36,6 +36,18 @@ class TestInterpolator:
             data_points, data_values, points_to_interpolate
         )
 
-        exp_interpolated_values = [float("nan"), float("nan"), float("nan"), float("nan"), 1.6666666666666665, 2.0, float("nan"), 3.0, float("nan")]
+        exp_interpolated_values = [
+            float("nan"),
+            float("nan"),
+            float("nan"),
+            float("nan"),
+            1.6666666666666665,
+            2.0,
+            float("nan"),
+            3.0,
+            float("nan"),
+        ]
 
-        assert np.array_equal(interpolated_values, exp_interpolated_values, equal_nan=True)
+        assert np.array_equal(
+            interpolated_values, exp_interpolated_values, equal_nan=True
+        )
