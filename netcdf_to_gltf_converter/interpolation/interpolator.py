@@ -9,7 +9,8 @@ class Interpolator:
     class Method(str, Enum):
         linear = "linear"
         nearest = "nearest"
-        
+    
+    @staticmethod
     def interpolate_nearest(
         data_points: np.ndarray,
         data_values: np.ndarray,
