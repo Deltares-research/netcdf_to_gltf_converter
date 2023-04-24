@@ -352,27 +352,6 @@ files = [
 marshmallow = ">=2.0.0"
 
 [[package]]
-name = "meshkernel"
-version = "2.0.2"
-description = "`meshkernel` is a library which can be used to manipulate meshes."
-category = "main"
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "meshkernel-2.0.2-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:710b5541d0d67eafc3b75bbf9e7fa944430a3d9f57a9779c88431f977d99dc89"},
-    {file = "meshkernel-2.0.2-py3-none-win_amd64.whl", hash = "sha256:04a200ebe2a9302f15128cb8ce29f0267e323d0941e3b2612a7369f25ff85738"},
-    {file = "meshkernel-2.0.2.tar.gz", hash = "sha256:17565ea786d1247b6070f3c63df3a40b008b7a0d9b97e917bcd1674b42cf670f"},
-]
-
-[package.dependencies]
-numpy = "*"
-
-[package.extras]
-docs = ["myst-nb", "sphinx", "sphinx-book-theme"]
-lint = ["black", "flake8", "isort"]
-tests = ["matplotlib", "nbval", "pytest", "pytest-cov"]
-
-[[package]]
 name = "mypy-extensions"
 version = "1.0.0"
 description = "Type system extensions for programs checked with the mypy type checker."
@@ -743,4 +722,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9, <3.12"
-content-hash = "d36c21f297baeb904c39017c51cb833c10db6b2f661e01131ca4cc0ed4edf1a4"
+content-hash = "72d585134d06d5007908b15982c32323705149c849b0848b926c83bc4b12517e"
