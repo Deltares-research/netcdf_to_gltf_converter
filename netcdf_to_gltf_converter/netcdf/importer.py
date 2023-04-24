@@ -22,6 +22,10 @@ class StandardName(str, Enum):
 
     water_depth = "sea_floor_depth_below_sea_surface"
     """The vertical distance between the sea surface and the seabed as measured at a given point in space including the variance caused by tides and possibly waves."""
+    x_coordinates= "projection_x_coordinate"
+    """"x" indicates a vector component along the grid x-axis, when this is not true longitude, positive with increasing x. Projection coordinates are distances in the x- and y-directions on a plane onto which the surface of the Earth has been projected according to a map projection. The relationship between the projection coordinates and latitude and longitude is described by the grid_mapping."""
+    y_coordinates= "projection_y_coordinate"
+    """"y" indicates a vector component along the grid y-axis, when this is not true latitude, positive with increasing y. Projection coordinates are distances in the x- and y-directions on a plane onto which the surface of the Earth has been projected according to a map projection. The relationship between the projection coordinates and latitude and longitude is described by the grid_mapping."""
 
 class Importer:
 
@@ -29,10 +33,10 @@ class Importer:
         return ds.filter_by_attrs(mesh=mesh)
 
     def _filter_by_standard_name(ds: xr.Dataset, standard_name: str):
-        filter = {"standard_name":StandardName.water_depth}
+        filter = {"standard_name":standard_name}
         return ds.filter_by_attrs(**filter)
 
-    def _get_water_depth_2d(ugrid_ds: xu.UgridDataset) -> xr.DataArray:
+    def _get_water_depth_2d(ugrid_ds: xu.UgridDataset) -> xr.Dataset:
         ds_mesh2d: xr.Dataset = Importer._filter_by_mesh(ugrid_ds, MeshType.mesh2d)
         ds_water_depth: xr.DataArray = Importer._filter_by_standard_name(ds_mesh2d, StandardName.water_depth)
 
