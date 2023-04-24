@@ -1,4 +1,5 @@
 from enum import Enum
+
 import numpy as np
 from scipy import interpolate
 
@@ -9,7 +10,7 @@ class Interpolator:
     class Method(str, Enum):
         linear = "linear"
         nearest = "nearest"
-        
+
     def interpolate_nearest(
         data_points: np.ndarray,
         data_values: np.ndarray,
@@ -28,7 +29,10 @@ class Interpolator:
             np.ndarray: The interpolated data values, an ndarray of floats with shape (m,).
         """
         return interpolate.griddata(
-            data_points, data_values, points_to_interpolate, method=Interpolator.Method.nearest
+            data_points,
+            data_values,
+            points_to_interpolate,
+            method=Interpolator.Method.nearest,
         )
 
     def interpolate_linear(
@@ -38,7 +42,7 @@ class Interpolator:
     ) -> np.ndarray:
         """Interpolate the data values onto the points to interpolate.
         Interpolation is performend by triangulating the input data, and on each triangle performing linear interpolation.
-        
+
         Args:
             data_points (np.ndarray): The data point coordinates, a 2D ndarray of floats with shape (n, 2).
             data_values (np.ndarray): The data values, an ndarray of floats with shape (n,).
@@ -48,5 +52,8 @@ class Interpolator:
             np.ndarray: The interpolated data values, an ndarray of floats with shape (m,).
         """
         return interpolate.griddata(
-            data_points, data_values, points_to_interpolate, method=Interpolator.Method.linear
+            data_points,
+            data_values,
+            points_to_interpolate,
+            method=Interpolator.Method.linear,
         )
