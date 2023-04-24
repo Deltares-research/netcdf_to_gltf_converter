@@ -1,6 +1,6 @@
 import numpy as np
 
-from netcdf_to_gltf_converter.interpolation.interpolator import Interpolator
+from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator
 
 
 class TestInterpolator:
