@@ -1,13 +1,13 @@
 from enum import Enum
 from pathlib import Path
-import xugrid as xu
+
 import xarray as xr
 import xugrid as xu
 
 from netcdf_to_gltf_converter.geometries import TriangularMesh
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
-
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
+
 
 class MeshType(str, Enum):
     """Enum containg the valid mesh types as stored in the "mesh" attribute of a data variable."""
@@ -46,23 +46,27 @@ class Importer:
             ds_mesh2d, StandardName.water_depth
         )
 
-        return ds_water_depth    
+        return ds_water_depth
 
     @staticmethod
     def import_from(file_path: Path) -> TriangularMesh:
         ds = xr.open_dataset(str(file_path))
         ugrid2d = xu.Ugrid2d.from_dataset(ds, MeshType.mesh2d)
-              
+
         triangulated_grid = Triangulator.triangulate(ugrid2d)
-        
+
         ds_water_depth = Importer._get_water_depth_2d(ds)
-        
+
         ds_water_depth_for_time = ds_water_depth.isel(time=2)
-        x_data_values = ds_water_depth_for_time.coords['Mesh2d_face_x'].data
-        y_data_values = ds_water_depth_for_time.coords['Mesh2d_face_y'].data
-        data_values = ds_water_depth_for_time['Mesh2d_waterdepth'].data
-        
-        interpolated_data_points = Interpolator.interpolate_nearest(x_data_values, y_data_values, data_values, triangulated_grid, Location.nodes)
-        
-        triangular_mesh = TriangularMesh.from_arrays(interpolated_data_points, triangulated_grid.face_node_connectivity)
+        x_data_values = ds_water_depth_for_time.coords["Mesh2d_face_x"].data
+        y_data_values = ds_water_depth_for_time.coords["Mesh2d_face_y"].data
+        data_values = ds_water_depth_for_time["Mesh2d_waterdepth"].data
+
+        interpolated_data_points = Interpolator.interpolate_nearest(
+            x_data_values, y_data_values, data_values, triangulated_grid, Location.nodes
+        )
+
+        triangular_mesh = TriangularMesh.from_arrays(
+            interpolated_data_points, triangulated_grid.face_node_connectivity
+        )
         return triangular_mesh
