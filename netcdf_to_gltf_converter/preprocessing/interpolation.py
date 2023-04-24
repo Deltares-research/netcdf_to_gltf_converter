@@ -33,8 +33,9 @@ class Interpolator:
         
     @staticmethod
     def interpolate_nearest(
-        data_points: np.ndarray,
-        data_values: np.ndarray,
+        x_coords: np.ndarray,
+        y_coords: np.ndarray,
+        values: np.ndarray,
         grid: xu.Ugrid2d,
         location: Location
     ) -> np.ndarray:
@@ -42,8 +43,9 @@ class Interpolator:
         Interpolation is performend by taking the data point closest to the point of interpolation.
 
         Args:
-            data_points (np.ndarray): The data point coordinates, a 2D ndarray of floats with shape (n, 2).
-            data_values (np.ndarray): The data values, an ndarray of floats with shape (n,).
+            x_coords (np.ndarray): The data point x-coordinates, a 1D ndarray of floats with shape (n,).
+            y_coords (np.ndarray): The data point y-coordinates, a 1D ndarray of floats with shape (n,).
+            values (np.ndarray): The data point values, a 1D ndarray of floats with shape (n,).
             grid (xu.Ugrid2d): The grid onto which to interpolate the data.
             location (Location): The grid element type onto which to interpolate the data.
 
@@ -54,12 +56,13 @@ class Interpolator:
             ValueError: When the provided location is not supported.
         """
         
-        return Interpolator._interpolate(data_points, data_values, grid, location, Method.nearest)
+        return Interpolator._interpolate(x_coords, y_coords, values, grid, location, Method.nearest)
 
     @staticmethod
     def interpolate_linear(
-        data_points: np.ndarray,
-        data_values: np.ndarray,
+        x_coords: np.ndarray,
+        y_coords: np.ndarray,
+        values: np.ndarray,
         grid: xu.Ugrid2d,
         location: Location
     ) -> np.ndarray:
@@ -67,9 +70,9 @@ class Interpolator:
         Interpolation is performend by triangulating the input data, and on each triangle performing linear interpolation.
 
         Args:
-            data_points (np.ndarray): The data point coordinates, a 2D ndarray of floats with shape (n, 2).
-            data_values (np.ndarray): The data values, an ndarray of floats with shape (n,).
-            grid (xu.Ugrid2d): The grid onto which to interpolate the data.
+            x_coords (np.ndarray): The data point x-coordinates, a 1D ndarray of floats with shape (n,).
+            y_coords (np.ndarray): The data point y-coordinates, a 1D ndarray of floats with shape (n,).
+            values (np.ndarray): The data point values, a 1D ndarray of floats with shape (n,).grid (xu.Ugrid2d): The grid onto which to interpolate the data.
             location (Location): The grid element type onto which to interpolate the data.
             
         Returns:
@@ -79,22 +82,23 @@ class Interpolator:
             ValueError: When the provided location is not supported.
         """
         
-        return Interpolator._interpolate(data_points, data_values, grid, location, Method.linear)
+        return Interpolator._interpolate(x_coords, y_coords, values, grid, location, Method.linear)
         
     def _interpolate(
-        data_points: np.ndarray,
-        data_values: np.ndarray,
+        x_coords: np.ndarray,
+        y_coords: np.ndarray,
+        values: np.ndarray,
         grid: xu.Ugrid2d,
         location: Location,
         method: Method
-        
     ) -> np.ndarray:
         
+        data_points = np.array([x_coords, y_coords]).T
         points_to_interpolate = Interpolator.get_coordinates(grid, location)
         
         interpolated_points = interpolate.griddata(
             data_points,
-            data_values,
+            values,
             points_to_interpolate,
             method=method,
         )
