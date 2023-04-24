@@ -8,9 +8,14 @@ class Method(str, Enum):
     nearest = "nearest"
 
 class Location(str, Enum):
+    """The interpolation location for the grid."""
+    
     nodes = "nodes"
+    """Interpolate on the node coordinates of the grid."""
     faces = "faces"
+    """Interpolate on the face coordinates of the grid."""
     edges = "edges"
+    """Interpolate on the edge coordinates of the grid."""
 
 class Interpolator:
     """Class to interpolate data values onto a set of coordinates."""
@@ -43,8 +48,8 @@ class Interpolator:
             location (Location): The grid element type onto which to interpolate the data.
 
         Returns:
-            np.ndarray: The interpolated data values, an ndarray of floats with shape (m, 3).
-            
+            np.ndarray: The interpolated data values, an ndarray of floats with shape (m, 3). Each row contains the x and y coordinate with the interpolated value.
+           
         Raises: 
             ValueError: When the provided location is not supported.
         """
@@ -68,7 +73,7 @@ class Interpolator:
             location (Location): The grid element type onto which to interpolate the data.
             
         Returns:
-            np.ndarray: The interpolated data values, an ndarray of floats with shape (m, 3).
+            np.ndarray: The interpolated data values, an ndarray of floats with shape (m, 3). Each row contains the x and y coordinate with the interpolated value.
             
         Raises: 
             ValueError: When the provided location is not supported.
