@@ -1,5 +1,5 @@
 from typing import Any, List
-
+import numpy as np
 from pygltflib import (
     ARRAY_BUFFER,
     ELEMENT_ARRAY_BUFFER,
@@ -67,6 +67,7 @@ class GLTFBuilder:
         self._indices_buffer_view = BufferView(
             buffer=self._gltf.buffers.index(self._geometry_buffer),
             byteOffset=0,
+            byteLength=0,
             target=ELEMENT_ARRAY_BUFFER,
         )
         self._gltf.bufferViews.append(self._indices_buffer_view)
@@ -74,6 +75,7 @@ class GLTFBuilder:
         # Add buffer view for the vertex positions
         self._positions_buffer_view = BufferView(
             buffer=self._gltf.buffers.index(self._geometry_buffer),
+            byteLength=0,
             target=ARRAY_BUFFER,
         )
         self._gltf.bufferViews.append(self._positions_buffer_view)
@@ -91,25 +93,10 @@ class GLTFBuilder:
 
         # Prepare data
         triangles = triangular_mesh.triangles_as_array()
-        triangles_binary_blob = triangles.flatten().tobytes()
         nodes = triangular_mesh.nodes_positions_as_array()
-        nodes_binary_blob = nodes.tobytes()
+        nodes_binary_blob = nodes.flatten().tobytes()
         
-        # Add a buffer view for the indices to the gltf buffer views
-        byte_length = len(triangles_binary_blob)
-        self._indices_buffer_view.byteLength = byte_length
-        self._binary_blob += triangles_binary_blob
-
-        # Add an accessor for the indices to the gltf accessors
-        indices_accessor = Accessor(
-            bufferView=self._gltf.bufferViews.index(self._indices_buffer_view),
-            componentType=UNSIGNED_INT,
-            count=triangles.size,
-            type=SCALAR,
-            max=[int(triangles.max())],
-            min=[int(triangles.min())],
-        )
-        indices_accessor_index = add(self._gltf.accessors, indices_accessor)
+        indices_accessor_index = self._add_accessor_to_bufferview(triangles, self._indices_buffer_view, UNSIGNED_INT, SCALAR)
 
         # Add a buffer view for the vertices to the gltf buffer views
         byte_offset = self._indices_buffer_view.byteOffset + self._indices_buffer_view.byteLength
@@ -151,6 +138,29 @@ class GLTFBuilder:
 
         self._gltf.set_binary_blob(self._binary_blob)
 
+    def _add_accessor_to_bufferview(self, data: np.ndarray, buffer_view: BufferView, component_type: int, type: str) -> int:
+
+        data_binary_blob = data.flatten().tobytes()
+        
+        byte_length = len(data_binary_blob)
+        buffer_view.byteLength += byte_length
+        self._binary_blob += data_binary_blob
+
+        max = [int(data.max())]
+        min = [int(data.min())]
+        
+        accessor = Accessor(
+            bufferView=self._gltf.bufferViews.index(buffer_view),
+            componentType=component_type,
+            count=data.size,
+            type=type,
+            max=max,
+            min=min,
+        )
+        self._gltf.accessors.append(accessor)
+        
+        return self._gltf.accessors.index(accessor)
+        
     def finish(self) -> GLTF2:
         """Finish the GLTF build and return the results
 
