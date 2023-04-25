@@ -33,13 +33,16 @@ class StandardName(str, Enum):
 
 
 class Importer:
+    @staticmethod
     def _filter_by_mesh(ds: xr.Dataset, mesh: MeshType):
         return ds.filter_by_attrs(mesh=mesh)
 
+    @staticmethod
     def _filter_by_standard_name(ds: xr.Dataset, standard_name: str):
-        filter = {"standard_name": standard_name}
-        return ds.filter_by_attrs(**filter)
+        standard_name_filter = {"standard_name": standard_name}
+        return ds.filter_by_attrs(**standard_name_filter)
 
+    @staticmethod
     def _get_water_depth_2d(ugrid_ds: xu.UgridDataset) -> xr.Dataset:
         ds_mesh2d: xr.Dataset = Importer._filter_by_mesh(ugrid_ds, MeshType.mesh2d)
         ds_water_depth: xr.DataArray = Importer._filter_by_standard_name(

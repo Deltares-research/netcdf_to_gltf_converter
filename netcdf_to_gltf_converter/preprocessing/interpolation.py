@@ -92,6 +92,7 @@ class Interpolator:
             x_coords, y_coords, values, grid, location, Method.linear
         )
 
+    @staticmethod
     def _interpolate(
         x_coords: np.ndarray,
         y_coords: np.ndarray,
