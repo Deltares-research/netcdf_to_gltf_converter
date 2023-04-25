@@ -2,6 +2,11 @@ from typing import Any, List
 
 import numpy as np
 from pygltflib import (
+    ANIM_LINEAR,
+    Animation,
+    AnimationChannel,
+    AnimationChannelTarget,
+    AnimationSampler,
     ARRAY_BUFFER,
     ELEMENT_ARRAY_BUFFER,
     FLOAT,
@@ -55,9 +60,13 @@ class GLTFBuilder:
         # Add node index to scene
         self._scene.nodes.append(self._node_index)
 
-        # Add a geometry buffer for the mesh to the scene
+        # Add a geometry buffer for the mesh
         self._geometry_buffer = Buffer(byteLength=0)
         self._gltf.buffers.append(self._geometry_buffer)
+        
+        # Add a animation buffer for the mesh
+        self._animation_buffer = Buffer(byteLength=0)
+        self._gltf.buffers.append(self._animation_buffer)
 
         # Add a buffer view for the indices
         self._indices_buffer_view = BufferView(
@@ -76,8 +85,26 @@ class GLTFBuilder:
             target=ARRAY_BUFFER,
         )
         self._gltf.bufferViews.append(self._positions_buffer_view)
+        
+        # Add buffer view for the sampler inputs
+        self._sampler_inputs_buffer_view = BufferView(
+            #buffer=self._gltf.buffers.index(self._animation_buffer), # DOES NOT WORK
+            buffer=1,
+            byteOffset=0,
+            byteLength=0
+        )
+        self._gltf.bufferViews.append(self._sampler_inputs_buffer_view)
+        
+        # Add buffer view for the sampler outputs
+        self._sampler_outputs_buffer_view = BufferView(
+            #buffer=self._gltf.buffers.index(self._animation_buffer), # DOES NOT WORK
+            buffer=1,
+            byteOffset=0,
+            byteLength=0
+        )
+        self._gltf.bufferViews.append(self._sampler_outputs_buffer_view)
 
-        self._vertices_buffer_view = BufferView()
+        #self._vertices_buffer_view = BufferView()
 
         self._binary_blob = b""
 
@@ -103,7 +130,36 @@ class GLTFBuilder:
             indices=indices_accessor_index,
         )
         self._gltf.meshes[self._mesh_index].primitives.append(primitive)
+        
+        for mesh_geometry in triangular_mesh.animated_geometry:
+            positions = [node.position.as_list() for node in mesh_geometry]
+            nodes = np.array(positions, dtype="float32")
 
+            positions_accessor_index = self._add_accessor_to_bufferview(
+                nodes, self._positions_buffer_view, FLOAT, VEC3
+            )
+            
+            target_attr = Attributes(POSITION=positions_accessor_index)
+            primitive.targets.append(target_attr)
+            
+            self._mesh.weights.append(1.0)
+        
+        # Add sampler inputs accessor
+        n_times = len(triangular_mesh.animated_geometry) + 1
+        data = np.array([float(i)for i in range(n_times)], dtype="float32")
+        sampler_inputs_accessor_index = self._add_accessor_to_bufferview(data, self._sampler_inputs_buffer_view, FLOAT, SCALAR)
+        
+        # Add sampled outputs accessor
+        data = np.array([[1.0,1.0]for i in range(n_times)], dtype="float32")
+        sampler_outputs_accessor_index = self._add_accessor_to_bufferview(data, self._sampler_outputs_buffer_view, FLOAT, SCALAR)
+        
+
+        sampler = AnimationSampler(input=sampler_inputs_accessor_index, interpolation=ANIM_LINEAR, output=sampler_outputs_accessor_index)
+        target = AnimationChannelTarget(node=0, path="weights")
+        channel = AnimationChannel(sampler=0, target=target)
+        animation = Animation(samplers=[sampler], channels=[channel])
+        self._gltf.animations.append(animation)
+        
         self._gltf.set_binary_blob(self._binary_blob)
 
     def _add_accessor_to_bufferview(

@@ -1,10 +1,12 @@
 from enum import Enum
 from pathlib import Path
+from typing import List
+import numpy as np
 
 import xarray as xr
 import xugrid as xu
 
-from netcdf_to_gltf_converter.geometries import TriangularMesh
+from netcdf_to_gltf_converter.geometries import Node, TriangularMesh
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 
@@ -62,15 +64,19 @@ class Importer:
         x_data_values = ds_water_depth.coords["Mesh2d_face_x"].data
         y_data_values = ds_water_depth.coords["Mesh2d_face_y"].data
 
-        ds_water_depth_for_time = ds_water_depth.isel(time=0)
+        mesh_geometries: List[np.ndarray] = [] 
+        
+        n_times = ds_water_depth.dims["time"]
+        for time_index in range(n_times):
+            ds_water_depth_for_time = ds_water_depth.isel(time=time_index)
+            data_values = ds_water_depth_for_time["Mesh2d_waterdepth"].data
 
-        data_values = ds_water_depth_for_time["Mesh2d_waterdepth"].data
-
-        interpolated_data_points = Interpolator.interpolate_nearest(
-            x_data_values, y_data_values, data_values, triangulated_grid, Location.nodes
-        )
+            interpolated_data_points = Interpolator.interpolate_nearest(
+                x_data_values, y_data_values, data_values, triangulated_grid, Location.nodes
+            )
+            mesh_geometries.append(interpolated_data_points)
 
         triangular_mesh = TriangularMesh.from_arrays(
-            interpolated_data_points, triangulated_grid.face_node_connectivity
+            mesh_geometries[0], triangulated_grid.face_node_connectivity, mesh_geometries[1:]
         )
         return triangular_mesh

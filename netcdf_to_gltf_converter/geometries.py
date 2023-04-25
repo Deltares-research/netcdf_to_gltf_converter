@@ -29,7 +29,7 @@ class Vec3:
         Returns:
             Vec3: The constructed Vec3 object.
         """
-        return Vec3(x=array[0], y=array[1], z=array[2])
+        return Vec3(x=array[0], y=array[1], z=array[2]*50)
 
 
 class Node:
@@ -73,8 +73,10 @@ class Triangle:
         )
 
 
+MeshGeometry = List[Node]
+
 class TriangularMesh:
-    def __init__(self, nodes: List[Node], triangles: List[Triangle]) -> None:
+    def __init__(self, nodes: MeshGeometry, triangles: List[Triangle], animated_geometry: List[MeshGeometry] = None) -> None:
         """Initialize a TriangularMesh with the given arguments.
 
         Args:
@@ -83,6 +85,7 @@ class TriangularMesh:
         """
         self.nodes = nodes
         self.triangles = triangles
+        self.animated_geometry = animated_geometry
 
     def nodes_positions_as_array(self) -> np.ndarray:
         """Gets a two-dimensional array where each row contains three values that represent the x, y and z positions of a node.
@@ -105,7 +108,7 @@ class TriangularMesh:
         return np.array(triangles, dtype="uint32")
 
     @staticmethod
-    def from_arrays(nodes_arr: np.ndarray, indices_arr: np.ndarray) -> "TriangularMesh":
+    def from_arrays(nodes_arr: np.ndarray, indices_arr: np.ndarray, animated_geom_arr: List[np.ndarray]) -> "TriangularMesh":
         """Create a triangular mesh from the given data.
 
         Args:
@@ -120,5 +123,11 @@ class TriangularMesh:
         triangles = [
             Triangle.from_array(triangle_indices) for triangle_indices in indices_arr
         ]
+        
+        mesh_geometries: List[MeshGeometry] = [] 
+        
+        for animated_geom in animated_geom_arr:
+            mesh_geom = [Node(Vec3.from_array(vertex)) for vertex in animated_geom]
+            mesh_geometries.append(mesh_geom)
 
-        return TriangularMesh(nodes, triangles)
+        return TriangularMesh(nodes, triangles, mesh_geometries)
