@@ -94,7 +94,6 @@ class TriangularMesh:
         positions = [node.position.as_list() for node in self.nodes]
         return np.array(positions, dtype="float32")
 
-    @staticmethod
     def triangles_as_array(self) -> np.ndarray:
         """Gets a two-dimensional array where each row contains three values that represent the node indices of a triangle.
         Note that this array is not cached and will be rebuilt with each call.
@@ -105,6 +104,7 @@ class TriangularMesh:
         triangles = [triangle.as_list() for triangle in self.triangles]
         return np.array(triangles, dtype="uint32")
 
+    @staticmethod
     def from_arrays(nodes_arr: np.ndarray, indices_arr: np.ndarray) -> "TriangularMesh":
         """Create a triangular mesh from the given data.
 
