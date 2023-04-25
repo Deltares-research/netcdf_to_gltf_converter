@@ -25,6 +25,15 @@ class TestVec3:
 
         assert as_list == [x, y, z]
 
+    def test_from_array(self):
+        array = [1, 2, 3]
+
+        vec3 = Vec3.from_array(array)
+
+        assert vec3.x == 1
+        assert vec3.y == 2
+        assert vec3.z == 3
+
 
 class TestNode:
     def test_initializer(self):
@@ -56,6 +65,15 @@ class TestTriangle:
         as_list = triangle.as_list()
 
         assert as_list == [node_index_1, node_index_2, node_index_3]
+
+    def test_from_array(self):
+        array = [1, 2, 3]
+
+        triangle = Triangle.from_array(array)
+
+        assert triangle.node_index_1 == 1
+        assert triangle.node_index_2 == 2
+        assert triangle.node_index_3 == 3
 
 
 class TestTriangularMesh:
@@ -119,4 +137,16 @@ class TestTriangularMesh:
         exp_array = [[0, 1, 2], [0, 2, 3]]
 
         assert np.array_equal(array, exp_array)
-        assert array.dtype == "uint16"
+        assert array.dtype == "uint32"
+
+    def test_from_arrays(self):
+        nodes_arr = [[0, 0, 1], [1, 0, 2], [0, 1, 3]]
+        indices_arr = [[0, 1, 2]]
+
+        triangular_mesh = TriangularMesh.from_arrays(nodes_arr, indices_arr)
+
+        nodes = [node.position.as_list() for node in triangular_mesh.nodes]
+        indices = [triangle.as_list() for triangle in triangular_mesh.triangles]
+
+        np.array_equal(nodes, nodes_arr)
+        np.array_equal(indices, indices_arr)

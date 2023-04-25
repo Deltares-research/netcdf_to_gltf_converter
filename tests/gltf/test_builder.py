@@ -56,7 +56,7 @@ class TestGLTFBuilder:
                     "extras": {},
                     "bufferView": 0,
                     "byteOffset": 0,
-                    "componentType": 5123,
+                    "componentType": 5125,
                     "normalized": False,
                     "count": 6,
                     "type": "SCALAR",
@@ -95,7 +95,7 @@ class TestGLTFBuilder:
                     "extras": {},
                     "buffer": 0,
                     "byteOffset": 0,
-                    "byteLength": 12,
+                    "byteLength": 24,
                     "byteStride": None,
                     "target": 34963,
                     "name": None,
@@ -104,7 +104,7 @@ class TestGLTFBuilder:
                     "extensions": {},
                     "extras": {},
                     "buffer": 0,
-                    "byteOffset": 12,
+                    "byteOffset": 24,
                     "byteLength": 48,
                     "byteStride": None,
                     "target": 34962,
@@ -112,7 +112,7 @@ class TestGLTFBuilder:
                 },
             ],
             "buffers": [
-                {"extensions": {}, "extras": {}, "uri": None, "byteLength": 60}
+                {"extensions": {}, "extras": {}, "uri": None, "byteLength": 72}
             ],
             "cameras": [],
             "extensionsUsed": [],
