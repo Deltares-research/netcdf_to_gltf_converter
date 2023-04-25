@@ -3,6 +3,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Generator
 
+test_data = Path("tests") / "data"
 
 @contextmanager
 def get_temp_file(filename: str) -> Generator[Path, None, None]:
