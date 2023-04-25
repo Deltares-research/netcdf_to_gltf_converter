@@ -116,13 +116,13 @@ class GLTFBuilder:
         accessor_byte_length = len(data_binary_blob)
 
         # Set offset and length buffer view
-        buffer = self._gltf.buffers[buffer_view.buffer]
+        buffer_ = self._gltf.buffers[buffer_view.buffer]
         if buffer_view.byteLength == 0:
-            self._set_offset_bufferview_including_padding(buffer_view, buffer)
+            self._set_offset_bufferview_including_padding(buffer_view, buffer_)
         buffer_view.byteLength += accessor_byte_length
 
         # Set byte length buffer
-        buffer.byteLength += accessor_byte_length
+        buffer_.byteLength += accessor_byte_length
 
         # Update binary blob
         self._binary_blob += data_binary_blob
