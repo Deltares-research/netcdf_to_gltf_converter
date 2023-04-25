@@ -59,10 +59,11 @@ class Importer:
         triangulated_grid = Triangulator.triangulate(ugrid2d)
 
         ds_water_depth = Importer._get_water_depth_2d(ds)
+        x_data_values = ds_water_depth.coords["Mesh2d_face_x"].data
+        y_data_values = ds_water_depth.coords["Mesh2d_face_y"].data
 
         ds_water_depth_for_time = ds_water_depth.isel(time=0)
-        x_data_values = ds_water_depth_for_time.coords["Mesh2d_face_x"].data
-        y_data_values = ds_water_depth_for_time.coords["Mesh2d_face_y"].data
+
         data_values = ds_water_depth_for_time["Mesh2d_waterdepth"].data
 
         interpolated_data_points = Interpolator.interpolate_nearest(
