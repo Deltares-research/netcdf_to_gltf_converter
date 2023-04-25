@@ -98,38 +98,28 @@ class GLTFBuilder:
             indices=indices_accessor_index,
         )
         self._gltf.meshes[self._mesh_index].primitives.append(primitive)
-        
-        # for each time step time_i:
-        #   add new position accessor to positions buffer view
-        #   add new target to primitive that points to each accessor
-        #
 
         self._gltf.set_binary_blob(self._binary_blob)
 
     def _add_accessor_to_bufferview(
         self, data: np.ndarray, buffer_view: BufferView, component_type: int, type: str
     ) -> int:
-
-        buffer = self._gltf.buffers[buffer_view.buffer]
-        
-        if buffer_view.byteLength == 0: # offset has not been determined yet
-            buffer_view_byte_offset = buffer.byteLength # offset should start after existing data in buffer
-            n_padding_bytes = buffer_view_byte_offset % 4 # add padding bytes between bufferviews if needed, TODO number of bytes should be according to accessor componenttype, 
-            if n_padding_bytes != 0:
-                buffer_view_byte_offset += n_padding_bytes # buffer view should start after the padding bytes
-                buffer.byteLength += n_padding_bytes # at to total length of buffer 
-                self._binary_blob += n_padding_bytes * PADDING_BYTE # add to total binary data?? 
-
-            buffer_view.byteOffset = buffer_view_byte_offset ## set offset
-        
         data_binary_blob = data.flatten().tobytes()
+        
+        # Get offset and length accessor where offset is the offset within the bufferview
+        accessor_byte_offset = buffer_view.byteLength
         accessor_byte_length = len(data_binary_blob)
-        
-        accessor_byte_offset = buffer_view.byteLength # accessor should start after existing data in bufferview
-        
-        buffer.byteLength += accessor_byte_length # add bytes to total length buffer
-        buffer_view.byteLength += accessor_byte_length # add bytes to total  length of bufferview
 
+        # Set offset and length buffer view
+        buffer = self._gltf.buffers[buffer_view.buffer]
+        if buffer_view.byteLength == 0:
+            self._set_offset_bufferview_including_padding(buffer_view, buffer)
+        buffer_view.byteLength += accessor_byte_length
+        
+        # Set byte length buffer
+        buffer.byteLength += accessor_byte_length
+    
+        # Update binary blob
         self._binary_blob += data_binary_blob
         
         max, min, count = self._get_min_max_count(data, type)
@@ -146,6 +136,16 @@ class GLTFBuilder:
         
         return self._gltf.accessors.index(accessor)
 
+    def _set_offset_bufferview_including_padding(self, buffer_view: BufferView, buffer: Buffer):        
+        byte_offset = buffer.byteLength
+        n_padding_bytes = byte_offset % 4 # add padding bytes between bufferviews if needed, TODO number of bytes should be according to accessor componenttype, 
+        if n_padding_bytes != 0:
+            byte_offset += n_padding_bytes
+            buffer.byteLength += n_padding_bytes
+            self._binary_blob += n_padding_bytes * PADDING_BYTE
+
+        buffer_view.byteOffset = byte_offset
+        
     def _get_min_max_count(self, data: np.ndarray, type: str):
         if type == SCALAR:
             max = [int(data.max())]
