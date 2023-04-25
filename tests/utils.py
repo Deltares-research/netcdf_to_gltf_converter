@@ -5,6 +5,7 @@ from typing import Generator
 
 test_data = Path("tests") / "data"
 
+
 @contextmanager
 def get_temp_file(filename: str) -> Generator[Path, None, None]:
     """Gets a path to a file in a temporary directory with the specified file name.
