@@ -127,15 +127,15 @@ class GLTFBuilder:
         # Update binary blob
         self._binary_blob += data_binary_blob
 
-        max, min, count = self._get_min_max_count(data, type)
+        data_max, data_min, data_count = self._get_min_max_count(data, type)
         accessor = Accessor(
             bufferView=self._gltf.bufferViews.index(buffer_view),
             byteOffset=accessor_byte_offset,
             componentType=component_type,
-            count=count,
+            count=data_count,
             type=type,
-            max=max,
-            min=min,
+            max=data_max,
+            min=data_min,
         )
         self._gltf.accessors.append(accessor)
 
@@ -157,17 +157,17 @@ class GLTFBuilder:
 
     def _get_min_max_count(self, data: np.ndarray, type: str):
         if type == SCALAR:
-            max = [int(data.max())]
-            min = [int(data.min())]
-            count = data.size
+            data_max = [int(data.max())]
+            data_min = [int(data.min())]
+            data_count = data.size
         elif type == VEC3:
-            max = data.max(axis=0).tolist()
-            min = data.min(axis=0).tolist()
-            count = len(data)
+            data_max = data.max(axis=0).tolist()
+            data_min = data.min(axis=0).tolist()
+            data_count = len(data)
         else:
             raise ValueError(f"Type {type} not supported.")
 
-        return max, min, count
+        return data_max, data_min, data_count
 
     def finish(self) -> GLTF2:
         """Finish the GLTF build and return the results

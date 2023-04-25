@@ -19,6 +19,7 @@ class Vec3:
     def as_list(self):
         return [self.x, self.y, self.z]
 
+    @staticmethod
     def from_array(array: np.ndarray) -> "Vec3":
         """Create a Vec3 from the given data.
 
@@ -57,6 +58,7 @@ class Triangle:
     def as_list(self):
         return [self.node_index_1, self.node_index_2, self.node_index_3]
 
+    @staticmethod
     def from_array(array: np.ndarray) -> "Triangle":
         """Create a Triangle from the given data.
 
@@ -92,6 +94,7 @@ class TriangularMesh:
         positions = [node.position.as_list() for node in self.nodes]
         return np.array(positions, dtype="float32")
 
+    @staticmethod
     def triangles_as_array(self) -> np.ndarray:
         """Gets a two-dimensional array where each row contains three values that represent the node indices of a triangle.
         Note that this array is not cached and will be rebuilt with each call.
