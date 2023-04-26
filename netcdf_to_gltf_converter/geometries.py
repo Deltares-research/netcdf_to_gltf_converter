@@ -108,26 +108,26 @@ class TriangularMesh:
         return np.array(triangles, dtype="uint32")
 
     @staticmethod
-    def from_arrays(nodes_arr: np.ndarray, indices_arr: np.ndarray, animated_geom_arr: List[np.ndarray]) -> "TriangularMesh":
+    def from_arrays(nodes_arr: np.ndarray, indices_arr: np.ndarray, node_transformations_arr: List[np.ndarray]) -> "TriangularMesh":
         """Create a triangular mesh from the given data.
 
         Args:
-            vertices (np.ndarray): The node coordinates, a 2D ndarray of floats with shape (n, 3) where each row contains the x, y and z coordinate.
-            indices (np.ndarray): The face node indices, a 2D ndarray of floats with shape (m, 3) where each row contains three node indices that define the triangle shape and position.      Returns:
-
+            nodes_arr (np.ndarray): The node coordinates, a 2D ndarray of floats with shape (n, 3) where each row contains the x, y and z coordinate.
+            indices_arr (np.ndarray): The face node indices, a 2D ndarray of floats with shape (m, 3) where each row contains three node indices that define the triangle shape and position.
+            nodes_arr (np.ndarray): The node coordinate transformations, a 2D ndarray of floats with shape (n, 3) where each row contains the x, y and z coordinate transformations.
         Returns:
             TriangularMesh: The constructed triangular mesh object.
         """
 
-        nodes = [Node(Vec3.from_array(vertex)) for vertex in nodes_arr]
+        nodes = [Node(Vec3.from_array(xyz)) for xyz in nodes_arr]
         triangles = [
             Triangle.from_array(triangle_indices) for triangle_indices in indices_arr
         ]
         
-        mesh_geometries: List[MeshGeometry] = [] 
+        node_transformations: List[MeshGeometry] = [] 
         
-        for animated_geom in animated_geom_arr:
-            mesh_geom = [Node(Vec3.from_array(vertex)) for vertex in animated_geom]
-            mesh_geometries.append(mesh_geom)
+        for node_transformation in node_transformations_arr:
+            mesh_geom = [Node(Vec3.from_array(xyz)) for xyz in node_transformation]
+            node_transformations.append(mesh_geom)
 
-        return TriangularMesh(nodes, triangles, mesh_geometries)
+        return TriangularMesh(nodes, triangles, node_transformations)
