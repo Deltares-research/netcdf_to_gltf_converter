@@ -1,10 +1,12 @@
 from enum import Enum
 from pathlib import Path
+from typing import List
 
+import numpy as np
 import xarray as xr
 import xugrid as xu
 
-from netcdf_to_gltf_converter.geometries import TriangularMesh
+from netcdf_to_gltf_converter.geometries import Node, TriangularMesh
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 
@@ -59,17 +61,37 @@ class Importer:
         triangulated_grid = Triangulator.triangulate(ugrid2d)
 
         ds_water_depth = Importer._get_water_depth_2d(ds)
+        x_data_values = ds_water_depth.coords["Mesh2d_face_x"].data
+        y_data_values = ds_water_depth.coords["Mesh2d_face_y"].data
 
-        ds_water_depth_for_time = ds_water_depth.isel(time=0)
-        x_data_values = ds_water_depth_for_time.coords["Mesh2d_face_x"].data
-        y_data_values = ds_water_depth_for_time.coords["Mesh2d_face_y"].data
-        data_values = ds_water_depth_for_time["Mesh2d_waterdepth"].data
+        original_mesh_geometry: np.ndarray
+        mesh_geometry_transforms: List[np.ndarray] = []
 
-        interpolated_data_points = Interpolator.interpolate_nearest(
-            x_data_values, y_data_values, data_values, triangulated_grid, Location.nodes
-        )
+        n_times = ds_water_depth.dims["time"]
+        for time_index in range(n_times):
+            ds_water_depth_for_time = ds_water_depth.isel(time=time_index)
+            data_values = ds_water_depth_for_time["Mesh2d_waterdepth"].data
+
+            mesh_geometry_transform = Interpolator.interpolate_nearest(
+                x_data_values,
+                y_data_values,
+                data_values,
+                triangulated_grid,
+                Location.nodes,
+            )
+
+            if time_index == 0:
+                original_mesh_geometry = mesh_geometry_transform
+
+            else:
+                mesh_geometry_transform = np.subtract(
+                    mesh_geometry_transform, original_mesh_geometry
+                )
+                mesh_geometry_transforms.append(mesh_geometry_transform)
 
         triangular_mesh = TriangularMesh.from_arrays(
-            interpolated_data_points, triangulated_grid.face_node_connectivity
+            original_mesh_geometry,
+            triangulated_grid.face_node_connectivity,
+            mesh_geometry_transforms,
         )
         return triangular_mesh

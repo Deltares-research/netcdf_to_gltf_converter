@@ -38,5 +38,23 @@ class TestImporter:
             dtype=np.float32,
         )
 
+        exp_node_transformations = np.array(
+            [
+                [
+                    [0.0, 0.0, -2.0],
+                    [0.0, 0.0, -2.0],
+                    [0.0, 0.0, 2.0],
+                    [0.0, 0.0, -2.0],
+                    [0.0, 0.0, -2.0],
+                    [0.0, 0.0, 2.0],
+                    [0.0, 0.0, -2.0],
+                    [0.0, 0.0, -2.0],
+                    [0.0, 0.0, 2.0],
+                ],
+            ],
+            dtype=np.float32,
+        )
+
         np.array_equal(triangular_grid.triangles, exp_triangles)
         np.array_equal(triangular_grid.nodes, exp_nodes)
+        np.array_equal(triangular_grid.node_transformations, exp_node_transformations)

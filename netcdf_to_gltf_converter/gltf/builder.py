@@ -1,8 +1,11 @@
+import base64
 from typing import Any, List
 
 import numpy as np
 from pygltflib import (
+    ANIM_LINEAR,
     ARRAY_BUFFER,
+    DATA_URI_HEADER,
     ELEMENT_ARRAY_BUFFER,
     FLOAT,
     GLTF2,
@@ -10,6 +13,10 @@ from pygltflib import (
     UNSIGNED_INT,
     VEC3,
     Accessor,
+    Animation,
+    AnimationChannel,
+    AnimationChannelTarget,
+    AnimationSampler,
     Attributes,
     Buffer,
     BufferView,
@@ -24,6 +31,12 @@ from netcdf_to_gltf_converter.geometries import TriangularMesh
 PADDING_BYTE = b"\x00"
 
 
+def add(list: List, item: Any) -> int:
+    index = len(list)
+    list.append(item)
+    return index
+
+
 class GLTFBuilder:
     def __init__(self) -> None:
         """Initialize a GLTFBuilder.
@@ -31,55 +44,55 @@ class GLTFBuilder:
         Assumption: the GLTF will contain only one scene.
         """
 
-        # Create GLTF root object
         self._gltf = GLTF2()
 
-        # Add single scene to the gltf scenes
-        self._scene = Scene()
-        self._gltf.scenes.append(self._scene)
-        scene_index = self._gltf.scenes.index(self._scene)
+        self._mesh_index = add(self._gltf.meshes, Mesh())
+        self._node_index = add(self._gltf.nodes, Node(mesh=self._mesh_index))
+        self._scene_index = add(self._gltf.scenes, Scene(nodes=[self._node_index]))
+        self._gltf.scene = self._scene_index
 
-        # Set only scene as default scene
-        self._gltf.scene = scene_index
-
-        # Add mesh to gltf meshes
-        self._mesh = Mesh()
-        self._gltf.meshes.append(self._mesh)
-        self._mesh_index = self._gltf.meshes.index(self._mesh)
-
-        # Add node to gltf nodes
-        self._node = Node(mesh=self._mesh_index)
-        self._gltf.nodes.append(self._node)
-        self._node_index = self._gltf.nodes.index(self._node)
-
-        # Add node index to scene
-        self._scene.nodes.append(self._node_index)
-
-        # Add a geometry buffer for the mesh to the scene
-        self._geometry_buffer = Buffer(byteLength=0)
-        self._gltf.buffers.append(self._geometry_buffer)
+        # Add a geometry and animation buffer for the mesh
+        self._geometry_buffer_index = add(
+            self._gltf.buffers, Buffer(byteLength=0, uri=b"")
+        )
+        self._animation_buffer_index = add(
+            self._gltf.buffers, Buffer(byteLength=0, uri=b"")
+        )
 
         # Add a buffer view for the indices
-        self._indices_buffer_view = BufferView(
-            buffer=self._gltf.buffers.index(self._geometry_buffer),
-            byteOffset=0,
-            byteLength=0,
-            target=ELEMENT_ARRAY_BUFFER,
+        self._indices_buffer_view_index = add(
+            self._gltf.bufferViews,
+            BufferView(
+                buffer=self._geometry_buffer_index,
+                byteOffset=0,
+                byteLength=0,
+                target=ELEMENT_ARRAY_BUFFER,
+            ),
         )
-        self._gltf.bufferViews.append(self._indices_buffer_view)
 
-        # Add buffer view for the vertex positions
-        self._positions_buffer_view = BufferView(
-            buffer=self._gltf.buffers.index(self._geometry_buffer),
-            byteOffset=0,
-            byteLength=0,
-            target=ARRAY_BUFFER,
+        # Add buffer view for the vertex positions and their displacements
+        self._positions_buffer_view_index = add(
+            self._gltf.bufferViews,
+            BufferView(
+                buffer=self._geometry_buffer_index,
+                byteOffset=0,
+                byteLength=0,
+                byteStride=12,
+                target=ARRAY_BUFFER,
+            ),
         )
-        self._gltf.bufferViews.append(self._positions_buffer_view)
 
-        self._vertices_buffer_view = BufferView()
+        # Add buffer view for the sampler inputs: the time frames in seconds
+        self._time_frames_buffer_view_index = add(
+            self._gltf.bufferViews,
+            BufferView(buffer=self._animation_buffer_index, byteOffset=0, byteLength=0),
+        )
 
-        self._binary_blob = b""
+        # Add buffer view for the sampler outputs: the weights per time frame
+        self._weights_buffer_view_index = add(
+            self._gltf.bufferViews,
+            BufferView(buffer=self._animation_buffer_index, byteOffset=0, byteLength=0),
+        )
 
     def add_triangular_mesh(self, triangular_mesh: TriangularMesh):
         """Add a new mesh given the triangular mesh geometry.
@@ -90,12 +103,13 @@ class GLTFBuilder:
 
         triangles = triangular_mesh.triangles_as_array()
         nodes = triangular_mesh.nodes_positions_as_array()
+        node_transformations = triangular_mesh.node_transformations_as_array()
 
         indices_accessor_index = self._add_accessor_to_bufferview(
-            triangles, self._indices_buffer_view, UNSIGNED_INT, SCALAR
+            triangles, self._indices_buffer_view_index, UNSIGNED_INT, SCALAR
         )
         positions_accessor_index = self._add_accessor_to_bufferview(
-            nodes, self._positions_buffer_view, FLOAT, VEC3
+            nodes, self._positions_buffer_view_index, FLOAT, VEC3
         )
 
         primitive = Primitive(
@@ -104,14 +118,72 @@ class GLTFBuilder:
         )
         self._gltf.meshes[self._mesh_index].primitives.append(primitive)
 
-        self._gltf.set_binary_blob(self._binary_blob)
+        self.add_mesh_geometry_animation(node_transformations, primitive)
+
+    def add_mesh_geometry_animation(
+        self, node_transformations: np.ndarray, primitive: Primitive
+    ):
+        n_transformations = len(node_transformations)
+        time_frames = []
+        weights = []
+
+        for frame_index in range(n_transformations):
+            transformed_nodes = node_transformations[frame_index]
+
+            positions_accessor_index = self._add_accessor_to_bufferview(
+                transformed_nodes, self._positions_buffer_view_index, FLOAT, VEC3
+            )
+
+            target_attr = Attributes(POSITION=positions_accessor_index)
+            primitive.targets.append(target_attr)
+
+            self._gltf.meshes[self._mesh_index].weights.append(0.0)
+
+            time_frames.append(float(frame_index))
+            weights_for_frame = n_transformations * [0.0]
+            weights_for_frame[frame_index] = 1.0
+            weights.append(weights_for_frame)
+
+        # Add time frames accessor
+        time_frames_inputs_accessor_index = self._add_accessor_to_bufferview(
+            np.array(time_frames, dtype="float32"),
+            self._time_frames_buffer_view_index,
+            FLOAT,
+            SCALAR,
+        )
+
+        # Add weights accessor
+        weights_accessor_index = self._add_accessor_to_bufferview(
+            np.array(weights, dtype="float32"),
+            self._weights_buffer_view_index,
+            FLOAT,
+            SCALAR,
+        )
+
+        animation = Animation()
+        sampler = AnimationSampler(
+            input=time_frames_inputs_accessor_index,
+            interpolation=ANIM_LINEAR,
+            output=weights_accessor_index,
+        )
+        sample_index = add(animation.samplers, sampler)
+        target = AnimationChannelTarget(node=self._node_index, path="weights")
+        channel = AnimationChannel(sampler=sample_index, target=target)
+        animation.channels.append(channel)
+
+        self._gltf.animations.append(animation)
+
+    def add_data_to_buffer(self, data: bytes, buffer: Buffer):
+        buffer.uri += data
+        buffer.byteLength += len(data)
 
     def _add_accessor_to_bufferview(
-        self, data: np.ndarray, buffer_view: BufferView, component_type: int, type: str
+        self, data: np.ndarray, buffer_view_index: int, component_type: int, type: str
     ) -> int:
         data_binary_blob = data.flatten().tobytes()
 
         # Get offset and length accessor where offset is the offset within the bufferview
+        buffer_view = self._gltf.bufferViews[buffer_view_index]
         accessor_byte_offset = buffer_view.byteLength
         accessor_byte_length = len(data_binary_blob)
 
@@ -121,11 +193,8 @@ class GLTFBuilder:
             self._set_offset_bufferview_including_padding(buffer_view, buffer_)
         buffer_view.byteLength += accessor_byte_length
 
-        # Set byte length buffer
-        buffer_.byteLength += accessor_byte_length
-
-        # Update binary blob
-        self._binary_blob += data_binary_blob
+        # Add data to buffer
+        self.add_data_to_buffer(data_binary_blob, buffer_)
 
         data_max, data_min, data_count = self._get_min_max_count(data, type)
         accessor = Accessor(
@@ -137,9 +206,8 @@ class GLTFBuilder:
             max=data_max,
             min=data_min,
         )
-        self._gltf.accessors.append(accessor)
 
-        return self._gltf.accessors.index(accessor)
+        return add(self._gltf.accessors, accessor)
 
     def _set_offset_bufferview_including_padding(
         self, buffer_view: BufferView, buffer: Buffer
@@ -150,8 +218,7 @@ class GLTFBuilder:
         )  # add padding bytes between bufferviews if needed, TODO number of bytes should be according to accessor componenttype,
         if n_padding_bytes != 0:
             byte_offset += n_padding_bytes
-            buffer.byteLength += n_padding_bytes
-            self._binary_blob += n_padding_bytes * PADDING_BYTE
+            self.add_data_to_buffer(n_padding_bytes * PADDING_BYTE, buffer)
 
         buffer_view.byteOffset = byte_offset
 
@@ -175,4 +242,7 @@ class GLTFBuilder:
         Returns:
             GLTF2: The created GLTF2 object.
         """
+        for buffer in self._gltf.buffers:
+            buffer.uri = DATA_URI_HEADER + base64.b64encode(buffer.uri).decode("utf-8")
+
         return self._gltf

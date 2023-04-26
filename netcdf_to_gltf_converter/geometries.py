@@ -73,16 +73,26 @@ class Triangle:
         )
 
 
+MeshGeometry = List[Node]
+
+
 class TriangularMesh:
-    def __init__(self, nodes: List[Node], triangles: List[Triangle]) -> None:
+    def __init__(
+        self,
+        nodes: MeshGeometry,
+        triangles: List[Triangle],
+        node_transformations: List[MeshGeometry] = None,
+    ) -> None:
         """Initialize a TriangularMesh with the given arguments.
 
         Args:
             nodes (List[Node]): The nodes in the mesh.
             triangles (List[Triangle]): The triangles in the mesh each containing the three node indices that define the triangle shape and position.
+            node_transformations (List[List[[Node]]): The collection of node transformations.
         """
         self.nodes = nodes
         self.triangles = triangles
+        self.node_transformations = node_transformations
 
     def nodes_positions_as_array(self) -> np.ndarray:
         """Gets a two-dimensional array where each row contains three values that represent the x, y and z positions of a node.
@@ -104,21 +114,41 @@ class TriangularMesh:
         triangles = [triangle.as_list() for triangle in self.triangles]
         return np.array(triangles, dtype="uint32")
 
+    def node_transformations_as_array(self) -> np.ndarray:
+        nodes_transformations_arr = []
+        for nodes_transformation in self.node_transformations:
+            nodes_transformation_arr = [
+                node.position.as_list() for node in nodes_transformation
+            ]
+            nodes_transformations_arr.append(nodes_transformation_arr)
+
+        return np.array(nodes_transformations_arr, dtype="float32")
+
     @staticmethod
-    def from_arrays(nodes_arr: np.ndarray, indices_arr: np.ndarray) -> "TriangularMesh":
+    def from_arrays(
+        nodes_arr: np.ndarray,
+        indices_arr: np.ndarray,
+        node_transformations_arr: List[np.ndarray],
+    ) -> "TriangularMesh":
         """Create a triangular mesh from the given data.
 
         Args:
-            vertices (np.ndarray): The node coordinates, a 2D ndarray of floats with shape (n, 3) where each row contains the x, y and z coordinate.
-            indices (np.ndarray): The face node indices, a 2D ndarray of floats with shape (m, 3) where each row contains three node indices that define the triangle shape and position.      Returns:
-
+            nodes_arr (np.ndarray): The node coordinates, a 2D ndarray of floats with shape (n, 3) where each row contains the x, y and z coordinate.
+            indices_arr (np.ndarray): The face node indices, a 2D ndarray of floats with shape (m, 3) where each row contains three node indices that define the triangle shape and position.
+            nodes_arr (np.ndarray): The node coordinate transformations, a 2D ndarray of floats with shape (n, 3) where each row contains the x, y and z coordinate transformations.
         Returns:
             TriangularMesh: The constructed triangular mesh object.
         """
 
-        nodes = [Node(Vec3.from_array(vertex)) for vertex in nodes_arr]
+        nodes = [Node(Vec3.from_array(xyz)) for xyz in nodes_arr]
         triangles = [
             Triangle.from_array(triangle_indices) for triangle_indices in indices_arr
         ]
 
-        return TriangularMesh(nodes, triangles)
+        node_transformations: List[MeshGeometry] = []
+
+        for node_transformation in node_transformations_arr:
+            mesh_geom = [Node(Vec3.from_array(xyz)) for xyz in node_transformation]
+            node_transformations.append(mesh_geom)
+
+        return TriangularMesh(nodes, triangles, node_transformations)
