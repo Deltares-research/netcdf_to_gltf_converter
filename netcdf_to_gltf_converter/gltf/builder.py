@@ -120,7 +120,9 @@ class GLTFBuilder:
 
         self.add_mesh_geometry_animation(node_transformations, primitive)
 
-    def add_mesh_geometry_animation(self, node_transformations: np.ndarray, primitive: Primitive):
+    def add_mesh_geometry_animation(
+        self, node_transformations: np.ndarray, primitive: Primitive
+    ):
         n_transformations = len(node_transformations)
         time_frames = []
         weights = []
