@@ -63,10 +63,6 @@ class GLTFBuilder:
         # Add a geometry buffer for the mesh
         self._geometry_buffer = Buffer(byteLength=0)
         self._gltf.buffers.append(self._geometry_buffer)
-        
-        # Add a animation buffer for the mesh
-        self._animation_buffer = Buffer(byteLength=0)
-        self._gltf.buffers.append(self._animation_buffer)
 
         # Add a buffer view for the indices
         self._indices_buffer_view = BufferView(
@@ -86,6 +82,10 @@ class GLTFBuilder:
         )
         self._gltf.bufferViews.append(self._positions_buffer_view)
         
+        # Add a animation buffer for the mesh
+        self._animation_buffer = Buffer(byteLength=0)
+        self._gltf.buffers.append(self._animation_buffer)
+        
         # Add buffer view for the sampler inputs
         self._sampler_inputs_buffer_view = BufferView(
             #buffer=self._gltf.buffers.index(self._animation_buffer), # DOES NOT WORK
@@ -103,8 +103,6 @@ class GLTFBuilder:
             byteLength=0
         )
         self._gltf.bufferViews.append(self._sampler_outputs_buffer_view)
-
-        #self._vertices_buffer_view = BufferView()
 
         self._binary_blob = b""
 
@@ -131,27 +129,35 @@ class GLTFBuilder:
         )
         self._gltf.meshes[self._mesh_index].primitives.append(primitive)
         
-        for mesh_geometry in triangular_mesh.animated_geometry:
+        n_frames = len(triangular_mesh.animated_geometry)
+        frame_times = []
+        weights = []
+                
+        for frame_index in range(n_frames):
+            mesh_geometry = triangular_mesh.animated_geometry[frame_index]
             positions = [node.position.as_list() for node in mesh_geometry]
             nodes = np.array(positions, dtype="float32")
 
             positions_accessor_index = self._add_accessor_to_bufferview(
                 nodes, self._positions_buffer_view, FLOAT, VEC3
             )
+            self._positions_buffer_view.byteStride = 12
             
             target_attr = Attributes(POSITION=positions_accessor_index)
             primitive.targets.append(target_attr)
             
-            self._mesh.weights.append(1.0)
+            self._mesh.weights.append(0.0)
+            
+            frame_times.append(float(frame_index))
+            weights_for_frame = (n_frames * [0.0])
+            weights_for_frame[frame_index] = 1.0
+            weights.append(weights_for_frame)
         
         # Add sampler inputs accessor
-        n_times = len(triangular_mesh.animated_geometry) + 1
-        data = np.array([float(i)for i in range(n_times)], dtype="float32")
-        sampler_inputs_accessor_index = self._add_accessor_to_bufferview(data, self._sampler_inputs_buffer_view, FLOAT, SCALAR)
+        sampler_inputs_accessor_index = self._add_accessor_to_bufferview(np.array(frame_times, dtype="float32"), self._sampler_inputs_buffer_view, FLOAT, SCALAR)
         
         # Add sampled outputs accessor
-        data = np.array([[1.0,1.0]for i in range(n_times)], dtype="float32")
-        sampler_outputs_accessor_index = self._add_accessor_to_bufferview(data, self._sampler_outputs_buffer_view, FLOAT, SCALAR)
+        sampler_outputs_accessor_index = self._add_accessor_to_bufferview(np.array(weights, dtype="float32"), self._sampler_outputs_buffer_view, FLOAT, SCALAR)
         
 
         sampler = AnimationSampler(input=sampler_inputs_accessor_index, interpolation=ANIM_LINEAR, output=sampler_outputs_accessor_index)
