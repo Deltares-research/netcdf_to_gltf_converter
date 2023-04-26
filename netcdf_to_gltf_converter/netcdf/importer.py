@@ -69,19 +69,7 @@ class Importer:
 
         n_times = ds_water_depth.dims["time"]
         for time_index in range(n_times):
-            ds_water_depth_for_time = ds_water_depth.isel(time=time_index)
-            data_values = ds_water_depth_for_time["Mesh2d_waterdepth"].data
-
-            interpolated_vertex_positions = np.array(
-                Interpolator.interpolate_nearest(
-                    x_data_values,
-                    y_data_values,
-                    data_values,
-                    triangulated_grid,
-                    Location.nodes,
-                ),
-                dtype="float32",
-            )
+            interpolated_vertex_positions = Importer.interpolate(triangulated_grid, ds_water_depth, x_data_values, y_data_values, time_index)
 
             if time_index == 0:
                 original_mesh_geometry = MeshGeometry(
@@ -109,3 +97,21 @@ class Importer:
             mesh_transformations=mesh_geometry_transforms,
         )
         return triangular_mesh
+
+    @staticmethod
+    def interpolate(grid, ds_water_depth, x_data_values, y_data_values, time_index):
+        ds_water_depth_for_time = ds_water_depth.isel(time=time_index)
+        data_values = ds_water_depth_for_time["Mesh2d_waterdepth"].data
+
+        interpolated_vertex_positions = np.array(
+                Interpolator.interpolate_nearest(
+                    x_data_values,
+                    y_data_values,
+                    data_values,
+                    grid,
+                    Location.nodes,
+                ),
+                dtype="float32",
+            )
+        
+        return interpolated_vertex_positions
