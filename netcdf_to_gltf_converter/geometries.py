@@ -17,8 +17,11 @@ class MeshGeometry:
         Args:
             vertex_positions (np.ndarray (n, 3)): float32
         """
-        validate_array(vertex_positions, "float32", n_shape=2, n_col=3)
         self.vertex_positions = vertex_positions
+        self.validate()
+        
+    def validate(self):
+        validate_array(self.vertex_positions, "float32", n_shape=2, n_col=3)
 
 class TriangularMesh:
     def __init__(
@@ -34,8 +37,13 @@ class TriangularMesh:
             triangles (np.ndarray (m, 3)): uint32The triangles in the mesh each containing the three node indices that define the triangle shape and position.
             mesh_transformations (List[MeshGeometry]): The collection of node transformations.
         """
-        validate_array(triangles, "uint32", n_shape=2, n_col=3)
-        assert mesh_geometry.vertex_positions.size == mesh_transformations[0].vertex_positions.size
         self.mesh_geometry = mesh_geometry
         self.triangles = triangles
         self.mesh_transformations = mesh_transformations
+        self.validate()
+
+    def validate(self):
+        validate_array(self.triangles, "uint32", n_shape=2, n_col=3)
+        base_mesh_geometry_node_size = self.mesh_geometry.vertex_positions.size
+        for mesh_transformation in self.mesh_transformations:
+            assert mesh_transformation.vertex_positions.size == base_mesh_geometry_node_size
