@@ -64,37 +64,23 @@ class Importer:
         x_data_values = ds_water_depth.coords["Mesh2d_face_x"].data
         y_data_values = ds_water_depth.coords["Mesh2d_face_y"].data
 
-        original_mesh_geometry: MeshGeometry
-        mesh_geometry_transforms: List[MeshGeometry] = []
-
+        interpolated_vertex_positions = Importer.interpolate(triangulated_grid, ds_water_depth, x_data_values, y_data_values, 0)
+        base_mesh_geometry = MeshGeometry(vertex_positions=interpolated_vertex_positions) 
+        
+        mesh_transformations: List[MeshGeometry] = []
         n_times = ds_water_depth.dims["time"]
-        for time_index in range(n_times):
+        for time_index in range(1, n_times):
             interpolated_vertex_positions = Importer.interpolate(triangulated_grid, ds_water_depth, x_data_values, y_data_values, time_index)
-
-            if time_index == 0:
-                original_mesh_geometry = MeshGeometry(
-                    vertex_positions=interpolated_vertex_positions
-                )
-
-            else:
-                displaced_geometry = np.array(
-                    np.subtract(
-                        interpolated_vertex_positions,
-                        original_mesh_geometry.vertex_positions,
-                    ),
-                    dtype="float32",
-                )
-                transformed_mesh_geometry = MeshGeometry(
-                    vertex_positions=displaced_geometry
-                )
-                mesh_geometry_transforms.append(transformed_mesh_geometry)
+            displaced_vertices = np.array(np.subtract(interpolated_vertex_positions, base_mesh_geometry.vertex_positions), dtype="float32")
+            mesh_transformation = MeshGeometry(vertex_positions=displaced_vertices)
+            mesh_transformations.append(mesh_transformation)
 
         triangular_mesh = TriangularMesh(
-            mesh_geometry=original_mesh_geometry,
+            mesh_geometry=base_mesh_geometry,
             triangles=np.array(
                 triangulated_grid.face_node_connectivity, dtype="uint32"
             ),
-            mesh_transformations=mesh_geometry_transforms,
+            mesh_transformations=mesh_transformations,
         )
         return triangular_mesh
 
