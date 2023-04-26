@@ -6,7 +6,7 @@ import numpy as np
 import xarray as xr
 import xugrid as xu
 
-from netcdf_to_gltf_converter.geometries import Node, TriangularMesh
+from netcdf_to_gltf_converter.geometries import TriangularMesh, MeshGeometry
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 
@@ -64,34 +64,34 @@ class Importer:
         x_data_values = ds_water_depth.coords["Mesh2d_face_x"].data
         y_data_values = ds_water_depth.coords["Mesh2d_face_y"].data
 
-        original_mesh_geometry: np.ndarray
-        mesh_geometry_transforms: List[np.ndarray] = []
+        original_mesh_geometry: MeshGeometry
+        mesh_geometry_transforms: List[MeshGeometry] = []
 
         n_times = ds_water_depth.dims["time"]
         for time_index in range(n_times):
             ds_water_depth_for_time = ds_water_depth.isel(time=time_index)
             data_values = ds_water_depth_for_time["Mesh2d_waterdepth"].data
 
-            mesh_geometry_transform = Interpolator.interpolate_nearest(
+            interpolated_vertex_positions = np.array(Interpolator.interpolate_nearest(
                 x_data_values,
                 y_data_values,
                 data_values,
                 triangulated_grid,
                 Location.nodes,
-            )
+            ), dtype="float32")
 
             if time_index == 0:
-                original_mesh_geometry = mesh_geometry_transform
+                original_mesh_geometry = MeshGeometry(vertex_positions=interpolated_vertex_positions)
 
             else:
-                mesh_geometry_transform = np.subtract(
-                    mesh_geometry_transform, original_mesh_geometry
-                )
-                mesh_geometry_transforms.append(mesh_geometry_transform)
+                displaced_geometry = np.array(np.subtract(
+                    interpolated_vertex_positions, original_mesh_geometry.vertex_positions
+                ), dtype="float32")
+                transformed_mesh_geometry = MeshGeometry(vertex_positions=displaced_geometry)
+                mesh_geometry_transforms.append(transformed_mesh_geometry)
 
-        triangular_mesh = TriangularMesh.from_arrays(
-            original_mesh_geometry,
-            triangulated_grid.face_node_connectivity,
-            mesh_geometry_transforms,
-        )
+        triangular_mesh = TriangularMesh(mesh_geometry=original_mesh_geometry, 
+                                         triangles=np.array(triangulated_grid.face_node_connectivity, dtype="uint32"), 
+                                         mesh_transformations=mesh_geometry_transforms)
         return triangular_mesh
+

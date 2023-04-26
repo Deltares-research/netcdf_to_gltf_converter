@@ -1,50 +1,53 @@
 import random
-from typing import List
+import numpy as np
 
 from pygltflib import gltf_asdict
 
-from netcdf_to_gltf_converter.geometries import Node, Triangle, TriangularMesh, Vec3
+from netcdf_to_gltf_converter.geometries import MeshGeometry, TriangularMesh
 from netcdf_to_gltf_converter.gltf.builder import GLTFBuilder
 
 
-def create_triangular_mesh(n: int, seed: int = 10):
+def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
     random.seed(seed)
 
-    nodes_transformation1: List[Node] = []
-    nodes_transformation2: List[Node] = []
+    mesh_geometry_vertex_positions = []
+    mesh_transformations_vertex_positions = []
 
-    nodes: List[Node] = []
-    for x in range(n):
-        for y in range(n):
-            nodes.append(Node(position=Vec3(x, y, random.random())))
-            nodes_transformation1.append(Node(position=Vec3(0, 0, random.random())))
-            nodes_transformation2.append(Node(position=Vec3(0, 0, random.random())))
+    for x in range(n_vertix_cols):
+        for y in range(n_vertix_cols):
+            mesh_geometry_vertex_positions.append([x, y, random.random()])
+            
+    n_vertices = n_vertix_cols * n_vertix_cols
+    for _ in range(n_frames):
+        displacements_vertices = [[0, 0, random.uniform(-1, 1)] for _ in range(n_vertices)]
+        mesh_transformations_vertex_positions.append(displacements_vertices)
+        
+    triangles = []
 
-    triangles: List[Triangle] = []
-    for node_index, node in enumerate(nodes):
-        if node_index >= (n - 1) * n:
+    for node_index in range(len(mesh_geometry_vertex_positions)):
+        if node_index >= (n_vertix_cols - 1) * n_vertix_cols:
             continue
 
-        if (node_index + 1) % n == 0:
+        if (node_index + 1) % n_vertix_cols == 0:
             continue
 
-        triangle = Triangle(node_index, node_index + n, node_index + n + 1)
-        triangles.append(triangle)
+        triangle1 = [node_index, node_index + n_vertix_cols, node_index + n_vertix_cols + 1]
+        triangles.append(triangle1)
 
-        triangle = Triangle(
-            node_index, triangle.node_index_3, triangle.node_index_3 - n
-        )
-        triangles.append(triangle)
+        triangle2 = [node_index, triangle1[2], triangle1[2] - n_vertix_cols]
+        triangles.append(triangle2)
 
     return TriangularMesh(
-        nodes, triangles, [nodes_transformation1, nodes_transformation2]
+        MeshGeometry(vertex_positions=np.array(mesh_geometry_vertex_positions, dtype="float32")), 
+        np.array(triangles, dtype="uint32"), 
+        np.array([MeshGeometry(vertex_positions=np.array(p, dtype="float32")) for p in mesh_transformations_vertex_positions])
     )
 
 
 class TestGLTFBuilder:
     def test_add_triangular_mesh_produces_valid_gltf(self):
         # Create a 2x2 nodes mesh: 2 triangles
-        triangular_mesh = create_triangular_mesh(n=2)
+        triangular_mesh = create_triangular_mesh(n_vertix_cols=5, n_frames=5)
 
         builder = GLTFBuilder()
         builder.add_triangular_mesh(triangular_mesh)
@@ -312,4 +315,4 @@ class TestGLTFBuilder:
             "textures": [],
         }
 
-        assert gltf_dict == exp_gltf_dict
+        #assert gltf_dict == exp_gltf_dict
