@@ -15,8 +15,8 @@ class MeshGeometry:
 
         Args:
             vertex_positions (np.ndarray): The vertex positions, an ndarray of floats with shape (n, 3). Each row represents one vertex and contains the x, y and z coordinate of this vertex.
-        
-        Raises: 
+
+        Raises:
             AssertionError: When the shape or dtype of the `vertex_positions` does not match the requirements.
         """
         self.vertex_positions = vertex_positions
@@ -27,19 +27,24 @@ class MeshGeometry:
 
 
 class TriangularMesh:
-    def __init__(self, mesh_geometry: MeshGeometry, triangles: np.ndarray, mesh_transformations: List[MeshGeometry]) -> None:
+    def __init__(
+        self,
+        mesh_geometry: MeshGeometry,
+        triangles: np.ndarray,
+        mesh_transformations: List[MeshGeometry],
+    ) -> None:
         """Initialize a TriangularMesh with the specified arguments.
 
         Args:
             mesh_geometry (MeshGeometry): The base mesh geometry.
             triangles (np.ndarray): The vertex indices per triangle, an ndarray of integers with shape (m, 3). Each row represents one triangle and contains the three vertex indices of this triangle.
-            mesh_transformations (List[MeshGeometry]): The mesh transformations containing the vertex displacements. 
-        
-        Raises: 
+            mesh_transformations (List[MeshGeometry]): The mesh transformations containing the vertex displacements.
+
+        Raises:
             AssertionError: When the shape or dtype of the `triangles` does not match the requirements.
             AssertionError: When the size of the vertex positions in any of the mesh transformations do not match the amount in the base mesh geometry.
         """
-        
+
         self.mesh_geometry = mesh_geometry
         self.triangles = triangles
         self.mesh_transformations = mesh_transformations
@@ -47,7 +52,7 @@ class TriangularMesh:
 
     def validate(self):
         validate_2d_array(self.triangles, "uint32", n_col=3)
-        
+
         base_vertex_size = self.mesh_geometry.vertex_positions.size
         for mesh_transformation in self.mesh_transformations:
             assert mesh_transformation.vertex_positions.size == base_vertex_size
