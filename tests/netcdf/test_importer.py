@@ -56,6 +56,10 @@ class TestImporter:
         )
 
         np.array_equal(triangular_grid.triangles, exp_triangles)
-        np.array_equal(triangular_grid.mesh_geometry.vertex_positions, exp_vertex_positions)
+        np.array_equal(
+            triangular_grid.mesh_geometry.vertex_positions, exp_vertex_positions
+        )
         assert len(triangular_grid.mesh_transformations) == 1
-        np.array_equal(triangular_grid.mesh_transformations[0], exp_vertex_transformations)
+        np.array_equal(
+            triangular_grid.mesh_transformations[0], exp_vertex_transformations
+        )

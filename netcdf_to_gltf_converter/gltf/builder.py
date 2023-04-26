@@ -102,10 +102,16 @@ class GLTFBuilder:
         """
 
         indices_accessor_index = self._add_accessor_to_bufferview(
-            triangular_mesh.triangles, self._indices_buffer_view_index, UNSIGNED_INT, SCALAR
+            triangular_mesh.triangles,
+            self._indices_buffer_view_index,
+            UNSIGNED_INT,
+            SCALAR,
         )
         positions_accessor_index = self._add_accessor_to_bufferview(
-            triangular_mesh.mesh_geometry.vertex_positions, self._positions_buffer_view_index, FLOAT, VEC3
+            triangular_mesh.mesh_geometry.vertex_positions,
+            self._positions_buffer_view_index,
+            FLOAT,
+            VEC3,
         )
 
         primitive = Primitive(
@@ -114,7 +120,9 @@ class GLTFBuilder:
         )
         self._gltf.meshes[self._mesh_index].primitives.append(primitive)
 
-        self.add_mesh_geometry_animation(triangular_mesh.mesh_transformations, primitive)
+        self.add_mesh_geometry_animation(
+            triangular_mesh.mesh_transformations, primitive
+        )
 
     def add_mesh_geometry_animation(
         self, mesh_transformations: List[MeshGeometry], primitive: Primitive
@@ -127,7 +135,10 @@ class GLTFBuilder:
             mesh_transformation = mesh_transformations[frame_index]
 
             positions_accessor_index = self._add_accessor_to_bufferview(
-                mesh_transformation.vertex_positions, self._positions_buffer_view_index, FLOAT, VEC3
+                mesh_transformation.vertex_positions,
+                self._positions_buffer_view_index,
+                FLOAT,
+                VEC3,
             )
 
             target_attr = Attributes(POSITION=positions_accessor_index)

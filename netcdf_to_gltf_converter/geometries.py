@@ -2,10 +2,12 @@ from typing import List
 
 import numpy as np
 
+
 def validate_array(array: np.ndarray, dtype: str, n_shape: int, n_col: int):
     assert array.dtype == dtype
     assert len(array.shape) == n_shape
     assert array.shape[1] == n_col
+
 
 class MeshGeometry:
     def __init__(
@@ -19,15 +21,16 @@ class MeshGeometry:
         """
         self.vertex_positions = vertex_positions
         self.validate()
-        
+
     def validate(self):
         validate_array(self.vertex_positions, "float32", n_shape=2, n_col=3)
+
 
 class TriangularMesh:
     def __init__(
         self,
         mesh_geometry: MeshGeometry,
-        triangles: np.ndarray, 
+        triangles: np.ndarray,
         mesh_transformations: List[MeshGeometry],
     ) -> None:
         """Initialize a TriangularMesh with the given arguments.
@@ -46,4 +49,7 @@ class TriangularMesh:
         validate_array(self.triangles, "uint32", n_shape=2, n_col=3)
         base_mesh_geometry_node_size = self.mesh_geometry.vertex_positions.size
         for mesh_transformation in self.mesh_transformations:
-            assert mesh_transformation.vertex_positions.size == base_mesh_geometry_node_size
+            assert (
+                mesh_transformation.vertex_positions.size
+                == base_mesh_geometry_node_size
+            )

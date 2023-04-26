@@ -1,6 +1,6 @@
 import random
-import numpy as np
 
+import numpy as np
 from pygltflib import gltf_asdict
 
 from netcdf_to_gltf_converter.geometries import MeshGeometry, TriangularMesh
@@ -16,12 +16,14 @@ def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
     for x in range(n_vertix_cols):
         for y in range(n_vertix_cols):
             mesh_geometry_vertex_positions.append([x, y, random.random()])
-            
+
     n_vertices = n_vertix_cols * n_vertix_cols
     for _ in range(n_frames):
-        displacements_vertices = [[0, 0, random.uniform(-1, 1)] for _ in range(n_vertices)]
+        displacements_vertices = [
+            [0, 0, random.uniform(-1, 1)] for _ in range(n_vertices)
+        ]
         mesh_transformations_vertex_positions.append(displacements_vertices)
-        
+
     triangles = []
 
     for node_index in range(len(mesh_geometry_vertex_positions)):
@@ -31,16 +33,27 @@ def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
         if (node_index + 1) % n_vertix_cols == 0:
             continue
 
-        triangle1 = [node_index, node_index + n_vertix_cols, node_index + n_vertix_cols + 1]
+        triangle1 = [
+            node_index,
+            node_index + n_vertix_cols,
+            node_index + n_vertix_cols + 1,
+        ]
         triangles.append(triangle1)
 
         triangle2 = [node_index, triangle1[2], triangle1[2] - n_vertix_cols]
         triangles.append(triangle2)
 
     return TriangularMesh(
-        MeshGeometry(vertex_positions=np.array(mesh_geometry_vertex_positions, dtype="float32")), 
-        np.array(triangles, dtype="uint32"), 
-        np.array([MeshGeometry(vertex_positions=np.array(p, dtype="float32")) for p in mesh_transformations_vertex_positions])
+        MeshGeometry(
+            vertex_positions=np.array(mesh_geometry_vertex_positions, dtype="float32")
+        ),
+        np.array(triangles, dtype="uint32"),
+        np.array(
+            [
+                MeshGeometry(vertex_positions=np.array(p, dtype="float32"))
+                for p in mesh_transformations_vertex_positions
+            ]
+        ),
     )
 
 
@@ -315,4 +328,4 @@ class TestGLTFBuilder:
             "textures": [],
         }
 
-        #assert gltf_dict == exp_gltf_dict
+        # assert gltf_dict == exp_gltf_dict
