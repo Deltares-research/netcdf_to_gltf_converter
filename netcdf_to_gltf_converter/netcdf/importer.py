@@ -64,14 +64,29 @@ class Importer:
         x_data_values = ds_water_depth.coords["Mesh2d_face_x"].data
         y_data_values = ds_water_depth.coords["Mesh2d_face_y"].data
 
-        interpolated_vertex_positions = Importer.interpolate(triangulated_grid, ds_water_depth, x_data_values, y_data_values, 0)
-        base_mesh_geometry = MeshGeometry(vertex_positions=interpolated_vertex_positions) 
-        
+        interpolated_vertex_positions = Importer.interpolate(
+            triangulated_grid, ds_water_depth, x_data_values, y_data_values, 0
+        )
+        base_mesh_geometry = MeshGeometry(
+            vertex_positions=interpolated_vertex_positions
+        )
+
         mesh_transformations: List[MeshGeometry] = []
         n_times = ds_water_depth.dims["time"]
         for time_index in range(1, n_times):
-            interpolated_vertex_positions = Importer.interpolate(triangulated_grid, ds_water_depth, x_data_values, y_data_values, time_index)
-            displaced_vertices = np.array(np.subtract(interpolated_vertex_positions, base_mesh_geometry.vertex_positions), dtype="float32")
+            interpolated_vertex_positions = Importer.interpolate(
+                triangulated_grid,
+                ds_water_depth,
+                x_data_values,
+                y_data_values,
+                time_index,
+            )
+            displaced_vertices = np.array(
+                np.subtract(
+                    interpolated_vertex_positions, base_mesh_geometry.vertex_positions
+                ),
+                dtype="float32",
+            )
             mesh_transformation = MeshGeometry(vertex_positions=displaced_vertices)
             mesh_transformations.append(mesh_transformation)
 
@@ -90,14 +105,14 @@ class Importer:
         data_values = ds_water_depth_for_time["Mesh2d_waterdepth"].data
 
         interpolated_vertex_positions = np.array(
-                Interpolator.interpolate_nearest(
-                    x_data_values,
-                    y_data_values,
-                    data_values,
-                    grid,
-                    Location.nodes,
-                ),
-                dtype="float32",
-            )
-        
+            Interpolator.interpolate_nearest(
+                x_data_values,
+                y_data_values,
+                data_values,
+                grid,
+                Location.nodes,
+            ),
+            dtype="float32",
+        )
+
         return interpolated_vertex_positions
