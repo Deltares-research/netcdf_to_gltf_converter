@@ -142,11 +142,17 @@ class TestTriangularMesh:
     def test_from_arrays(self):
         nodes_arr = [[0, 0, 1], [1, 0, 2], [0, 1, 3]]
         indices_arr = [[0, 1, 2]]
+        node_transformations_arr = [
+            [[0, 0, 2], [1, 0, 1], [0, 1, 1]],
+            [[0, 0, 3], [1, 0, 0], [0, 1, 5]]
+        ]
 
-        triangular_mesh = TriangularMesh.from_arrays(nodes_arr, indices_arr)
+        triangular_mesh = TriangularMesh.from_arrays(nodes_arr, indices_arr, node_transformations_arr)
 
-        nodes = [node.position.as_list() for node in triangular_mesh.nodes]
-        indices = [triangle.as_list() for triangle in triangular_mesh.triangles]
+        nodes = triangular_mesh.nodes_positions_as_array()
+        indices = triangular_mesh.triangles_as_array()
+        node_transformations = triangular_mesh.node_transformations_as_array()
 
         np.array_equal(nodes, nodes_arr)
         np.array_equal(indices, indices_arr)
+        np.array_equal(node_transformations, node_transformations_arr)
