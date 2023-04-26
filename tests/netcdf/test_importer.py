@@ -57,3 +57,4 @@ class TestImporter:
 
         np.array_equal(triangular_grid.triangles, exp_triangles)
         np.array_equal(triangular_grid.nodes, exp_nodes)
+        np.array_equal(triangular_grid.node_transformations, exp_node_transformations)
