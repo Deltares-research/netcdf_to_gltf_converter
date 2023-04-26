@@ -44,24 +44,14 @@ class GLTFBuilder:
         Assumption: the GLTF will contain only one scene.
         """
 
-        # Create GLTF root object
         self._gltf = GLTF2()
 
-        # Add single scene to the gltf scenes
-        scene = Scene()
-        scene_index = add(self._gltf.scenes, scene)
 
-        # Set only scene as default scene
-        self._gltf.scene = scene_index
 
-        # Add mesh to gltf meshes
         self._mesh_index = add(self._gltf.meshes, Mesh())
-
-        # Add node to gltf nodes
         self._node_index = add(self._gltf.nodes, Node(mesh=self._mesh_index))
-
-        # Add node index to scene
-        scene.nodes.append(self._node_index)
+        self._scene_index = add(self._gltf.scenes, Scene(nodes=[self._node_index]))
+        self._gltf.scene = self._scene_index
 
         # Add a geometry and animation buffer for the mesh
         self._geometry_buffer_index = add(
@@ -82,7 +72,7 @@ class GLTFBuilder:
             ),
         )
 
-        # Add buffer view for the vertex positions
+        # Add buffer view for the vertex positions and their displacements
         self._positions_buffer_view_index = add(
             self._gltf.bufferViews,
             BufferView(
