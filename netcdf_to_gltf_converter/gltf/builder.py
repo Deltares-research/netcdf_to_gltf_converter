@@ -105,6 +105,7 @@ class GLTFBuilder:
 
         triangles = triangular_mesh.triangles_as_array()
         nodes = triangular_mesh.nodes_positions_as_array()
+        node_transformations = triangular_mesh.node_transformations_as_array()
 
         indices_accessor_index = self._add_accessor_to_bufferview(
             triangles, self._indices_buffer_view_index, UNSIGNED_INT, SCALAR
@@ -119,17 +120,18 @@ class GLTFBuilder:
         )
         self._gltf.meshes[self._mesh_index].primitives.append(primitive)
 
-        n_frames = len(triangular_mesh.node_transformations)
-        frame_times = []
+        self.add_mesh_geometry_animation(node_transformations, primitive)
+
+    def add_mesh_geometry_animation(self, node_transformations: np.ndarray, primitive: Primitive):
+        n_transformations = len(node_transformations)
+        time_frames = []
         weights = []
 
-        for frame_index in range(n_frames):
-            mesh_geometry = triangular_mesh.node_transformations[frame_index]
-            positions = [node.position.as_list() for node in mesh_geometry]
-            nodes = np.array(positions, dtype="float32")
+        for frame_index in range(n_transformations):
+            transformed_nodes = node_transformations[frame_index]
 
             positions_accessor_index = self._add_accessor_to_bufferview(
-                nodes, self._positions_buffer_view_index, FLOAT, VEC3
+                transformed_nodes, self._positions_buffer_view_index, FLOAT, VEC3
             )
 
             target_attr = Attributes(POSITION=positions_accessor_index)
@@ -137,14 +139,14 @@ class GLTFBuilder:
 
             self._gltf.meshes[self._mesh_index].weights.append(0.0)
 
-            frame_times.append(float(frame_index))
-            weights_for_frame = n_frames * [0.0]
+            time_frames.append(float(frame_index))
+            weights_for_frame = n_transformations * [0.0]
             weights_for_frame[frame_index] = 1.0
             weights.append(weights_for_frame)
 
         # Add time frames accessor
         time_frames_inputs_accessor_index = self._add_accessor_to_bufferview(
-            np.array(frame_times, dtype="float32"),
+            np.array(time_frames, dtype="float32"),
             self._time_frames_buffer_view_index,
             FLOAT,
             SCALAR,
