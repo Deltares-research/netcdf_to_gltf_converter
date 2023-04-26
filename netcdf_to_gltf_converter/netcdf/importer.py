@@ -64,19 +64,27 @@ class Importer:
         x_data_values = ds_water_depth.coords["Mesh2d_face_x"].data
         y_data_values = ds_water_depth.coords["Mesh2d_face_y"].data
 
-        mesh_geometries: List[np.ndarray] = [] 
+        original_mesh_geometry: np.ndarray
+        mesh_geometry_transforms: List[np.ndarray] = [] 
         
         n_times = ds_water_depth.dims["time"]
         for time_index in range(n_times):
             ds_water_depth_for_time = ds_water_depth.isel(time=time_index)
             data_values = ds_water_depth_for_time["Mesh2d_waterdepth"].data
 
-            interpolated_data_points = Interpolator.interpolate_nearest(
+            mesh_geometry_transform = Interpolator.interpolate_nearest(
                 x_data_values, y_data_values, data_values, triangulated_grid, Location.nodes
             )
-            mesh_geometries.append(interpolated_data_points)
+            
+            if time_index == 0:
+                original_mesh_geometry = mesh_geometry_transform
+            
+            else:
+                mesh_geometry_transform = np.subtract(mesh_geometry_transform, original_mesh_geometry)
+                mesh_geometry_transforms.append(mesh_geometry_transform)
+            
 
         triangular_mesh = TriangularMesh.from_arrays(
-            mesh_geometries[0], triangulated_grid.face_node_connectivity, mesh_geometries[1:]
+            original_mesh_geometry, triangulated_grid.face_node_connectivity, mesh_geometry_transforms
         )
         return triangular_mesh
