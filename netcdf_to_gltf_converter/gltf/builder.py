@@ -84,14 +84,14 @@ class GLTFBuilder:
             ),
         )
 
-        # Add buffer view for the sampler inputs
-        self._sampler_inputs_buffer_view_index = add(
+        # Add buffer view for the sampler inputs: the time frames in seconds
+        self._time_frames_buffer_view_index = add(
             self._gltf.bufferViews,
             BufferView(buffer=self._animation_buffer_index, byteOffset=0, byteLength=0),
         )
 
-        # Add buffer view for the sampler outputs
-        self._sampler_outputs_buffer_view_index = add(
+        # Add buffer view for the sampler outputs: the weights per time frame
+        self._weights_buffer_view_index = add(
             self._gltf.bufferViews,
             BufferView(buffer=self._animation_buffer_index, byteOffset=0, byteLength=0),
         )
@@ -142,27 +142,27 @@ class GLTFBuilder:
             weights_for_frame[frame_index] = 1.0
             weights.append(weights_for_frame)
 
-        # Add sampler inputs accessor
-        sampler_inputs_accessor_index = self._add_accessor_to_bufferview(
+        # Add time frames accessor
+        time_frames_inputs_accessor_index = self._add_accessor_to_bufferview(
             np.array(frame_times, dtype="float32"),
-            self._sampler_inputs_buffer_view_index,
+            self._time_frames_buffer_view_index,
             FLOAT,
             SCALAR,
         )
 
-        # Add sampled outputs accessor
-        sampler_outputs_accessor_index = self._add_accessor_to_bufferview(
+        # Add weights accessor
+        weights_accessor_index = self._add_accessor_to_bufferview(
             np.array(weights, dtype="float32"),
-            self._sampler_outputs_buffer_view_index,
+            self._weights_buffer_view_index,
             FLOAT,
             SCALAR,
         )
 
         animation = Animation()
         sampler = AnimationSampler(
-            input=sampler_inputs_accessor_index,
+            input=time_frames_inputs_accessor_index,
             interpolation=ANIM_LINEAR,
-            output=sampler_outputs_accessor_index,
+            output=weights_accessor_index,
         )
         sample_index = add(animation.samplers, sampler)
         target = AnimationChannelTarget(node=self._node_index, path="weights")
