@@ -29,7 +29,7 @@ class Vec3:
         Returns:
             Vec3: The constructed Vec3 object.
         """
-        return Vec3(x=array[0], y=array[1], z=array[2]*50)
+        return Vec3(x=array[0], y=array[1], z=array[2])
 
 
 class Node:
