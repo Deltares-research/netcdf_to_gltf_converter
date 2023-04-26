@@ -144,10 +144,12 @@ class TestTriangularMesh:
         indices_arr = [[0, 1, 2]]
         node_transformations_arr = [
             [[0, 0, 2], [1, 0, 1], [0, 1, 1]],
-            [[0, 0, 3], [1, 0, 0], [0, 1, 5]]
+            [[0, 0, 3], [1, 0, 0], [0, 1, 5]],
         ]
 
-        triangular_mesh = TriangularMesh.from_arrays(nodes_arr, indices_arr, node_transformations_arr)
+        triangular_mesh = TriangularMesh.from_arrays(
+            nodes_arr, indices_arr, node_transformations_arr
+        )
 
         nodes = triangular_mesh.nodes_positions_as_array()
         indices = triangular_mesh.triangles_as_array()
