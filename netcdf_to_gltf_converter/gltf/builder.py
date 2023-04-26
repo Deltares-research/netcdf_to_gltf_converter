@@ -46,8 +46,6 @@ class GLTFBuilder:
 
         self._gltf = GLTF2()
 
-
-
         self._mesh_index = add(self._gltf.meshes, Mesh())
         self._node_index = add(self._gltf.nodes, Node(mesh=self._mesh_index))
         self._scene_index = add(self._gltf.scenes, Scene(nodes=[self._node_index]))

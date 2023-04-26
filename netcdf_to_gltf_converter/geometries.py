@@ -88,7 +88,7 @@ class TriangularMesh:
         Args:
             nodes (List[Node]): The nodes in the mesh.
             triangles (List[Triangle]): The triangles in the mesh each containing the three node indices that define the triangle shape and position.
-            node_transformations (List[List[[Node]]): The collection of node transformations. 
+            node_transformations (List[List[[Node]]): The collection of node transformations.
         """
         self.nodes = nodes
         self.triangles = triangles
