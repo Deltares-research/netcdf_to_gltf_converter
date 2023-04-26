@@ -119,12 +119,12 @@ class GLTFBuilder:
         )
         self._gltf.meshes[self._mesh_index].primitives.append(primitive)
 
-        n_frames = len(triangular_mesh.animated_geometry)
+        n_frames = len(triangular_mesh.node_transformations)
         frame_times = []
         weights = []
 
         for frame_index in range(n_frames):
-            mesh_geometry = triangular_mesh.animated_geometry[frame_index]
+            mesh_geometry = triangular_mesh.node_transformations[frame_index]
             positions = [node.position.as_list() for node in mesh_geometry]
             nodes = np.array(positions, dtype="float32")
 
