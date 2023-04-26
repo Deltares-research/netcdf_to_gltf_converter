@@ -28,6 +28,10 @@ from netcdf_to_gltf_converter.geometries import TriangularMesh
 
 PADDING_BYTE = b"\x00"
 
+class BufferWrapper:
+    def __init__(self, buffer: Buffer) -> None:
+        self.buffer = buffer
+        self.binary_blob = b""
 
 class GLTFBuilder:
     def __init__(self) -> None:
@@ -60,13 +64,13 @@ class GLTFBuilder:
         # Add node index to scene
         self._scene.nodes.append(self._node_index)
 
+        self._buffer_wrappers: List[BufferWrapper] = []
         # Add a geometry buffer for the mesh
-        self._geometry_buffer = Buffer(byteLength=0)
-        self._gltf.buffers.append(self._geometry_buffer)
+        self._geometry_buffer = self.add_buffer(Buffer(byteLength=0, uri="geometry.bin"))
 
         # Add a buffer view for the indices
         self._indices_buffer_view = BufferView(
-            buffer=self._gltf.buffers.index(self._geometry_buffer),
+            buffer=self._buffer_wrappers.index(self._geometry_buffer),
             byteOffset=0,
             byteLength=0,
             target=ELEMENT_ARRAY_BUFFER,
@@ -75,7 +79,7 @@ class GLTFBuilder:
 
         # Add buffer view for the vertex positions
         self._positions_buffer_view = BufferView(
-            buffer=self._gltf.buffers.index(self._geometry_buffer),
+            buffer=self._buffer_wrappers.index(self._geometry_buffer),
             byteOffset=0,
             byteLength=0,
             target=ARRAY_BUFFER,
@@ -83,13 +87,12 @@ class GLTFBuilder:
         self._gltf.bufferViews.append(self._positions_buffer_view)
         
         # Add a animation buffer for the mesh
-        self._animation_buffer = Buffer(byteLength=0)
-        self._gltf.buffers.append(self._animation_buffer)
+        self._animation_buffer = self.add_buffer(Buffer(byteLength=0, uri="animation.bin"))
         
         # Add buffer view for the sampler inputs
         self._sampler_inputs_buffer_view = BufferView(
-            #buffer=self._gltf.buffers.index(self._animation_buffer), # DOES NOT WORK
-            buffer=1,
+            buffer=self._buffer_wrappers.index(self._animation_buffer),
+            #buffer=1,
             byteOffset=0,
             byteLength=0
         )
@@ -97,15 +100,21 @@ class GLTFBuilder:
         
         # Add buffer view for the sampler outputs
         self._sampler_outputs_buffer_view = BufferView(
-            #buffer=self._gltf.buffers.index(self._animation_buffer), # DOES NOT WORK
-            buffer=1,
+            buffer=self._buffer_wrappers.index(self._animation_buffer),
+            #buffer=1,
             byteOffset=0,
             byteLength=0
         )
         self._gltf.bufferViews.append(self._sampler_outputs_buffer_view)
 
         self._binary_blob = b""
-
+        
+    def add_buffer(self, buffer: Buffer) -> BufferWrapper:
+        buffer_wrapper = BufferWrapper(buffer)
+        self._buffer_wrappers.append(buffer_wrapper)
+        self._gltf.buffers.append(buffer)
+        return buffer_wrapper
+        
     def add_triangular_mesh(self, triangular_mesh: TriangularMesh):
         """Add a new mesh given the triangular mesh geometry.
 
@@ -178,16 +187,17 @@ class GLTFBuilder:
         accessor_byte_length = len(data_binary_blob)
 
         # Set offset and length buffer view
-        buffer_ = self._gltf.buffers[buffer_view.buffer]
+        buffer_ = self._buffer_wrappers[buffer_view.buffer]
         if buffer_view.byteLength == 0:
             self._set_offset_bufferview_including_padding(buffer_view, buffer_)
         buffer_view.byteLength += accessor_byte_length
 
         # Set byte length buffer
-        buffer_.byteLength += accessor_byte_length
+        buffer_.buffer.byteLength += accessor_byte_length
 
         # Update binary blob
         self._binary_blob += data_binary_blob
+        buffer_.binary_blob += data_binary_blob
 
         data_max, data_min, data_count = self._get_min_max_count(data, type)
         accessor = Accessor(
@@ -204,16 +214,17 @@ class GLTFBuilder:
         return self._gltf.accessors.index(accessor)
 
     def _set_offset_bufferview_including_padding(
-        self, buffer_view: BufferView, buffer: Buffer
+        self, buffer_view: BufferView, buffer: BufferWrapper
     ):
-        byte_offset = buffer.byteLength
+        byte_offset = buffer.buffer.byteLength
         n_padding_bytes = (
             byte_offset % 4
         )  # add padding bytes between bufferviews if needed, TODO number of bytes should be according to accessor componenttype,
         if n_padding_bytes != 0:
             byte_offset += n_padding_bytes
-            buffer.byteLength += n_padding_bytes
+            buffer.buffer.byteLength += n_padding_bytes
             self._binary_blob += n_padding_bytes * PADDING_BYTE
+            buffer.binary_blob += n_padding_bytes * PADDING_BYTE
 
         buffer_view.byteOffset = byte_offset
 
