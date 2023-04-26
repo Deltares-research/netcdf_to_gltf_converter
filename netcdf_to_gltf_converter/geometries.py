@@ -106,6 +106,14 @@ class TriangularMesh:
         """
         triangles = [triangle.as_list() for triangle in self.triangles]
         return np.array(triangles, dtype="uint32")
+    
+    def node_transformations_as_array(self) -> np.ndarray:
+        nodes_transformations_arr = []
+        for nodes_transformation in self.animated_geometry:
+            nodes_transformation_arr = [node.position.as_list() for node in nodes_transformation]
+            nodes_transformations_arr.append(nodes_transformation_arr)
+        
+        return np.array(nodes_transformations_arr, dtype="float32")
 
     @staticmethod
     def from_arrays(nodes_arr: np.ndarray, indices_arr: np.ndarray, node_transformations_arr: List[np.ndarray]) -> "TriangularMesh":
