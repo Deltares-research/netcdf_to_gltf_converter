@@ -2,8 +2,9 @@ from typing import List
 
 import numpy as np
 
-from netcdf_to_gltf_converter.utils import validate_2d_array
 from netcdf_to_gltf_converter.data.colors import DEFAULT_MESH_COLOR
+from netcdf_to_gltf_converter.utils import validate_2d_array
+
 
 class MeshGeometry:
     def __init__(self, vertex_positions: np.ndarray) -> None:
