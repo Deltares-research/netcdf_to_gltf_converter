@@ -36,7 +36,7 @@ def test_float32_array():
 
     array = float32_array(data)
 
-    array.data == data
+    assert array.tolist() == data
     assert array.dtype == np.float32
 
 
@@ -45,5 +45,5 @@ def test_uint32_array():
 
     array = uint32_array(data)
 
-    array.data == data
+    assert array.tolist() == data
     assert array.dtype == np.uint32
