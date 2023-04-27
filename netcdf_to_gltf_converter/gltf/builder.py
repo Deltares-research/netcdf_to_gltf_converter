@@ -173,7 +173,7 @@ class GLTFBuilder:
             weights.append(weights_for_frame)
 
         # Add time frames accessor
-        time_frames_inputs_accessor_index = self._add_accessor_to_bufferview(
+        time_frames_accessor_index = self._add_accessor_to_bufferview(
             float32_array(time_frames),
             self._time_frames_buffer_view_index,
             FLOAT,
@@ -190,7 +190,7 @@ class GLTFBuilder:
 
         animation = Animation()
         sampler = AnimationSampler(
-            input=time_frames_inputs_accessor_index,
+            input=time_frames_accessor_index,
             interpolation=ANIM_LINEAR,
             output=weights_accessor_index,
         )
