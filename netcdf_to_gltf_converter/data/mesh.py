@@ -15,14 +15,16 @@ class MeshGeometry:
             vertex_colors (np.ndarray): The vertex colors, an ndarray of floats with shape (n, 4). Each row represents a color defined by its normalized red, green, blue and alpha values.
         Raises:
             AssertionError: When the shape or dtype of the arrays do not match the requirements.
+            AssertionError: When the number of vertex colors does not correspond with the number of vertex positions (number of vertices).
         """
         self.vertex_positions = vertex_positions
         self.vertex_colors = float32_array(len(vertex_positions) * [DEFAULT_MESH_COLOR])
-        self.validate()
+        self._validate()
 
-    def validate(self):
+    def _validate(self):
         validate_2d_array(self.vertex_positions, np.float32, n_col=3)
         validate_2d_array(self.vertex_colors, np.float32, n_col=4)
+        assert len(self.vertex_positions) == len(self.vertex_colors)
 
 
 class TriangularMesh:
@@ -40,18 +42,18 @@ class TriangularMesh:
             mesh_transformations (List[MeshGeometry]): The mesh transformations containing the vertex displacements.
 
         Raises:
-            AssertionError: When the shape or dtype of the `triangles` does not match the requirements.
-            AssertionError: When the size of the vertex positions in any of the mesh transformations do not match the amount in the base mesh geometry.
+            AssertionError: When the shape or dtype of the `triangles` does not match the described requirements.
+            AssertionError: When the size of the attributes in any of the mesh transformations do not match the size in the base mesh geometry.
         """
 
         self.mesh_geometry = mesh_geometry
         self.triangles = triangles
         self.mesh_transformations = mesh_transformations
-        self.validate()
+        self._validate()
 
-    def validate(self):
+    def _validate(self):
         validate_2d_array(self.triangles, np.uint32, n_col=3)
 
-        base_vertex_size = self.mesh_geometry.vertex_positions.size
         for mesh_transformation in self.mesh_transformations:
-            assert mesh_transformation.vertex_positions.size == base_vertex_size
+            assert mesh_transformation.vertex_positions.size == self.mesh_geometry.vertex_positions.size
+            assert mesh_transformation.vertex_colors.size == self.mesh_geometry.vertex_colors.size
