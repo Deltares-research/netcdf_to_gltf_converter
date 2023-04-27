@@ -1,7 +1,8 @@
 from typing import List
-from netcdf_to_gltf_converter.utils import validate_2d_array
+
 import numpy as np
 
+from netcdf_to_gltf_converter.utils import validate_2d_array
 
 
 class MeshGeometry:
