@@ -53,7 +53,7 @@ class GLTFBuilder:
         self._scene_index = add(self._gltf.scenes, Scene(nodes=[self._node_index]))
         self._gltf.scene = self._scene_index
 
-        # Add a geometry and animation buffer for the mesh
+        # Add a buffer for the mesh geometry, colors and animation
         self._geometry_buffer_index = add(
             self._gltf.buffers, Buffer(byteLength=0, uri=b"")
         )
@@ -87,6 +87,7 @@ class GLTFBuilder:
             ),
         )
 
+        # Add buffer view for the vertex colors
         self._colors_buffer_view_index = add(
             self._gltf.bufferViews,
             BufferView(
@@ -127,7 +128,6 @@ class GLTFBuilder:
             FLOAT,
             VEC3,
         )
-
         colors_accessor_index = self._add_accessor_to_bufferview(
             triangular_mesh.base.vertex_colors,
             self._colors_buffer_view_index,
@@ -137,7 +137,8 @@ class GLTFBuilder:
 
         primitive = Primitive(
             attributes=Attributes(
-                POSITION=positions_accessor_index, COLOR_0=colors_accessor_index
+                POSITION=positions_accessor_index, 
+                COLOR_0=colors_accessor_index
             ),
             indices=indices_accessor_index,
         )
@@ -148,29 +149,7 @@ class GLTFBuilder:
     def add_mesh_geometry_animation(
         self, transformations: List[MeshAttributes], primitive: Primitive
     ):
-        n_transformations = len(transformations)
-        time_frames = []
-        weights = []
-
-        for frame_index in range(n_transformations):
-            transformation = transformations[frame_index]
-
-            positions_accessor_index = self._add_accessor_to_bufferview(
-                transformation.vertex_positions,
-                self._positions_buffer_view_index,
-                FLOAT,
-                VEC3,
-            )
-
-            target_attr = Attributes(POSITION=positions_accessor_index)
-            primitive.targets.append(target_attr)
-
-            self._gltf.meshes[self._mesh_index].weights.append(0.0)
-
-            time_frames.append(float(frame_index))
-            weights_for_frame = n_transformations * [0.0]
-            weights_for_frame[frame_index] = 1.0
-            weights.append(weights_for_frame)
+        time_frames, weights = self._get_animation_data(transformations, primitive)
 
         # Add time frames accessor
         time_frames_accessor_index = self._add_accessor_to_bufferview(
@@ -200,6 +179,34 @@ class GLTFBuilder:
         animation.channels.append(channel)
 
         self._gltf.animations.append(animation)
+
+    def _get_animation_data(self, transformations, primitive):
+        time_frames = []
+        weights = []
+
+        n_transformations = len(transformations)
+        for frame_index in range(n_transformations):
+            transformation = transformations[frame_index]
+
+            positions_accessor_index = self._add_accessor_to_bufferview(
+                transformation.vertex_positions,
+                self._positions_buffer_view_index,
+                FLOAT,
+                VEC3,
+            )
+
+            target_attr = Attributes(POSITION=positions_accessor_index)
+            primitive.targets.append(target_attr)
+
+            self._gltf.meshes[self._mesh_index].weights.append(0.0)
+
+            time_frames.append(float(frame_index))
+            
+            weights_for_frame = n_transformations * [0.0]
+            weights_for_frame[frame_index] = 1.0
+            weights.append(weights_for_frame)
+            
+        return time_frames, weights
 
     def add_data_to_buffer(self, data: bytes, buffer: Buffer):
         buffer.uri += data
