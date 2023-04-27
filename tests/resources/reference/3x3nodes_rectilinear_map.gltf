@@ -1,0 +1,271 @@
+{
+  "accessors": [
+    {
+      "bufferView": 0,
+      "byteOffset": 0,
+      "componentType": 5125,
+      "normalized": false,
+      "count": 24,
+      "type": "SCALAR",
+      "max": [
+        8
+      ],
+      "min": [
+        0
+      ]
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "normalized": false,
+      "count": 9,
+      "type": "VEC3",
+      "max": [
+        2.0,
+        2.0,
+        5.0
+      ],
+      "min": [
+        0.0,
+        0.0,
+        4.0
+      ]
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "normalized": false,
+      "count": 9,
+      "type": "VEC4",
+      "max": [
+        0.3799999952316284,
+        0.7300000190734863,
+        0.7799999713897705,
+        1.0
+      ],
+      "min": [
+        0.3799999952316284,
+        0.7300000190734863,
+        0.7799999713897705,
+        1.0
+      ]
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 108,
+      "componentType": 5126,
+      "normalized": false,
+      "count": 9,
+      "type": "VEC3",
+      "max": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "min": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 216,
+      "componentType": 5126,
+      "normalized": false,
+      "count": 9,
+      "type": "VEC3",
+      "max": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "min": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 324,
+      "componentType": 5126,
+      "normalized": false,
+      "count": 9,
+      "type": "VEC3",
+      "max": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "min": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 432,
+      "componentType": 5126,
+      "normalized": false,
+      "count": 9,
+      "type": "VEC3",
+      "max": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "min": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    },
+    {
+      "bufferView": 3,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "normalized": false,
+      "count": 4,
+      "type": "SCALAR",
+      "max": [
+        3
+      ],
+      "min": [
+        0
+      ]
+    },
+    {
+      "bufferView": 4,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "normalized": false,
+      "count": 16,
+      "type": "SCALAR",
+      "max": [
+        1
+      ],
+      "min": [
+        0
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "channels": [
+        {
+          "sampler": 0,
+          "target": {
+            "node": 0,
+            "path": "weights"
+          }
+        }
+      ],
+      "samplers": [
+        {
+          "input": 7,
+          "interpolation": "LINEAR",
+          "output": 8
+        }
+      ]
+    }
+  ],
+  "asset": {
+    "generator": "pygltflib@v1.15.5",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 96,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 96,
+      "byteLength": 540,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "buffer": 1,
+      "byteOffset": 0,
+      "byteLength": 144
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 0,
+      "byteLength": 16
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 16,
+      "byteLength": 64
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "data:application/octet-stream;base64,BQAAAAIAAAAAAAAABQAAAAAAAAABAAAAAQAAAAAAAAADAAAAAQAAAAMAAAAGAAAAAgAAAAcAAAAEAAAAAgAAAAQAAAAAAAAAAAAAAAQAAAAIAAAAAAAAAAgAAAADAAAAAACAPwAAgD8AAKBAAAAAAAAAgD8AAKBAAACAPwAAAAAAAKBAAACAPwAAAEAAAKBAAAAAQAAAgD8AAIBAAAAAAAAAAAAAAKBAAAAAAAAAAEAAAKBAAAAAQAAAAAAAAIBAAAAAQAAAAEAAAIBAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/",
+      "byteLength": 636
+    },
+    {
+      "uri": "data:application/octet-stream;base64,XI/CPkjhOj8Urkc/AACAP1yPwj5I4To/FK5HPwAAgD9cj8I+SOE6PxSuRz8AAIA/XI/CPkjhOj8Urkc/AACAP1yPwj5I4To/FK5HPwAAgD9cj8I+SOE6PxSuRz8AAIA/XI/CPkjhOj8Urkc/AACAP1yPwj5I4To/FK5HPwAAgD9cj8I+SOE6PxSuRz8AAIA/",
+      "byteLength": 144
+    },
+    {
+      "uri": "data:application/octet-stream;base64,AAAAAAAAgD8AAABAAABAQAAAgD8AAAAAAAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAAAAgD8=",
+      "byteLength": 80
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 1,
+            "COLOR_0": 2
+          },
+          "indices": 0,
+          "mode": 4,
+          "targets": [
+            {
+              "POSITION": 3
+            },
+            {
+              "POSITION": 4
+            },
+            {
+              "POSITION": 5
+            },
+            {
+              "POSITION": 6
+            }
+          ]
+        }
+      ],
+      "weights": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ]
+}
