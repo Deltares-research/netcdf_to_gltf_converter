@@ -64,10 +64,11 @@ class Importer:
         data_x_coords = ds_water_depth.coords["Mesh2d_face_x"].data
         data_y_coords = ds_water_depth.coords["Mesh2d_face_y"].data
         data_coords = np.array([data_x_coords, data_y_coords]).T
-        data_values = ds_water_depth["Mesh2d_waterdepth"].data
+
+        data_values = Importer.get_water_depth_for_time(ds_water_depth, time_index=0)
 
         interpolated_vertex_positions = Importer.interpolate(
-            data_coords, data_values[0], triangulated_grid
+            data_coords, data_values, triangulated_grid
         )
         base_mesh_geometry = MeshGeometry(
             vertex_positions=interpolated_vertex_positions
@@ -76,8 +77,9 @@ class Importer:
         mesh_transformations: List[MeshGeometry] = []
         n_times = ds_water_depth.dims["time"]
         for time_index in range(1, n_times):
+            data_values = Importer.get_water_depth_for_time(ds_water_depth, time_index)
             interpolated_vertex_positions = Importer.interpolate(
-                data_coords, data_values[time_index], triangulated_grid
+                data_coords, data_values, triangulated_grid
             )
             vertex_displacements = np.array(
                 np.subtract(
@@ -96,6 +98,12 @@ class Importer:
             mesh_transformations=mesh_transformations,
         )
         return triangular_mesh
+
+    @staticmethod
+    def get_water_depth_for_time(ds_water_depth, time_index: int):
+        ds_water_depth_for_time = ds_water_depth.isel(time=time_index)
+        data_values = ds_water_depth_for_time["Mesh2d_waterdepth"].data
+        return data_values
 
     @staticmethod
     def interpolate(data_coords: np.ndarray, data_values: np.ndarray, grid):
