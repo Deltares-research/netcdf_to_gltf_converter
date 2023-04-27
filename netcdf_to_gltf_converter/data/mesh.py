@@ -3,7 +3,7 @@ from typing import List
 import numpy as np
 
 from netcdf_to_gltf_converter.data.colors import DEFAULT_MESH_COLOR
-from netcdf_to_gltf_converter.utils.arrays import validate_2d_array, float32_array
+from netcdf_to_gltf_converter.utils.arrays import float32_array, validate_2d_array
 
 
 class MeshAttributes:
@@ -55,5 +55,7 @@ class TriangularMesh:
         validate_2d_array(self.triangles, np.uint32, n_col=3)
 
         for transformation in self.transformations:
-            assert transformation.vertex_positions.size == self.base.vertex_positions.size
+            assert (
+                transformation.vertex_positions.size == self.base.vertex_positions.size
+            )
             assert transformation.vertex_colors.size == self.base.vertex_colors.size

@@ -71,9 +71,7 @@ class Importer:
         interpolated_vertex_positions = Importer.interpolate(
             data_coords, data_values, triangulated_grid
         )
-        base_geometry = MeshAttributes(
-            vertex_positions=interpolated_vertex_positions
-        )
+        base_geometry = MeshAttributes(vertex_positions=interpolated_vertex_positions)
 
         transformations: List[MeshAttributes] = []
         n_times = ds_water_depth.dims["time"]
@@ -82,7 +80,11 @@ class Importer:
             interpolated_vertex_positions = Importer.interpolate(
                 data_coords, data_values, triangulated_grid
             )
-            vertex_displacements = np.subtract(interpolated_vertex_positions, base_geometry.vertex_positions, dtype=np.float32)
+            vertex_displacements = np.subtract(
+                interpolated_vertex_positions,
+                base_geometry.vertex_positions,
+                dtype=np.float32,
+            )
             transformation = MeshAttributes(vertex_positions=vertex_displacements)
             transformations.append(transformation)
 
@@ -101,4 +103,6 @@ class Importer:
 
     @staticmethod
     def interpolate(data_coords: np.ndarray, data_values: np.ndarray, grid):
-        return Interpolator.interpolate_nearest(data_coords, data_values, grid, Location.nodes)
+        return Interpolator.interpolate_nearest(
+            data_coords, data_values, grid, Location.nodes
+        )

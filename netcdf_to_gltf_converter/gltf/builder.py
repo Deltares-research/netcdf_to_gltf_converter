@@ -143,9 +143,7 @@ class GLTFBuilder:
         )
         self._gltf.meshes[self._mesh_index].primitives.append(primitive)
 
-        self.add_mesh_geometry_animation(
-            triangular_mesh.transformations, primitive
-        )
+        self.add_mesh_geometry_animation(triangular_mesh.transformations, primitive)
 
     def add_mesh_geometry_animation(
         self, transformations: List[MeshAttributes], primitive: Primitive

@@ -46,9 +46,12 @@ def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
     return TriangularMesh(
         MeshAttributes(vertex_positions=float32_array(base_geometry_vertex_positions)),
         uint32_array(triangles),
-        [MeshAttributes(vertex_positions=float32_array(p)) for p in transformations_vertex_positions]
+        [
+            MeshAttributes(vertex_positions=float32_array(p))
+            for p in transformations_vertex_positions
+        ],
     )
-    
+
 
 class TestGLTFBuilder:
     def test_add_triangular_mesh_produces_valid_gltf(self):
