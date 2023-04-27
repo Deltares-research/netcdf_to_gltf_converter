@@ -7,7 +7,8 @@ from netcdf_to_gltf_converter.utils import validate_2d_array
 
 class Color:
     blue = [0.38, 0.73, 0.78, 1.0]
-    
+
+
 class MeshGeometry:
     def __init__(self, vertex_positions: np.ndarray) -> None:
         """Initialize a MeshGeometry with the specified arguments.
