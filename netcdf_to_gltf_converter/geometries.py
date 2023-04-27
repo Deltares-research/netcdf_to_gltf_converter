@@ -1,12 +1,7 @@
 from typing import List
-
+from netcdf_to_gltf_converter.utils import validate_2d_array
 import numpy as np
 
-
-def validate_2d_array(array: np.ndarray, dtype: str, n_col: int):
-    assert array.dtype == dtype
-    assert len(array.shape) == 2
-    assert array.shape[1] == n_col
 
 
 class MeshGeometry:
