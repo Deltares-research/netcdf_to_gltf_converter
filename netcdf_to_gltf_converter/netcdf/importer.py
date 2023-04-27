@@ -64,7 +64,7 @@ class Importer:
         data_x_coords = ds_water_depth.coords["Mesh2d_face_x"].data
         data_y_coords = ds_water_depth.coords["Mesh2d_face_y"].data
         data_values = ds_water_depth["Mesh2d_waterdepth"].data
-        
+
         interpolated_vertex_positions = Importer.interpolate(
             triangulated_grid, data_values[0], data_x_coords, data_y_coords
         )
