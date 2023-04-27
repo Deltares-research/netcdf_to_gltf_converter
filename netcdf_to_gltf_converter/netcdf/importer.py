@@ -77,9 +77,7 @@ class Importer:
         n_times = ds_water_depth.dims["time"]
         for time_index in range(1, n_times):
             interpolated_vertex_positions = Importer.interpolate(
-                data_coords,
-                data_values[time_index],
-                triangulated_grid
+                data_coords, data_values[time_index], triangulated_grid
             )
             vertex_displacements = np.array(
                 np.subtract(

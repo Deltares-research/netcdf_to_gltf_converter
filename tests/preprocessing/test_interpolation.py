@@ -6,7 +6,9 @@ from tests.preprocessing.utils import Factory
 
 class TestInterpolator:
     def test_interpolate_nearest(self):
-        data_coords = np.array([[0.75,0.25], [1.75, 0.75], [0.25,1.25], [1.25,1.75]], dtype="float32")
+        data_coords = np.array(
+            [[0.75, 0.25], [1.75, 0.75], [0.25, 1.25], [1.25, 1.75]], dtype="float32"
+        )
         data_values = np.array([1, 2, 3, 4], dtype="float32")
         grid = Factory.create_rectilinear_ugrid2d()
         location = Location.nodes
@@ -30,7 +32,9 @@ class TestInterpolator:
         assert np.array_equal(interpolated_values, exp_interpolated_values)
 
     def test_interpolate_linear(self):
-        data_coords = np.array([[1.0,0.5], [2.0, 1.0], [1.0,2.0], [0.5,1.0]], dtype="float32")
+        data_coords = np.array(
+            [[1.0, 0.5], [2.0, 1.0], [1.0, 2.0], [0.5, 1.0]], dtype="float32"
+        )
         data_values = np.array([1, 2, 3, 4], dtype="float32")
         grid = Factory.create_rectilinear_ugrid2d()
         location = Location.nodes
