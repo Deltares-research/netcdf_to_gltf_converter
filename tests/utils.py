@@ -1,11 +1,12 @@
-from contextlib import contextmanager
 import filecmp
+from contextlib import contextmanager
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Generator
 
 resources = Path("tests") / "resources"
 reference_files = resources / "reference"
+
 
 def assert_files_equal(file_1: Path, file_2: Path):
     """Assert whether the contents of two files are equal.
@@ -18,6 +19,7 @@ def assert_files_equal(file_1: Path, file_2: Path):
         AssertionError: When the content of the two files are not equal.
     """
     assert filecmp.cmp(str(file_1), str(file_2)) == True
+
 
 @contextmanager
 def get_temp_file(filename: str) -> Generator[Path, None, None]:
