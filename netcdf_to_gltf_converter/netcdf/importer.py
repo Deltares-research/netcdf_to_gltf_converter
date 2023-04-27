@@ -6,10 +6,10 @@ import numpy as np
 import xarray as xr
 import xugrid as xu
 
-from netcdf_to_gltf_converter.data.mesh import MeshGeometry, TriangularMesh
+from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
-from netcdf_to_gltf_converter.utils.arrays import float32_array, uint32_array
+from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
 
 class MeshType(str, Enum):
@@ -71,11 +71,11 @@ class Importer:
         interpolated_vertex_positions = Importer.interpolate(
             data_coords, data_values, triangulated_grid
         )
-        base_geometry = MeshGeometry(
+        base_geometry = MeshAttributes(
             vertex_positions=interpolated_vertex_positions
         )
 
-        mesh_transformations: List[MeshGeometry] = []
+        transformations: List[MeshAttributes] = []
         n_times = ds_water_depth.dims["time"]
         for time_index in range(1, n_times):
             data_values = Importer.get_water_depth_for_time(ds_water_depth, time_index)
@@ -83,13 +83,13 @@ class Importer:
                 data_coords, data_values, triangulated_grid
             )
             vertex_displacements = np.subtract(interpolated_vertex_positions, base_geometry.vertex_positions, dtype=np.float32)
-            mesh_transformation = MeshGeometry(vertex_positions=vertex_displacements)
-            mesh_transformations.append(mesh_transformation)
+            transformation = MeshAttributes(vertex_positions=vertex_displacements)
+            transformations.append(transformation)
 
         triangular_mesh = TriangularMesh(
-            base_geometry=base_geometry,
+            base=base_geometry,
             triangles=uint32_array(triangulated_grid.face_node_connectivity),
-            mesh_transformations=mesh_transformations,
+            transformations=transformations,
         )
         return triangular_mesh
 

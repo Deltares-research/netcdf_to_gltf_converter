@@ -1,9 +1,8 @@
 import random
 
-import numpy as np
 from pygltflib import gltf_asdict
 
-from netcdf_to_gltf_converter.data.mesh import MeshGeometry, TriangularMesh
+from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.gltf.builder import GLTFBuilder
 from netcdf_to_gltf_converter.utils.arrays import float32_array, uint32_array
 
@@ -12,7 +11,7 @@ def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
     random.seed(seed)
 
     base_geometry_vertex_positions = []
-    mesh_transformations_vertex_positions = []
+    transformations_vertex_positions = []
 
     for x in range(n_vertix_cols):
         for y in range(n_vertix_cols):
@@ -23,7 +22,7 @@ def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
         displacements_vertices = [
             [0, 0, random.uniform(-1, 1)] for _ in range(n_vertices)
         ]
-        mesh_transformations_vertex_positions.append(displacements_vertices)
+        transformations_vertex_positions.append(displacements_vertices)
 
     triangles = []
 
@@ -45,9 +44,9 @@ def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
         triangles.append(triangle2)
 
     return TriangularMesh(
-        MeshGeometry(vertex_positions=float32_array(base_geometry_vertex_positions)),
+        MeshAttributes(vertex_positions=float32_array(base_geometry_vertex_positions)),
         uint32_array(triangles),
-        [MeshGeometry(vertex_positions=float32_array(p)) for p in mesh_transformations_vertex_positions]
+        [MeshAttributes(vertex_positions=float32_array(p)) for p in transformations_vertex_positions]
     )
     
 

@@ -27,7 +27,7 @@ from pygltflib import (
     Scene,
 )
 
-from netcdf_to_gltf_converter.data.mesh import MeshGeometry, TriangularMesh
+from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.utils.arrays import float32_array
 
 PADDING_BYTE = b"\x00"
@@ -122,14 +122,14 @@ class GLTFBuilder:
             SCALAR,
         )
         positions_accessor_index = self._add_accessor_to_bufferview(
-            triangular_mesh.base_geometry.vertex_positions,
+            triangular_mesh.base.vertex_positions,
             self._positions_buffer_view_index,
             FLOAT,
             VEC3,
         )
 
         colors_accessor_index = self._add_accessor_to_bufferview(
-            triangular_mesh.base_geometry.vertex_colors,
+            triangular_mesh.base.vertex_colors,
             self._colors_buffer_view_index,
             FLOAT,
             VEC4,
@@ -144,21 +144,21 @@ class GLTFBuilder:
         self._gltf.meshes[self._mesh_index].primitives.append(primitive)
 
         self.add_mesh_geometry_animation(
-            triangular_mesh.mesh_transformations, primitive
+            triangular_mesh.transformations, primitive
         )
 
     def add_mesh_geometry_animation(
-        self, mesh_transformations: List[MeshGeometry], primitive: Primitive
+        self, transformations: List[MeshAttributes], primitive: Primitive
     ):
-        n_transformations = len(mesh_transformations)
+        n_transformations = len(transformations)
         time_frames = []
         weights = []
 
         for frame_index in range(n_transformations):
-            mesh_transformation = mesh_transformations[frame_index]
+            transformation = transformations[frame_index]
 
             positions_accessor_index = self._add_accessor_to_bufferview(
-                mesh_transformation.vertex_positions,
+                transformation.vertex_positions,
                 self._positions_buffer_view_index,
                 FLOAT,
                 VEC3,
