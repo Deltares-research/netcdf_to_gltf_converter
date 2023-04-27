@@ -5,6 +5,7 @@ from pygltflib import gltf_asdict
 
 from netcdf_to_gltf_converter.data.mesh import MeshGeometry, TriangularMesh
 from netcdf_to_gltf_converter.gltf.builder import GLTFBuilder
+from netcdf_to_gltf_converter.utils.arrays import float32_array, uint32_array
 
 
 def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
@@ -44,18 +45,11 @@ def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
         triangles.append(triangle2)
 
     return TriangularMesh(
-        MeshGeometry(
-            vertex_positions=np.array(mesh_geometry_vertex_positions, dtype="float32")
-        ),
-        np.array(triangles, dtype="uint32"),
-        np.array(
-            [
-                MeshGeometry(vertex_positions=np.array(p, dtype="float32"))
-                for p in mesh_transformations_vertex_positions
-            ]
-        ),
+        MeshGeometry(vertex_positions=float32_array(mesh_geometry_vertex_positions)),
+        uint32_array(triangles),
+        [MeshGeometry(vertex_positions=float32_array(p)) for p in mesh_transformations_vertex_positions]
     )
-
+    
 
 class TestGLTFBuilder:
     def test_add_triangular_mesh_produces_valid_gltf(self):
@@ -66,7 +60,7 @@ class TestGLTFBuilder:
         builder.add_triangular_mesh(triangular_mesh)
 
         gltf = builder.finish()
-
+        gltf.save("pris.gltf")
         gltf_dict = gltf_asdict(gltf)
         exp_gltf_dict = {
             "extensions": {},

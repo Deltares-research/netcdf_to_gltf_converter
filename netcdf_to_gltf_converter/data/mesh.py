@@ -3,7 +3,7 @@ from typing import List
 import numpy as np
 
 from netcdf_to_gltf_converter.data.colors import DEFAULT_MESH_COLOR
-from netcdf_to_gltf_converter.utils.arrays import validate_2d_array
+from netcdf_to_gltf_converter.utils.arrays import validate_2d_array, float32_array
 
 
 class MeshGeometry:
@@ -17,15 +17,12 @@ class MeshGeometry:
             AssertionError: When the shape or dtype of the arrays do not match the requirements.
         """
         self.vertex_positions = vertex_positions
-        self.vertex_colors = np.array(
-            len(vertex_positions) * [DEFAULT_MESH_COLOR], dtype="float32"
-        )
-
+        self.vertex_colors = float32_array(len(vertex_positions) * [DEFAULT_MESH_COLOR])
         self.validate()
 
     def validate(self):
-        validate_2d_array(self.vertex_positions, "float32", n_col=3)
-        validate_2d_array(self.vertex_colors, "float32", n_col=4)
+        validate_2d_array(self.vertex_positions, np.float32, n_col=3)
+        validate_2d_array(self.vertex_colors, np.float32, n_col=4)
 
 
 class TriangularMesh:
@@ -53,7 +50,7 @@ class TriangularMesh:
         self.validate()
 
     def validate(self):
-        validate_2d_array(self.triangles, "uint32", n_col=3)
+        validate_2d_array(self.triangles, np.uint32, n_col=3)
 
         base_vertex_size = self.mesh_geometry.vertex_positions.size
         for mesh_transformation in self.mesh_transformations:

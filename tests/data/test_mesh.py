@@ -1,39 +1,34 @@
 import numpy as np
 
 from netcdf_to_gltf_converter.data.mesh import MeshGeometry, TriangularMesh
+from netcdf_to_gltf_converter.utils.arrays import float32_array, uint32_array
 
 
 class TestTriangularMesh:
     def test_initializer(self):
-        vertex_positions = np.array(
+        vertex_positions = float32_array(
             [
                 [0, 0, 1],
                 [1, 0, 2],
                 [1, 1, 3],
                 [0, 1, 4],
-            ],
-            dtype="float32",
-        )
+            ])
         mesh_geometry = MeshGeometry(vertex_positions=vertex_positions)
 
-        triangles = np.array(
+        triangles = uint32_array(
             [
                 [0, 1, 2],
                 [0, 2, 3],
-            ],
-            dtype="uint32",
-        )
+            ])
 
         mesh_transformation = MeshGeometry(
-            vertex_positions=np.array(
+            vertex_positions=float32_array(
                 [
                     [0, 0, 0.5],
                     [0, 0, -0.5],
                     [0, 0, 0.5],
                     [0, 0, -1.0],
-                ],
-                dtype="float32",
-            )
+                ])
         )
 
         triangular_mesh = TriangularMesh(

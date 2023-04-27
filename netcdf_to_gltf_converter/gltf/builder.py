@@ -28,6 +28,7 @@ from pygltflib import (
 )
 
 from netcdf_to_gltf_converter.data.mesh import MeshGeometry, TriangularMesh
+from netcdf_to_gltf_converter.utils.arrays import float32_array
 
 PADDING_BYTE = b"\x00"
 
@@ -175,7 +176,7 @@ class GLTFBuilder:
 
         # Add time frames accessor
         time_frames_inputs_accessor_index = self._add_accessor_to_bufferview(
-            np.array(time_frames, dtype="float32"),
+            float32_array(time_frames),
             self._time_frames_buffer_view_index,
             FLOAT,
             SCALAR,
@@ -183,7 +184,7 @@ class GLTFBuilder:
 
         # Add weights accessor
         weights_accessor_index = self._add_accessor_to_bufferview(
-            np.array(weights, dtype="float32"),
+            float32_array(weights),
             self._weights_buffer_view_index,
             FLOAT,
             SCALAR,

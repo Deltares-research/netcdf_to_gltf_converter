@@ -9,6 +9,7 @@ import xugrid as xu
 from netcdf_to_gltf_converter.data.mesh import MeshGeometry, TriangularMesh
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
+from netcdf_to_gltf_converter.utils.arrays import float32_array, uint32_array
 
 
 class MeshType(str, Enum):
@@ -81,20 +82,13 @@ class Importer:
             interpolated_vertex_positions = Importer.interpolate(
                 data_coords, data_values, triangulated_grid
             )
-            vertex_displacements = np.array(
-                np.subtract(
-                    interpolated_vertex_positions, base_mesh_geometry.vertex_positions
-                ),
-                dtype="float32",
-            )
+            vertex_displacements = np.subtract(interpolated_vertex_positions, base_mesh_geometry.vertex_positions, dtype=np.float32)
             mesh_transformation = MeshGeometry(vertex_positions=vertex_displacements)
             mesh_transformations.append(mesh_transformation)
 
         triangular_mesh = TriangularMesh(
             mesh_geometry=base_mesh_geometry,
-            triangles=np.array(
-                triangulated_grid.face_node_connectivity, dtype="uint32"
-            ),
+            triangles=uint32_array(triangulated_grid.face_node_connectivity),
             mesh_transformations=mesh_transformations,
         )
         return triangular_mesh
@@ -107,14 +101,4 @@ class Importer:
 
     @staticmethod
     def interpolate(data_coords: np.ndarray, data_values: np.ndarray, grid):
-        interpolated_vertex_positions = np.array(
-            Interpolator.interpolate_nearest(
-                data_coords,
-                data_values,
-                grid,
-                Location.nodes,
-            ),
-            dtype="float32",
-        )
-
-        return interpolated_vertex_positions
+        return Interpolator.interpolate_nearest(data_coords, data_values, grid, Location.nodes)

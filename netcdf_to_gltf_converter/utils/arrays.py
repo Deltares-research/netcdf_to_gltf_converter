@@ -1,7 +1,8 @@
+from enum import Enum
+from typing import Any, List
 import numpy as np
-
-
-def validate_2d_array(array: np.ndarray, dtype: str, n_col: int):
+    
+def validate_2d_array(array: np.ndarray, dtype: np.dtype[Any], n_col: int):
     """Validate the 2D array with the provided expectations.
 
     Args:
@@ -16,3 +17,25 @@ def validate_2d_array(array: np.ndarray, dtype: str, n_col: int):
     assert array.dtype == dtype
     assert len(array.shape) == 2
     assert array.shape[1] == n_col
+
+def float32_array(data: Any):
+    """Create a np.array with scalar data type 'float32'.
+
+    Args:
+        data (Any): The list to initialize the array with.
+
+    Returns:
+        np.ndarray: A np.array with scalar data type 'float32'.
+    """
+    return np.array(data, dtype=np.float32)
+
+def uint32_array(data: Any):
+    """Create a np.array with scalar data type 'uint32'.
+
+    Args:
+        data (Any): The list to initialize the array with.
+
+    Returns:
+        np.ndarray: A np.array with scalar data type 'uint32'.
+    """
+    return np.array(data, dtype=np.uint32)
