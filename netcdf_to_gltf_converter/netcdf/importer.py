@@ -71,7 +71,7 @@ class Importer:
         interpolated_vertex_positions = Importer.interpolate(
             data_coords, data_values, triangulated_grid
         )
-        base_mesh_geometry = MeshGeometry(
+        base_geometry = MeshGeometry(
             vertex_positions=interpolated_vertex_positions
         )
 
@@ -82,12 +82,12 @@ class Importer:
             interpolated_vertex_positions = Importer.interpolate(
                 data_coords, data_values, triangulated_grid
             )
-            vertex_displacements = np.subtract(interpolated_vertex_positions, base_mesh_geometry.vertex_positions, dtype=np.float32)
+            vertex_displacements = np.subtract(interpolated_vertex_positions, base_geometry.vertex_positions, dtype=np.float32)
             mesh_transformation = MeshGeometry(vertex_positions=vertex_displacements)
             mesh_transformations.append(mesh_transformation)
 
         triangular_mesh = TriangularMesh(
-            mesh_geometry=base_mesh_geometry,
+            base_geometry=base_geometry,
             triangles=uint32_array(triangulated_grid.face_node_connectivity),
             mesh_transformations=mesh_transformations,
         )

@@ -122,14 +122,14 @@ class GLTFBuilder:
             SCALAR,
         )
         positions_accessor_index = self._add_accessor_to_bufferview(
-            triangular_mesh.mesh_geometry.vertex_positions,
+            triangular_mesh.base_geometry.vertex_positions,
             self._positions_buffer_view_index,
             FLOAT,
             VEC3,
         )
 
         colors_accessor_index = self._add_accessor_to_bufferview(
-            triangular_mesh.mesh_geometry.vertex_colors,
+            triangular_mesh.base_geometry.vertex_colors,
             self._colors_buffer_view_index,
             FLOAT,
             VEC4,

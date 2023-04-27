@@ -13,7 +13,7 @@ class TestTriangularMesh:
                 [1, 1, 3],
                 [0, 1, 4],
             ])
-        mesh_geometry = MeshGeometry(vertex_positions=vertex_positions)
+        base_geometry = MeshGeometry(vertex_positions=vertex_positions)
 
         triangles = uint32_array(
             [
@@ -32,10 +32,10 @@ class TestTriangularMesh:
         )
 
         triangular_mesh = TriangularMesh(
-            mesh_geometry, triangles, [mesh_transformation]
+            base_geometry, triangles, [mesh_transformation]
         )
 
-        assert triangular_mesh.mesh_geometry == mesh_geometry
+        assert triangular_mesh.base_geometry == base_geometry
         np.array_equal(triangular_mesh.triangles, triangles)
         assert len(triangular_mesh.mesh_transformations) == 1
         assert triangular_mesh.mesh_transformations[0] == mesh_transformation

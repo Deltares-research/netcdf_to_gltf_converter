@@ -30,14 +30,14 @@ class MeshGeometry:
 class TriangularMesh:
     def __init__(
         self,
-        mesh_geometry: MeshGeometry,
+        base_geometry: MeshGeometry,
         triangles: np.ndarray,
         mesh_transformations: List[MeshGeometry],
     ) -> None:
         """Initialize a TriangularMesh with the specified arguments.
 
         Args:
-            mesh_geometry (MeshGeometry): The base mesh geometry.
+            base_geometry (MeshGeometry): The base geometry of the mesh.
             triangles (np.ndarray): The vertex indices per triangle, an ndarray of integers with shape (m, 3). Each row represents one triangle and contains the three vertex indices of this triangle.
             mesh_transformations (List[MeshGeometry]): The mesh transformations containing the vertex displacements.
 
@@ -46,7 +46,7 @@ class TriangularMesh:
             AssertionError: When the size of the attributes in any of the mesh transformations do not match the size in the base mesh geometry.
         """
 
-        self.mesh_geometry = mesh_geometry
+        self.base_geometry = base_geometry
         self.triangles = triangles
         self.mesh_transformations = mesh_transformations
         self._validate()
@@ -55,5 +55,5 @@ class TriangularMesh:
         validate_2d_array(self.triangles, np.uint32, n_col=3)
 
         for mesh_transformation in self.mesh_transformations:
-            assert mesh_transformation.vertex_positions.size == self.mesh_geometry.vertex_positions.size
-            assert mesh_transformation.vertex_colors.size == self.mesh_geometry.vertex_colors.size
+            assert mesh_transformation.vertex_positions.size == self.base_geometry.vertex_positions.size
+            assert mesh_transformation.vertex_colors.size == self.base_geometry.vertex_colors.size
