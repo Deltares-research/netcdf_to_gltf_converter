@@ -12,6 +12,7 @@ from pygltflib import (
     SCALAR,
     UNSIGNED_INT,
     VEC3,
+    VEC4,
     Accessor,
     Animation,
     AnimationChannel,
@@ -55,6 +56,9 @@ class GLTFBuilder:
         self._geometry_buffer_index = add(
             self._gltf.buffers, Buffer(byteLength=0, uri=b"")
         )
+        self._color_buffer_index = add(
+            self._gltf.buffers, Buffer(byteLength=0, uri=b"")
+        )
         self._animation_buffer_index = add(
             self._gltf.buffers, Buffer(byteLength=0, uri=b"")
         )
@@ -79,6 +83,15 @@ class GLTFBuilder:
                 byteLength=0,
                 byteStride=12,
                 target=ARRAY_BUFFER,
+            ),
+        )
+
+        self._colors_buffer_view_index = add(
+            self._gltf.bufferViews,
+            BufferView(
+                buffer=self._color_buffer_index,
+                byteOffset=0,
+                byteLength=0,
             ),
         )
 
@@ -114,8 +127,17 @@ class GLTFBuilder:
             VEC3,
         )
 
+        colors_accessor_index = self._add_accessor_to_bufferview(
+            triangular_mesh.mesh_geometry.vertex_colors,
+            self._colors_buffer_view_index,
+            FLOAT,
+            VEC4,
+        )
+
         primitive = Primitive(
-            attributes=Attributes(POSITION=positions_accessor_index),
+            attributes=Attributes(
+                POSITION=positions_accessor_index, COLOR_0=colors_accessor_index
+            ),
             indices=indices_accessor_index,
         )
         self._gltf.meshes[self._mesh_index].primitives.append(primitive)
@@ -234,7 +256,7 @@ class GLTFBuilder:
             data_max = [int(data.max())]
             data_min = [int(data.min())]
             data_count = data.size
-        elif type == VEC3:
+        elif type == VEC3 or type == VEC4:
             data_max = data.max(axis=0).tolist()
             data_min = data.min(axis=0).tolist()
             data_count = len(data)
