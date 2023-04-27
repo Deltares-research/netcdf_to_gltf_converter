@@ -59,15 +59,13 @@ def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
 
 class TestGLTFBuilder:
     def test_add_triangular_mesh_produces_valid_gltf(self):
-        # Create a 2x2 nodes mesh: 2 triangles
+        # Create a mesh with 5x5 vertices with 5 time frames
         triangular_mesh = create_triangular_mesh(n_vertix_cols=5, n_frames=5)
 
         builder = GLTFBuilder()
         builder.add_triangular_mesh(triangular_mesh)
 
         gltf = builder.finish()
-
-        gltf.save("testietest.gltf")
 
         gltf_dict = gltf_asdict(gltf)
         exp_gltf_dict = {

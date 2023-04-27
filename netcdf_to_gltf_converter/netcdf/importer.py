@@ -61,11 +61,12 @@ class Importer:
         triangulated_grid = Triangulator.triangulate(ugrid2d)
 
         ds_water_depth = Importer._get_water_depth_2d(ds)
-        x_data_values = ds_water_depth.coords["Mesh2d_face_x"].data
-        y_data_values = ds_water_depth.coords["Mesh2d_face_y"].data
-
+        data_x_coords = ds_water_depth.coords["Mesh2d_face_x"].data
+        data_y_coords = ds_water_depth.coords["Mesh2d_face_y"].data
+        data_values = ds_water_depth["Mesh2d_waterdepth"].data
+        
         interpolated_vertex_positions = Importer.interpolate(
-            triangulated_grid, ds_water_depth, x_data_values, y_data_values, 0
+            triangulated_grid, data_values[0], data_x_coords, data_y_coords
         )
         base_mesh_geometry = MeshGeometry(
             vertex_positions=interpolated_vertex_positions
@@ -76,18 +77,17 @@ class Importer:
         for time_index in range(1, n_times):
             interpolated_vertex_positions = Importer.interpolate(
                 triangulated_grid,
-                ds_water_depth,
-                x_data_values,
-                y_data_values,
-                time_index,
+                data_values[time_index],
+                data_x_coords,
+                data_y_coords,
             )
-            displaced_vertices = np.array(
+            vertex_displacements = np.array(
                 np.subtract(
                     interpolated_vertex_positions, base_mesh_geometry.vertex_positions
                 ),
                 dtype="float32",
             )
-            mesh_transformation = MeshGeometry(vertex_positions=displaced_vertices)
+            mesh_transformation = MeshGeometry(vertex_positions=vertex_displacements)
             mesh_transformations.append(mesh_transformation)
 
         triangular_mesh = TriangularMesh(
@@ -100,14 +100,11 @@ class Importer:
         return triangular_mesh
 
     @staticmethod
-    def interpolate(grid, ds_water_depth, x_data_values, y_data_values, time_index):
-        ds_water_depth_for_time = ds_water_depth.isel(time=time_index)
-        data_values = ds_water_depth_for_time["Mesh2d_waterdepth"].data
-
+    def interpolate(grid, data_values, data_x_coords, data_y_coords):
         interpolated_vertex_positions = np.array(
             Interpolator.interpolate_nearest(
-                x_data_values,
-                y_data_values,
+                data_x_coords,
+                data_y_coords,
                 data_values,
                 grid,
                 Location.nodes,
