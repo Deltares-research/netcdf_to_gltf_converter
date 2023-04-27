@@ -1,57 +1,71 @@
 import random
-from typing import List
 
+import numpy as np
 from pygltflib import gltf_asdict
 
-from netcdf_to_gltf_converter.geometries import Node, Triangle, TriangularMesh, Vec3
+from netcdf_to_gltf_converter.geometries import MeshGeometry, TriangularMesh
 from netcdf_to_gltf_converter.gltf.builder import GLTFBuilder
 
 
-def create_triangular_mesh(n: int, seed: int = 10):
+def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
     random.seed(seed)
 
-    nodes_transformation1: List[Node] = []
-    nodes_transformation2: List[Node] = []
+    mesh_geometry_vertex_positions = []
+    mesh_transformations_vertex_positions = []
 
-    nodes: List[Node] = []
-    for x in range(n):
-        for y in range(n):
-            nodes.append(Node(position=Vec3(x, y, random.random())))
-            nodes_transformation1.append(Node(position=Vec3(0, 0, random.random())))
-            nodes_transformation2.append(Node(position=Vec3(0, 0, random.random())))
+    for x in range(n_vertix_cols):
+        for y in range(n_vertix_cols):
+            mesh_geometry_vertex_positions.append([x, y, random.random()])
 
-    triangles: List[Triangle] = []
-    for node_index, node in enumerate(nodes):
-        if node_index >= (n - 1) * n:
+    n_vertices = n_vertix_cols * n_vertix_cols
+    for _ in range(n_frames):
+        displacements_vertices = [
+            [0, 0, random.uniform(-1, 1)] for _ in range(n_vertices)
+        ]
+        mesh_transformations_vertex_positions.append(displacements_vertices)
+
+    triangles = []
+
+    for node_index in range(len(mesh_geometry_vertex_positions)):
+        if node_index >= (n_vertix_cols - 1) * n_vertix_cols:
             continue
 
-        if (node_index + 1) % n == 0:
+        if (node_index + 1) % n_vertix_cols == 0:
             continue
 
-        triangle = Triangle(node_index, node_index + n, node_index + n + 1)
-        triangles.append(triangle)
+        triangle1 = [
+            node_index,
+            node_index + n_vertix_cols,
+            node_index + n_vertix_cols + 1,
+        ]
+        triangles.append(triangle1)
 
-        triangle = Triangle(
-            node_index, triangle.node_index_3, triangle.node_index_3 - n
-        )
-        triangles.append(triangle)
+        triangle2 = [node_index, triangle1[2], triangle1[2] - n_vertix_cols]
+        triangles.append(triangle2)
 
     return TriangularMesh(
-        nodes, triangles, [nodes_transformation1, nodes_transformation2]
+        MeshGeometry(
+            vertex_positions=np.array(mesh_geometry_vertex_positions, dtype="float32")
+        ),
+        np.array(triangles, dtype="uint32"),
+        np.array(
+            [
+                MeshGeometry(vertex_positions=np.array(p, dtype="float32"))
+                for p in mesh_transformations_vertex_positions
+            ]
+        ),
     )
 
 
 class TestGLTFBuilder:
     def test_add_triangular_mesh_produces_valid_gltf(self):
-        # Create a 2x2 nodes mesh: 2 triangles
-        triangular_mesh = create_triangular_mesh(n=2)
+        # Create a mesh with 5x5 vertices with 5 time frames
+        triangular_mesh = create_triangular_mesh(n_vertix_cols=5, n_frames=5)
 
         builder = GLTFBuilder()
         builder.add_triangular_mesh(triangular_mesh)
 
         gltf = builder.finish()
-
-        gltf.save("testietest.gltf")
 
         gltf_dict = gltf_asdict(gltf)
         exp_gltf_dict = {
@@ -65,10 +79,10 @@ class TestGLTFBuilder:
                     "byteOffset": 0,
                     "componentType": 5125,
                     "normalized": False,
-                    "count": 6,
+                    "count": 96,
                     "type": "SCALAR",
                     "sparse": None,
-                    "max": [3],
+                    "max": [24],
                     "min": [0],
                     "name": None,
                 },
@@ -79,39 +93,81 @@ class TestGLTFBuilder:
                     "byteOffset": 0,
                     "componentType": 5126,
                     "normalized": False,
-                    "count": 4,
+                    "count": 25,
                     "type": "VEC3",
                     "sparse": None,
-                    "max": [1.0, 1.0, 0.6534725427627563],
-                    "min": [0.0, 0.0, 0.20609822869300842],
+                    "max": [4.0, 4.0, 0.9965569972991943],
+                    "min": [0.0, 0.0, 0.0445563830435276],
                     "name": None,
                 },
                 {
                     "extensions": {},
                     "extras": {},
                     "bufferView": 1,
-                    "byteOffset": 48,
+                    "byteOffset": 300,
                     "componentType": 5126,
                     "normalized": False,
-                    "count": 4,
+                    "count": 25,
                     "type": "VEC3",
                     "sparse": None,
-                    "max": [0.0, 0.0, 0.8133212327957153],
-                    "min": [0.0, 0.0, 0.16022956371307373],
+                    "max": [0.0, 0.0, 0.9387763142585754],
+                    "min": [0.0, 0.0, -0.9918897151947021],
                     "name": None,
                 },
                 {
                     "extensions": {},
                     "extras": {},
                     "bufferView": 1,
-                    "byteOffset": 96,
+                    "byteOffset": 600,
                     "componentType": 5126,
                     "normalized": False,
-                    "count": 4,
+                    "count": 25,
                     "type": "VEC3",
                     "sparse": None,
-                    "max": [0.0, 0.0, 0.952816903591156],
-                    "min": [0.0, 0.0, 0.5206693410873413],
+                    "max": [0.0, 0.0, 0.8953878283500671],
+                    "min": [0.0, 0.0, -0.9899828433990479],
+                    "name": None,
+                },
+                {
+                    "extensions": {},
+                    "extras": {},
+                    "bufferView": 1,
+                    "byteOffset": 900,
+                    "componentType": 5126,
+                    "normalized": False,
+                    "count": 25,
+                    "type": "VEC3",
+                    "sparse": None,
+                    "max": [0.0, 0.0, 0.9373564124107361],
+                    "min": [0.0, 0.0, -0.8744527697563171],
+                    "name": None,
+                },
+                {
+                    "extensions": {},
+                    "extras": {},
+                    "bufferView": 1,
+                    "byteOffset": 1200,
+                    "componentType": 5126,
+                    "normalized": False,
+                    "count": 25,
+                    "type": "VEC3",
+                    "sparse": None,
+                    "max": [0.0, 0.0, 0.9853761196136475],
+                    "min": [0.0, 0.0, -0.9943391680717468],
+                    "name": None,
+                },
+                {
+                    "extensions": {},
+                    "extras": {},
+                    "bufferView": 1,
+                    "byteOffset": 1500,
+                    "componentType": 5126,
+                    "normalized": False,
+                    "count": 25,
+                    "type": "VEC3",
+                    "sparse": None,
+                    "max": [0.0, 0.0, 0.9626387357711792],
+                    "min": [0.0, 0.0, -0.9075282216072083],
                     "name": None,
                 },
                 {
@@ -121,10 +177,10 @@ class TestGLTFBuilder:
                     "byteOffset": 0,
                     "componentType": 5126,
                     "normalized": False,
-                    "count": 2,
+                    "count": 5,
                     "type": "SCALAR",
                     "sparse": None,
-                    "max": [1],
+                    "max": [4],
                     "min": [0],
                     "name": None,
                 },
@@ -135,7 +191,7 @@ class TestGLTFBuilder:
                     "byteOffset": 0,
                     "componentType": 5126,
                     "normalized": False,
-                    "count": 4,
+                    "count": 25,
                     "type": "SCALAR",
                     "sparse": None,
                     "max": [1],
@@ -165,9 +221,9 @@ class TestGLTFBuilder:
                         {
                             "extensions": {},
                             "extras": {},
-                            "input": 4,
+                            "input": 7,
                             "interpolation": "LINEAR",
-                            "output": 5,
+                            "output": 8,
                         }
                     ],
                 }
@@ -186,7 +242,7 @@ class TestGLTFBuilder:
                     "extras": {},
                     "buffer": 0,
                     "byteOffset": 0,
-                    "byteLength": 24,
+                    "byteLength": 384,
                     "byteStride": None,
                     "target": 34963,
                     "name": None,
@@ -195,8 +251,8 @@ class TestGLTFBuilder:
                     "extensions": {},
                     "extras": {},
                     "buffer": 0,
-                    "byteOffset": 24,
-                    "byteLength": 144,
+                    "byteOffset": 384,
+                    "byteLength": 1800,
                     "byteStride": 12,
                     "target": 34962,
                     "name": None,
@@ -206,7 +262,7 @@ class TestGLTFBuilder:
                     "extras": {},
                     "buffer": 1,
                     "byteOffset": 0,
-                    "byteLength": 8,
+                    "byteLength": 20,
                     "byteStride": None,
                     "target": None,
                     "name": None,
@@ -215,8 +271,8 @@ class TestGLTFBuilder:
                     "extensions": {},
                     "extras": {},
                     "buffer": 1,
-                    "byteOffset": 8,
-                    "byteLength": 16,
+                    "byteOffset": 20,
+                    "byteLength": 100,
                     "byteStride": None,
                     "target": None,
                     "name": None,
@@ -226,14 +282,14 @@ class TestGLTFBuilder:
                 {
                     "extensions": {},
                     "extras": {},
-                    "uri": "data:application/octet-stream;base64,AAAAAAIAAAADAAAAAAAAAAMAAAABAAAAAAAAAAAAAABxRxI/AAAAAAAAgD9qC1M+AACAPwAAAAD6SSc/AACAPwAAgD/X0ac+AAAAAAAAAABZl9s+AAAAAAAAAADSNVA/AAAAAAAAAAA4EyQ+AAAAAAAAAAAh/38+AAAAAAAAAADL/RM/AAAAAAAAAAC41lI/AAAAAAAAAACWSgU/AAAAAAAAAADP63M/",
-                    "byteLength": 168,
+                    "uri": "data:application/octet-stream;base64,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",
+                    "byteLength": 2184,
                 },
                 {
                     "extensions": {},
                     "extras": {},
-                    "uri": "data:application/octet-stream;base64,AAAAAAAAgD8AAIA/AAAAAAAAAAAAAIA/",
-                    "byteLength": 24,
+                    "uri": "data:application/octet-stream;base64,AAAAAAAAgD8AAABAAABAQAAAgEAAAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/",
+                    "byteLength": 120,
                 },
             ],
             "cameras": [],
@@ -283,10 +339,40 @@ class TestGLTFBuilder:
                                     "JOINTS_0": None,
                                     "WEIGHTS_0": None,
                                 },
+                                {
+                                    "POSITION": 4,
+                                    "NORMAL": None,
+                                    "TANGENT": None,
+                                    "TEXCOORD_0": None,
+                                    "TEXCOORD_1": None,
+                                    "COLOR_0": None,
+                                    "JOINTS_0": None,
+                                    "WEIGHTS_0": None,
+                                },
+                                {
+                                    "POSITION": 5,
+                                    "NORMAL": None,
+                                    "TANGENT": None,
+                                    "TEXCOORD_0": None,
+                                    "TEXCOORD_1": None,
+                                    "COLOR_0": None,
+                                    "JOINTS_0": None,
+                                    "WEIGHTS_0": None,
+                                },
+                                {
+                                    "POSITION": 6,
+                                    "NORMAL": None,
+                                    "TANGENT": None,
+                                    "TEXCOORD_0": None,
+                                    "TEXCOORD_1": None,
+                                    "COLOR_0": None,
+                                    "JOINTS_0": None,
+                                    "WEIGHTS_0": None,
+                                },
                             ],
                         }
                     ],
-                    "weights": [0.0, 0.0],
+                    "weights": [0.0, 0.0, 0.0, 0.0, 0.0],
                     "name": None,
                 }
             ],

@@ -23,7 +23,7 @@ class TestImporter:
             dtype=np.uint32,
         )
 
-        exp_nodes = np.array(
+        exp_vertex_positions = np.array(
             [
                 [1.0, 1.0, 3.0],
                 [0.0, 1.0, 3.0],
@@ -38,7 +38,7 @@ class TestImporter:
             dtype=np.float32,
         )
 
-        exp_node_transformations = np.array(
+        exp_vertex_transformations = np.array(
             [
                 [
                     [0.0, 0.0, -2.0],
@@ -56,5 +56,10 @@ class TestImporter:
         )
 
         np.array_equal(triangular_grid.triangles, exp_triangles)
-        np.array_equal(triangular_grid.nodes, exp_nodes)
-        np.array_equal(triangular_grid.node_transformations, exp_node_transformations)
+        np.array_equal(
+            triangular_grid.mesh_geometry.vertex_positions, exp_vertex_positions
+        )
+        assert len(triangular_grid.mesh_transformations) == 1
+        np.array_equal(
+            triangular_grid.mesh_transformations[0], exp_vertex_transformations
+        )

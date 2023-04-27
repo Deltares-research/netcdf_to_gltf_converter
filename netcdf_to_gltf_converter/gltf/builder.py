@@ -26,7 +26,7 @@ from pygltflib import (
     Scene,
 )
 
-from netcdf_to_gltf_converter.geometries import TriangularMesh
+from netcdf_to_gltf_converter.geometries import MeshGeometry, TriangularMesh
 
 PADDING_BYTE = b"\x00"
 
@@ -101,15 +101,17 @@ class GLTFBuilder:
             triangular_mesh (TriangularMesh): The triangular mesh.
         """
 
-        triangles = triangular_mesh.triangles_as_array()
-        nodes = triangular_mesh.nodes_positions_as_array()
-        node_transformations = triangular_mesh.node_transformations_as_array()
-
         indices_accessor_index = self._add_accessor_to_bufferview(
-            triangles, self._indices_buffer_view_index, UNSIGNED_INT, SCALAR
+            triangular_mesh.triangles,
+            self._indices_buffer_view_index,
+            UNSIGNED_INT,
+            SCALAR,
         )
         positions_accessor_index = self._add_accessor_to_bufferview(
-            nodes, self._positions_buffer_view_index, FLOAT, VEC3
+            triangular_mesh.mesh_geometry.vertex_positions,
+            self._positions_buffer_view_index,
+            FLOAT,
+            VEC3,
         )
 
         primitive = Primitive(
@@ -118,20 +120,25 @@ class GLTFBuilder:
         )
         self._gltf.meshes[self._mesh_index].primitives.append(primitive)
 
-        self.add_mesh_geometry_animation(node_transformations, primitive)
+        self.add_mesh_geometry_animation(
+            triangular_mesh.mesh_transformations, primitive
+        )
 
     def add_mesh_geometry_animation(
-        self, node_transformations: np.ndarray, primitive: Primitive
+        self, mesh_transformations: List[MeshGeometry], primitive: Primitive
     ):
-        n_transformations = len(node_transformations)
+        n_transformations = len(mesh_transformations)
         time_frames = []
         weights = []
 
         for frame_index in range(n_transformations):
-            transformed_nodes = node_transformations[frame_index]
+            mesh_transformation = mesh_transformations[frame_index]
 
             positions_accessor_index = self._add_accessor_to_bufferview(
-                transformed_nodes, self._positions_buffer_view_index, FLOAT, VEC3
+                mesh_transformation.vertex_positions,
+                self._positions_buffer_view_index,
+                FLOAT,
+                VEC3,
             )
 
             target_attr = Attributes(POSITION=positions_accessor_index)

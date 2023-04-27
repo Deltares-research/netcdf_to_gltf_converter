@@ -6,7 +6,7 @@ import numpy as np
 import xarray as xr
 import xugrid as xu
 
-from netcdf_to_gltf_converter.geometries import Node, TriangularMesh
+from netcdf_to_gltf_converter.geometries import MeshGeometry, TriangularMesh
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 
@@ -61,37 +61,52 @@ class Importer:
         triangulated_grid = Triangulator.triangulate(ugrid2d)
 
         ds_water_depth = Importer._get_water_depth_2d(ds)
-        x_data_values = ds_water_depth.coords["Mesh2d_face_x"].data
-        y_data_values = ds_water_depth.coords["Mesh2d_face_y"].data
+        data_x_coords = ds_water_depth.coords["Mesh2d_face_x"].data
+        data_y_coords = ds_water_depth.coords["Mesh2d_face_y"].data
+        data_coords = np.array([data_x_coords, data_y_coords]).T
+        data_values = ds_water_depth["Mesh2d_waterdepth"].data
 
-        original_mesh_geometry: np.ndarray
-        mesh_geometry_transforms: List[np.ndarray] = []
+        interpolated_vertex_positions = Importer.interpolate(
+            data_coords, data_values[0], triangulated_grid
+        )
+        base_mesh_geometry = MeshGeometry(
+            vertex_positions=interpolated_vertex_positions
+        )
 
+        mesh_transformations: List[MeshGeometry] = []
         n_times = ds_water_depth.dims["time"]
-        for time_index in range(n_times):
-            ds_water_depth_for_time = ds_water_depth.isel(time=time_index)
-            data_values = ds_water_depth_for_time["Mesh2d_waterdepth"].data
-
-            mesh_geometry_transform = Interpolator.interpolate_nearest(
-                x_data_values,
-                y_data_values,
-                data_values,
-                triangulated_grid,
-                Location.nodes,
+        for time_index in range(1, n_times):
+            interpolated_vertex_positions = Importer.interpolate(
+                data_coords, data_values[time_index], triangulated_grid
             )
+            vertex_displacements = np.array(
+                np.subtract(
+                    interpolated_vertex_positions, base_mesh_geometry.vertex_positions
+                ),
+                dtype="float32",
+            )
+            mesh_transformation = MeshGeometry(vertex_positions=vertex_displacements)
+            mesh_transformations.append(mesh_transformation)
 
-            if time_index == 0:
-                original_mesh_geometry = mesh_geometry_transform
-
-            else:
-                mesh_geometry_transform = np.subtract(
-                    mesh_geometry_transform, original_mesh_geometry
-                )
-                mesh_geometry_transforms.append(mesh_geometry_transform)
-
-        triangular_mesh = TriangularMesh.from_arrays(
-            original_mesh_geometry,
-            triangulated_grid.face_node_connectivity,
-            mesh_geometry_transforms,
+        triangular_mesh = TriangularMesh(
+            mesh_geometry=base_mesh_geometry,
+            triangles=np.array(
+                triangulated_grid.face_node_connectivity, dtype="uint32"
+            ),
+            mesh_transformations=mesh_transformations,
         )
         return triangular_mesh
+
+    @staticmethod
+    def interpolate(data_coords: np.ndarray, data_values: np.ndarray, grid):
+        interpolated_vertex_positions = np.array(
+            Interpolator.interpolate_nearest(
+                data_coords,
+                data_values,
+                grid,
+                Location.nodes,
+            ),
+            dtype="float32",
+        )
+
+        return interpolated_vertex_positions
