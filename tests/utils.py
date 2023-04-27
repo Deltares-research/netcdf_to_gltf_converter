@@ -3,7 +3,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Generator
 
-test_data = Path("tests") / "data"
+resources = Path("tests") / "resources"
 
 
 @contextmanager

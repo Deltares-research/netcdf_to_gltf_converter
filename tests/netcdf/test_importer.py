@@ -1,12 +1,12 @@
 import numpy as np
 
 from netcdf_to_gltf_converter.netcdf.importer import Importer
-from tests.utils import test_data
+from tests.utils import resources
 
 
 class TestImporter:
     def test_import_from(self):
-        file_path = test_data / "3x3nodes_rectilinear.nc"
+        file_path = resources / "3x3nodes_rectilinear.nc"
         triangular_grid = Importer.import_from(file_path)
 
         exp_triangles = np.array(
@@ -56,10 +56,6 @@ class TestImporter:
         )
 
         np.array_equal(triangular_grid.triangles, exp_triangles)
-        np.array_equal(
-            triangular_grid.mesh_geometry.vertex_positions, exp_vertex_positions
-        )
-        assert len(triangular_grid.mesh_transformations) == 1
-        np.array_equal(
-            triangular_grid.mesh_transformations[0], exp_vertex_transformations
-        )
+        np.array_equal(triangular_grid.base.vertex_positions, exp_vertex_positions)
+        assert len(triangular_grid.transformations) == 1
+        np.array_equal(triangular_grid.transformations[0], exp_vertex_transformations)

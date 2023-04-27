@@ -27,7 +27,8 @@ from pygltflib import (
     Scene,
 )
 
-from netcdf_to_gltf_converter.geometries import MeshGeometry, TriangularMesh
+from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
+from netcdf_to_gltf_converter.utils.arrays import float32_array
 
 PADDING_BYTE = b"\x00"
 
@@ -52,7 +53,7 @@ class GLTFBuilder:
         self._scene_index = add(self._gltf.scenes, Scene(nodes=[self._node_index]))
         self._gltf.scene = self._scene_index
 
-        # Add a geometry and animation buffer for the mesh
+        # Add a buffer for the mesh geometry, colors and animation
         self._geometry_buffer_index = add(
             self._gltf.buffers, Buffer(byteLength=0, uri=b"")
         )
@@ -86,6 +87,7 @@ class GLTFBuilder:
             ),
         )
 
+        # Add buffer view for the vertex colors
         self._colors_buffer_view_index = add(
             self._gltf.bufferViews,
             BufferView(
@@ -121,14 +123,13 @@ class GLTFBuilder:
             SCALAR,
         )
         positions_accessor_index = self._add_accessor_to_bufferview(
-            triangular_mesh.mesh_geometry.vertex_positions,
+            triangular_mesh.base.vertex_positions,
             self._positions_buffer_view_index,
             FLOAT,
             VEC3,
         )
-
         colors_accessor_index = self._add_accessor_to_bufferview(
-            triangular_mesh.mesh_geometry.vertex_colors,
+            triangular_mesh.base.vertex_colors,
             self._colors_buffer_view_index,
             FLOAT,
             VEC4,
@@ -142,22 +143,52 @@ class GLTFBuilder:
         )
         self._gltf.meshes[self._mesh_index].primitives.append(primitive)
 
-        self.add_mesh_geometry_animation(
-            triangular_mesh.mesh_transformations, primitive
-        )
+        self.add_mesh_geometry_animation(triangular_mesh.transformations, primitive)
 
     def add_mesh_geometry_animation(
-        self, mesh_transformations: List[MeshGeometry], primitive: Primitive
+        self, transformations: List[MeshAttributes], primitive: Primitive
     ):
-        n_transformations = len(mesh_transformations)
+        time_frames, weights = self._get_animation_data(transformations, primitive)
+
+        # Add time frames accessor
+        time_frames_accessor_index = self._add_accessor_to_bufferview(
+            float32_array(time_frames),
+            self._time_frames_buffer_view_index,
+            FLOAT,
+            SCALAR,
+        )
+
+        # Add weights accessor
+        weights_accessor_index = self._add_accessor_to_bufferview(
+            float32_array(weights),
+            self._weights_buffer_view_index,
+            FLOAT,
+            SCALAR,
+        )
+
+        animation = Animation()
+        sampler = AnimationSampler(
+            input=time_frames_accessor_index,
+            interpolation=ANIM_LINEAR,
+            output=weights_accessor_index,
+        )
+        sample_index = add(animation.samplers, sampler)
+        target = AnimationChannelTarget(node=self._node_index, path="weights")
+        channel = AnimationChannel(sampler=sample_index, target=target)
+        animation.channels.append(channel)
+
+        self._gltf.animations.append(animation)
+
+    def _get_animation_data(self, transformations, primitive):
         time_frames = []
         weights = []
 
+        n_transformations = len(transformations)
         for frame_index in range(n_transformations):
-            mesh_transformation = mesh_transformations[frame_index]
+            transformation = transformations[frame_index]
 
             positions_accessor_index = self._add_accessor_to_bufferview(
-                mesh_transformation.vertex_positions,
+                transformation.vertex_positions,
                 self._positions_buffer_view_index,
                 FLOAT,
                 VEC3,
@@ -169,38 +200,12 @@ class GLTFBuilder:
             self._gltf.meshes[self._mesh_index].weights.append(0.0)
 
             time_frames.append(float(frame_index))
+
             weights_for_frame = n_transformations * [0.0]
             weights_for_frame[frame_index] = 1.0
             weights.append(weights_for_frame)
 
-        # Add time frames accessor
-        time_frames_inputs_accessor_index = self._add_accessor_to_bufferview(
-            np.array(time_frames, dtype="float32"),
-            self._time_frames_buffer_view_index,
-            FLOAT,
-            SCALAR,
-        )
-
-        # Add weights accessor
-        weights_accessor_index = self._add_accessor_to_bufferview(
-            np.array(weights, dtype="float32"),
-            self._weights_buffer_view_index,
-            FLOAT,
-            SCALAR,
-        )
-
-        animation = Animation()
-        sampler = AnimationSampler(
-            input=time_frames_inputs_accessor_index,
-            interpolation=ANIM_LINEAR,
-            output=weights_accessor_index,
-        )
-        sample_index = add(animation.samplers, sampler)
-        target = AnimationChannelTarget(node=self._node_index, path="weights")
-        channel = AnimationChannel(sampler=sample_index, target=target)
-        animation.channels.append(channel)
-
-        self._gltf.animations.append(animation)
+        return time_frames, weights
 
     def add_data_to_buffer(self, data: bytes, buffer: Buffer):
         buffer.uri += data

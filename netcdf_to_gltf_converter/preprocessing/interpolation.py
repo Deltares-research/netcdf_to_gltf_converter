@@ -107,5 +107,7 @@ class Interpolator:
         )
 
         return np.concatenate(
-            (points_to_interpolate, interpolated_points.reshape(-1, 1)), axis=1
+            (points_to_interpolate, interpolated_points.reshape(-1, 1)),
+            axis=1,
+            dtype=np.float32,
         )

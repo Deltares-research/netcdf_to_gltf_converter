@@ -1,32 +1,32 @@
 import random
 
-import numpy as np
 from pygltflib import gltf_asdict
 
-from netcdf_to_gltf_converter.geometries import MeshGeometry, TriangularMesh
+from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.gltf.builder import GLTFBuilder
+from netcdf_to_gltf_converter.utils.arrays import float32_array, uint32_array
 
 
 def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
     random.seed(seed)
 
-    mesh_geometry_vertex_positions = []
-    mesh_transformations_vertex_positions = []
+    base_geometry_vertex_positions = []
+    transformations_vertex_positions = []
 
     for x in range(n_vertix_cols):
         for y in range(n_vertix_cols):
-            mesh_geometry_vertex_positions.append([x, y, random.random()])
+            base_geometry_vertex_positions.append([x, y, random.random()])
 
     n_vertices = n_vertix_cols * n_vertix_cols
     for _ in range(n_frames):
         displacements_vertices = [
             [0, 0, random.uniform(-1, 1)] for _ in range(n_vertices)
         ]
-        mesh_transformations_vertex_positions.append(displacements_vertices)
+        transformations_vertex_positions.append(displacements_vertices)
 
     triangles = []
 
-    for node_index in range(len(mesh_geometry_vertex_positions)):
+    for node_index in range(len(base_geometry_vertex_positions)):
         if node_index >= (n_vertix_cols - 1) * n_vertix_cols:
             continue
 
@@ -44,16 +44,12 @@ def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
         triangles.append(triangle2)
 
     return TriangularMesh(
-        MeshGeometry(
-            vertex_positions=np.array(mesh_geometry_vertex_positions, dtype="float32")
-        ),
-        np.array(triangles, dtype="uint32"),
-        np.array(
-            [
-                MeshGeometry(vertex_positions=np.array(p, dtype="float32"))
-                for p in mesh_transformations_vertex_positions
-            ]
-        ),
+        MeshAttributes(vertex_positions=float32_array(base_geometry_vertex_positions)),
+        uint32_array(triangles),
+        [
+            MeshAttributes(vertex_positions=float32_array(p))
+            for p in transformations_vertex_positions
+        ],
     )
 
 
@@ -66,7 +62,7 @@ class TestGLTFBuilder:
         builder.add_triangular_mesh(triangular_mesh)
 
         gltf = builder.finish()
-
+        gltf.save("pris.gltf")
         gltf_dict = gltf_asdict(gltf)
         exp_gltf_dict = {
             "extensions": {},
