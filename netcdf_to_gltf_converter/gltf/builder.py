@@ -137,8 +137,7 @@ class GLTFBuilder:
 
         primitive = Primitive(
             attributes=Attributes(
-                POSITION=positions_accessor_index, 
-                COLOR_0=colors_accessor_index
+                POSITION=positions_accessor_index, COLOR_0=colors_accessor_index
             ),
             indices=indices_accessor_index,
         )
@@ -201,11 +200,11 @@ class GLTFBuilder:
             self._gltf.meshes[self._mesh_index].weights.append(0.0)
 
             time_frames.append(float(frame_index))
-            
+
             weights_for_frame = n_transformations * [0.0]
             weights_for_frame[frame_index] = 1.0
             weights.append(weights_for_frame)
-            
+
         return time_frames, weights
 
     def add_data_to_buffer(self, data: bytes, buffer: Buffer):
