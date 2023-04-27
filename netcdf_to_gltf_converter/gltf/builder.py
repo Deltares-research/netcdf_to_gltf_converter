@@ -272,5 +272,5 @@ class GLTFBuilder:
         """
         for buffer in self._gltf.buffers:
             buffer.uri = DATA_URI_HEADER + base64.b64encode(buffer.uri).decode("utf-8")
-            
+
         return self._gltf
