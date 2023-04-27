@@ -85,7 +85,7 @@ class GLTFBuilder:
                 target=ARRAY_BUFFER,
             ),
         )
-        
+
         self._colors_buffer_view_index = add(
             self._gltf.bufferViews,
             BufferView(
@@ -126,7 +126,7 @@ class GLTFBuilder:
             FLOAT,
             VEC3,
         )
-        
+
         colors_accessor_index = self._add_accessor_to_bufferview(
             triangular_mesh.mesh_geometry.vertex_colors,
             self._colors_buffer_view_index,
@@ -135,7 +135,9 @@ class GLTFBuilder:
         )
 
         primitive = Primitive(
-            attributes=Attributes(POSITION=positions_accessor_index, COLOR_0=colors_accessor_index),
+            attributes=Attributes(
+                POSITION=positions_accessor_index, COLOR_0=colors_accessor_index
+            ),
             indices=indices_accessor_index,
         )
         self._gltf.meshes[self._mesh_index].primitives.append(primitive)

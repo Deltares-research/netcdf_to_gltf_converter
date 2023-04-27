@@ -4,9 +4,11 @@ import numpy as np
 
 from netcdf_to_gltf_converter.utils import validate_2d_array
 
+
 class Color:
     blue = [0.0, 0.588, 1.0, 0.75]
-    
+
+
 class MeshGeometry:
     def __init__(self, vertex_positions: np.ndarray) -> None:
         """Initialize a MeshGeometry with the specified arguments.
@@ -18,8 +20,10 @@ class MeshGeometry:
             AssertionError: When the shape or dtype of the arrays do not match the requirements.
         """
         self.vertex_positions = vertex_positions
-        self.vertex_colors = np.array([Color.blue for _ in vertex_positions], dtype="float32")
-        
+        self.vertex_colors = np.array(
+            [Color.blue for _ in vertex_positions], dtype="float32"
+        )
+
         self.validate()
 
     def validate(self):
