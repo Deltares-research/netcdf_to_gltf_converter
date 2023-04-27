@@ -1,12 +1,12 @@
 import numpy as np
 
 from netcdf_to_gltf_converter.netcdf.importer import Importer
-from tests.utils import test_data
+from tests.utils import resources
 
 
 class TestImporter:
     def test_import_from(self):
-        file_path = test_data / "3x3nodes_rectilinear.nc"
+        file_path = resources / "3x3nodes_rectilinear.nc"
         triangular_grid = Importer.import_from(file_path)
 
         exp_triangles = np.array(

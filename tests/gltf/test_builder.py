@@ -3,7 +3,7 @@ import random
 import numpy as np
 from pygltflib import gltf_asdict
 
-from netcdf_to_gltf_converter.geometries import MeshGeometry, TriangularMesh
+from netcdf_to_gltf_converter.data.mesh import MeshGeometry, TriangularMesh
 from netcdf_to_gltf_converter.gltf.builder import GLTFBuilder
 
 

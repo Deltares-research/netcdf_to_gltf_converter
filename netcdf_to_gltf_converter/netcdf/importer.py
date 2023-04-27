@@ -6,7 +6,7 @@ import numpy as np
 import xarray as xr
 import xugrid as xu
 
-from netcdf_to_gltf_converter.geometries import MeshGeometry, TriangularMesh
+from netcdf_to_gltf_converter.data.mesh import MeshGeometry, TriangularMesh
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 

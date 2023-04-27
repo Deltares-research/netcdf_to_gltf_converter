@@ -3,11 +3,7 @@ from typing import List
 import numpy as np
 
 from netcdf_to_gltf_converter.utils import validate_2d_array
-
-
-class Color:
-    blue = [0.38, 0.73, 0.78, 1.0]
-
+from netcdf_to_gltf_converter.data.colors import DEFAULT_MESH_COLOR
 
 class MeshGeometry:
     def __init__(self, vertex_positions: np.ndarray) -> None:
@@ -21,7 +17,7 @@ class MeshGeometry:
         """
         self.vertex_positions = vertex_positions
         self.vertex_colors = np.array(
-            [Color.blue for _ in vertex_positions], dtype="float32"
+            len(vertex_positions) * [DEFAULT_MESH_COLOR], dtype="float32"
         )
 
         self.validate()

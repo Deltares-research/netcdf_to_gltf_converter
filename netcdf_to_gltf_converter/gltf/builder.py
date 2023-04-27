@@ -27,7 +27,7 @@ from pygltflib import (
     Scene,
 )
 
-from netcdf_to_gltf_converter.geometries import MeshGeometry, TriangularMesh
+from netcdf_to_gltf_converter.data.mesh import MeshGeometry, TriangularMesh
 
 PADDING_BYTE = b"\x00"
 
