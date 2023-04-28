@@ -82,19 +82,19 @@ class Wrapper:
             yield variable
 
     def _get_2d_topology(self) -> str:
-        filter = {
+        attr_filter = {
             AttrKey.cf_role: AttrValue.mesh_topology,
             AttrKey.topology_dimension: 2,
         }
-        variable = next(self._get_variables_by_attr_filter(**filter))
+        variable = next(self._get_variables_by_attr_filter(**attr_filter))
         return variable.name
 
     def _get_2d_variable(self, standard_name: str) -> xr.DataArray:
-        filter = {
+        attr_filter = {
             AttrKey.standard_name: standard_name,
             AttrKey.mesh: self._2d_topology,
         }
-        variable = next(self._get_variables_by_attr_filter(**filter))
+        variable = next(self._get_variables_by_attr_filter(**attr_filter))
         return variable
 
     def _get_transformations(
