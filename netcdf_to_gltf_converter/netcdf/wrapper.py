@@ -113,7 +113,7 @@ class Wrapper:
                 base.vertex_positions,
                 dtype=np.float32,
             )
-            
+
             yield MeshAttributes(vertex_positions=vertex_displacements)
 
     def to_triangular_mesh(self):
