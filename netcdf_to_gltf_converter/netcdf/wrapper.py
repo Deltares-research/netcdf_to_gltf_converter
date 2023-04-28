@@ -57,17 +57,21 @@ class StandardName(str, Enum):
     water_depth = "sea_floor_depth_below_sea_surface"
     """The vertical distance between the sea surface and the seabed as measured at a given point in space including the variance caused by tides and possibly waves."""
 
+
 class Wrapper:
-    
     def __init__(self, dataset: xr.Dataset) -> None:
         self._dataset = dataset
         self._grid = Ugrid2d.from_dataset(dataset, MeshType.mesh2d)
         self._interpolator = Interpolator()
         self._triangulator = Triangulator()
 
-    def _interpolate(self, data_coords: np.ndarray, data_values: np.ndarray, grid: Ugrid2d):
-        return self._interpolator.interpolate_nearest(data_coords, data_values, grid, Location.nodes)
-        
+    def _interpolate(
+        self, data_coords: np.ndarray, data_values: np.ndarray, grid: Ugrid2d
+    ):
+        return self._interpolator.interpolate_nearest(
+            data_coords, data_values, grid, Location.nodes
+        )
+
     def _get_coordinates(self, location: DataLocation):
         if location == DataLocation.face:
             return self._grid.face_coordinates
@@ -114,7 +118,9 @@ class Wrapper:
         n_times = data.sizes["time"]
         for time_index in range(1, n_times):
             data_values = data.isel(time=time_index)
-            interpolated_data = self._interpolate(data_coords, data_values, triangulated_grid)
+            interpolated_data = self._interpolate(
+                data_coords, data_values, triangulated_grid
+            )
             vertex_displacements = np.subtract(
                 interpolated_data,
                 base_geometry.vertex_positions,
