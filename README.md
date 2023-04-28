@@ -6,8 +6,10 @@
 
 This is a tool that converts D-HYDRO map output results that are stored in the NetCDF file format to the glTF file format. The goal is to allow users who work with D-HYDRO results to view their data in 3D renderers using the glTF format.
 
-A rendered 10x10 grid with random data:
-![result](docs/readme/img/result.gif)
+<p align="center">
+  <img src="docs/readme/img/result.gif" alt="animated" />
+</p>
+
 
 ## Why use glTF?
 glTF (GL Transmission Format) is an open-standard file format developed by The Khronos Group. The glTF file format is used for 3D scenes and models designed for efficient transmission and loading of 3D content on the web and other real-time applications. This file format can store geometry, materials, textures, animations, and other scene data.
