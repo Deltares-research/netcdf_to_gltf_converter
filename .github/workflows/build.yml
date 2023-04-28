@@ -43,10 +43,7 @@ jobs:
           poetry config virtualenvs.path ~/.virtualenvs
 
       - name: Install dependencies
-        run: |
-          poetry install
-          poetry run pip install xugrid
-          poetry run pip install geopandas
+        run: poetry install
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Run tests
