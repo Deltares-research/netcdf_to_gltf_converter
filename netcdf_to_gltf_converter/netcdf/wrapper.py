@@ -54,11 +54,6 @@ class StandardName(str, Enum):
 
     water_depth = "sea_floor_depth_below_sea_surface"
     """The vertical distance between the sea surface and the seabed as measured at a given point in space including the variance caused by tides and possibly waves."""
-    x_coordinates = "projection_x_coordinate"
-    """"x" indicates a vector component along the grid x-axis, when this is not true longitude, positive with increasing x. Projection coordinates are distances in the x- and y-directions on a plane onto which the surface of the Earth has been projected according to a map projection. The relationship between the projection coordinates and latitude and longitude is described by the grid_mapping."""
-    y_coordinates = "projection_y_coordinate"
-    """"y" indicates a vector component along the grid y-axis, when this is not true latitude, positive with increasing y. Projection coordinates are distances in the x- and y-directions on a plane onto which the surface of the Earth has been projected according to a map projection. The relationship between the projection coordinates and latitude and longitude is described by the grid_mapping."""
-
 
 class Wrapper:
 
@@ -81,7 +76,12 @@ class Wrapper:
             return self._grid.node_coordinates
         
         raise ValueError(f"Location {location} not supported.")
-
+    
+    def _get_variables_by_attr_filter(self, **filter):
+        dataset = self._dataset.filter_by_attrs(**filter)
+        for variable in dataset.values():
+            yield variable
+            
     def _get_2d_topology(self) -> str:
         filter = {
             AttrKey.cf_role: AttrValue.mesh_topology,
@@ -89,11 +89,6 @@ class Wrapper:
         }
         variable = next(self._get_variables_by_attr_filter(**filter))
         return variable.name
-
-    def _get_variables_by_attr_filter(self, **filter):
-        dataset = self._dataset.filter_by_attrs(**filter)
-        for variable in dataset.values():
-            yield variable
 
     def _get_2d_variable(self, standard_name: str) -> xr.DataArray:
         filter = {
