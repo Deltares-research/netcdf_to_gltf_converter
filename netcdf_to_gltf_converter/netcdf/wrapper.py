@@ -61,7 +61,8 @@ class StandardName(str, Enum):
 class Wrapper:
     def __init__(self, dataset: xr.Dataset) -> None:
         self._dataset = dataset
-        self._grid = Ugrid2d.from_dataset(dataset, MeshType.mesh2d)
+        self._2d_topology = self._get_2d_topology()
+        self._grid = Ugrid2d.from_dataset(dataset, self._2d_topology)
         self._interpolator = Interpolator()
         self._triangulator = Triangulator()
 
@@ -98,7 +99,7 @@ class Wrapper:
     def _get_2d_variable(self, standard_name: str) -> xr.DataArray:
         filter = {
             AttrKey.standard_name: standard_name,
-            AttrKey.mesh: self._get_2d_topology(),
+            AttrKey.mesh: self._2d_topology,
         }
         variable = next(self._get_variables_by_attr_filter(**filter))
         return variable
