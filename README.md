@@ -6,13 +6,17 @@
 
 This is a tool that converts D-HYDRO map output results that are stored in the NetCDF file format to the glTF file format. The goal is to allow users who work with D-HYDRO results to view their data in 3D renderers using the glTF format.
 
+A rendered 10x10 grid with random data:
+![result](docs/readme/img/result.gif)
+
 ## Why use glTF?
 glTF (GL Transmission Format) is an open-standard file format developed by The Khronos Group. The glTF file format is used for 3D scenes and models designed for efficient transmission and loading of 3D content on the web and other real-time applications. This file format can store geometry, materials, textures, animations, and other scene data.
 glTF is used in a variety of industries and applications, including gaming, virtual and augmented reality, education, and more. It is particularly well-suited for web-based applications, as it allows 3D content to be easily and efficiently delivered over the internet, and can be rendered in real-time on a wide range of devices. 
 
+# User guide
 ## Requirements
 - Python >=3.9, <3.12
-- [Poetry](https://python-poetry.org/docs/) >=1.4.2 
+- Poetry >=1.4.2 
 
 ## Installation
 1. Install dependency manager [Poetry](https://python-poetry.org/docs/):
@@ -32,22 +36,20 @@ curl -sSL https://install.python-poetry.org | python3 -
 poetry install
 ```
 
+These steps will ensure that the converter is installed within a virtual environment (`.venv`) and you can start calling the converter script.
+
 ## Usage
  After following the installation steps, the converter can be used from the command line. 
  Two arguments should be passed to the converter script.
  * The first argument is the path to the source NetCDF file. Only files with the following conventions are supported: `CF-1.8 UGRID-1.0 Deltares-0.10`
  * The second argument is the path to the target glTF file. If the path already exist it will be overwritten.
  
- Example:
+**Example**
  ```
  poetry run python input_map.nc output.gltf
  ```
  
- ## View results
+## View results
  Several glTF viewers exist that can be used to view the produced glTF file. Just drag and drop the file and the glTF file is rendered.
  * [glTF Sample Viewer](https://github.khronos.org/glTF-Sample-Viewer-Release/)
  * [Babylon.js Sandbox](https://sandbox.babylonjs.com/)
- 
-## Example output
-Using a grid with 10x10 vertices and random data will look something like this:
-![result](docs/readme/img/result.gif)
