@@ -10,16 +10,6 @@ from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, L
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
-
-class MeshType(str, Enum):
-    """Enum containg the valid mesh types as stored in the "mesh" attribute of a data variable."""
-
-    mesh1d = "mesh1d"
-    """1D mesh"""
-    mesh2d = "Mesh2d"
-    """2D mesh"""
-
-
 class AttrKey(str, Enum):
     """Enum containing variable attribute keys."""
 
