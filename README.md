@@ -33,4 +33,23 @@ curl -sSL https://install.python-poetry.org | python3 -
 ```
 poetry install
 ```
-## Example
+
+## Usage
+ After following the installation steps, the converter can be used from the command line. 
+ Two arguments should be passed to the converter script.
+ * The first argument is the path to the source NetCDF file. Only files with the following conventions are supported: `CF-1.8 UGRID-1.0 Deltares-0.10`
+ * The second argument is the path to the target glTF file. If the path already exist it will be overwritten.
+ 
+ Example:
+ ```
+ poetry run python input_map.nc output.gltf
+ ```
+ 
+ ## View results
+ Several glTF viewers exist that can be used to view the produced glTF file. Just drag and drop the file and the glTF file is rendered.
+ * [glTF Sample Viewer](https://github.khronos.org/glTF-Sample-Viewer-Release/)
+ * [Babylon.js Sandbox](https://sandbox.babylonjs.com/)
+ 
+## Example output
+Using a grid with 10x10 vertices and random data will look something like this:
+<img src="docs/readme/img/result.gif"  width=30% height=30%>
