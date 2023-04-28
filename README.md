@@ -55,3 +55,11 @@ These steps will ensure that the converter is installed within a virtual environ
  Several glTF viewers exist that can be used to view the produced glTF file. Just drag and drop the file and the glTF file is rendered.
  * [glTF Sample Viewer](https://github.khronos.org/glTF-Sample-Viewer-Release/)
  * [Babylon.js Sandbox](https://sandbox.babylonjs.com/)
+
+# Contributing
+If you encounter any issues or have good ideas for this project please [create an issue](https://github.com/Deltares/netcdf_to_gltf_converter/issues/new/choose). This will help improve the project.bBefore creating any new issues, please check the [backlog](https://github.com/Deltares/netcdf_to_gltf_converter/issues) to see if your issue already exists. 
+
+# Acknowledgments
+[Connec2](https://connec2.nl/) is a company specialized in cross reality (XR) technology that guided us to setup this project. 
+This tool was developed as part of the fifth Top consortium for Knowledge and Innovation (TKI) programme.
+
