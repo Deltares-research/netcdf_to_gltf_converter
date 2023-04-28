@@ -32,6 +32,8 @@ glTF is used in a variety of industries and applications, including gaming, virt
 - Poetry >=1.4.2 
 
 ## Installation <a name="installation"></a>
+To install the converter, follow these steps:
+
 1. Install dependency manager [Poetry](https://python-poetry.org/docs/):
 
 **Windows (PowerShell)**
@@ -54,8 +56,8 @@ These steps will ensure that the converter is installed within a virtual environ
 ## Usage <a name="usage"></a>
  After following the installation steps, the converter can be used from the command line. 
  Two arguments should be passed to the converter script.
- * The first argument is the path to the source NetCDF file. Only files with the following conventions are supported: `CF-1.8 UGRID-1.0 Deltares-0.10`
- * The second argument is the path to the target glTF file. If the path already exist it will be overwritten.
+1. The path to the source NetCDF file. Only files with the following conventions are supported: `CF-1.8 UGRID-1.0 Deltares-0.10`
+2. The path to the target glTF file. If the path already exist it will be overwritten.
  
 **Example**
  ```
@@ -63,12 +65,12 @@ These steps will ensure that the converter is installed within a virtual environ
  ```
  
 ## View results <a name="view-results"></a>
- Several glTF viewers exist that can be used to view the produced glTF file. Just drag and drop the file and the glTF file is rendered.
+ Several glTF viewers exist that can be used to view the produced glTF file. Simply drag and drop the file, and the glTF file will be rendered.
  * [glTF Sample Viewer](https://github.khronos.org/glTF-Sample-Viewer-Release/)
  * [Babylon.js Sandbox](https://sandbox.babylonjs.com/)
 
 # Contributing <a name="contributing"></a>
-If you encounter any issues or have good ideas for this project please [create an issue](https://github.com/Deltares/netcdf_to_gltf_converter/issues/new/choose). This will help improve the project.bBefore creating any new issues, please check the [backlog](https://github.com/Deltares/netcdf_to_gltf_converter/issues) to see if your issue already exists. 
+If you encounter any issues or have good ideas for this project please [create an issue](https://github.com/Deltares/netcdf_to_gltf_converter/issues/new/choose). This will help improve the project. Before creating any new issues, please check the [backlog](https://github.com/Deltares/netcdf_to_gltf_converter/issues) to see if your issue already exists. 
 
 # Acknowledgments <a name="acknowledgements"></a>
 [Connec2](https://connec2.nl/) is a company specialized in cross reality (XR) technology that guided us to setup this project. 
