@@ -25,10 +25,3 @@ class TestConverter:
             converter.run()
 
             assert_files_equal(gltf_file_path, reference_gltf_file_path)
-
-    def test_case(self):
-        netcdf_file_path = Path(r"C:\checkouts\TKI5ARVR\DIMR5bij5naar25_V95P2b\my-artifact\dflowfm\output\DFM_map.nc")
-        gltf_file_path = Path("case.gltf")
-
-        converter = Converter(netcdf_file_path, gltf_file_path)
-        converter.run()
