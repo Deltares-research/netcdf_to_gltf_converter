@@ -11,7 +11,8 @@ glTF (GL Transmission Format) is an open-standard file format developed by The K
 glTF is used in a variety of industries and applications, including gaming, virtual and augmented reality, education, and more. It is particularly well-suited for web-based applications, as it allows 3D content to be easily and efficiently delivered over the internet, and can be rendered in real-time on a wide range of devices. 
 
 ## Requirements
-- Python 3.9 or later
+- Python >=3.9, <3.12
+- [Poetry](https://python-poetry.org/docs/) >=1.4.2 
 
 ## Installation
 1. Install dependency manager [Poetry](https://python-poetry.org/docs/):
