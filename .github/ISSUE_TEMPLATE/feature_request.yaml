@@ -1,0 +1,30 @@
+name: Feature Request
+description: Propose a new feature
+title: ""
+labels:
+  - new feature
+  - improvement
+  - triage
+assignees:
+  - priscavdsluis
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for improving the software.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Describe the feature request and why you need it.
+      placeholder: ""
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: Describe the expected behaviour in detail of the new feature.
+      placeholder: ""
+    validations:
+      required: true
