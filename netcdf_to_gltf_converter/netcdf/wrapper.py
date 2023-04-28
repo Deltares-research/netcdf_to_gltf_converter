@@ -113,8 +113,8 @@ class Wrapper:
                 base.vertex_positions,
                 dtype=np.float32,
             )
-            transformation = MeshAttributes(vertex_positions=vertex_displacements)
-            yield transformation
+            
+            yield MeshAttributes(vertex_positions=vertex_displacements)
 
     def to_triangular_mesh(self):
         data = self._get_2d_variable(StandardName.water_depth)
