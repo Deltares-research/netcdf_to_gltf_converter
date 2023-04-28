@@ -52,4 +52,4 @@ poetry install
  
 ## Example output
 Using a grid with 10x10 vertices and random data will look something like this:
-<img src="docs/readme/img/result.gif"  width=30% height=30%>
+![result](docs/readme/img/result.gif)
