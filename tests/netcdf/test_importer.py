@@ -1,4 +1,6 @@
+from pathlib import Path
 import numpy as np
+import pytest
 
 from netcdf_to_gltf_converter.netcdf.importer import Importer
 from tests.utils import resources
@@ -6,7 +8,7 @@ from tests.utils import resources
 
 class TestImporter:
     def test_import_from(self):
-        file_path = resources / "3x3nodes_rectilinear.nc"
+        file_path = resources / "3x3nodes_rectilinear_map.nc"
         triangular_grid = Importer.import_from(file_path)
 
         exp_triangles = np.array(
@@ -25,37 +27,43 @@ class TestImporter:
 
         exp_vertex_positions = np.array(
             [
-                [1.0, 1.0, 3.0],
-                [0.0, 1.0, 3.0],
-                [1.0, 0.0, 3.0],
-                [1.0, 2.0, 1.0],
-                [2.0, 1.0, 3.0],
-                [0.0, 0.0, 3.0],
-                [0.0, 2.0, 1.0],
-                [2.0, 0.0, 3.0],
-                [2.0, 2.0, 1.0],
+                [1.0, 1.0, 5.0],
+                [0.0, 1.0, 5.0],
+                [1.0, 0.0, 5.0],
+                [1.0, 2.0, 5.0],
+                [2.0, 1.0, 4.0],
+                [0.0, 0.0, 5.0],
+                [0.0, 2.0, 5.0],
+                [2.0, 0.0, 4.0],
+                [2.0, 2.0, 4.0],
             ],
             dtype=np.float32,
         )
 
         exp_vertex_transformations = np.array(
             [
-                [
-                    [0.0, 0.0, -2.0],
-                    [0.0, 0.0, -2.0],
-                    [0.0, 0.0, 2.0],
-                    [0.0, 0.0, -2.0],
-                    [0.0, 0.0, -2.0],
-                    [0.0, 0.0, 2.0],
-                    [0.0, 0.0, -2.0],
-                    [0.0, 0.0, -2.0],
-                    [0.0, 0.0, 2.0],
-                ],
+                [0.0, 0.0, -1.0],
+                [0.0, 0.0, -1.0],
+                [0.0, 0.0, -1.0],
+                [0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0],
+                [0.0, 0.0, -1.0],
+                [0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0],
+                [0.0, 0.0, 1.0],
             ],
             dtype=np.float32,
         )
 
-        np.array_equal(triangular_grid.triangles, exp_triangles)
-        np.array_equal(triangular_grid.base.vertex_positions, exp_vertex_positions)
-        assert len(triangular_grid.transformations) == 1
-        np.array_equal(triangular_grid.transformations[0], exp_vertex_transformations)
+        assert np.array_equal(triangular_grid.triangles, exp_triangles)
+        assert np.array_equal(triangular_grid.base.vertex_positions, exp_vertex_positions)
+        assert len(triangular_grid.transformations) == 4
+        assert np.array_equal(triangular_grid.transformations[2].vertex_positions, exp_vertex_transformations)
+
+    def test_import_from_netcdf_does_not_exist_raises_error(self):
+        netcdf = Path("path/to/file.netcdf")
+
+        with pytest.raises(ValueError) as error:
+            _ = Importer.import_from(netcdf)
+
+        assert str(error.value) == rf"NetCDF file does not exist: {netcdf}"
