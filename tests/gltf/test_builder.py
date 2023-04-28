@@ -62,7 +62,7 @@ class TestGLTFBuilder:
         builder.add_triangular_mesh(triangular_mesh)
 
         gltf = builder.finish()
-        gltf.save("pris.gltf")
+
         gltf_dict = gltf_asdict(gltf)
         exp_gltf_dict = {
             "extensions": {},
@@ -123,6 +123,48 @@ class TestGLTFBuilder:
                 {
                     "extensions": {},
                     "extras": {},
+                    "bufferView": 3,
+                    "byteOffset": 0,
+                    "componentType": 5125,
+                    "normalized": False,
+                    "count": 24,
+                    "type": "SCALAR",
+                    "sparse": None,
+                    "max": [8],
+                    "min": [0],
+                    "name": None,
+                },
+                {
+                    "extensions": {},
+                    "extras": {},
+                    "bufferView": 4,
+                    "byteOffset": 0,
+                    "componentType": 5126,
+                    "normalized": False,
+                    "count": 9,
+                    "type": "VEC3",
+                    "sparse": None,
+                    "max": [2.0, 2.0, 0.009999999776482582],
+                    "min": [0.0, 0.0, 0.009999999776482582],
+                    "name": None,
+                },
+                {
+                    "extensions": {},
+                    "extras": {},
+                    "bufferView": 5,
+                    "byteOffset": 0,
+                    "componentType": 5126,
+                    "normalized": False,
+                    "count": 9,
+                    "type": "VEC4",
+                    "sparse": None,
+                    "max": [1.0, 1.0, 1.0, 1.0],
+                    "min": [1.0, 1.0, 1.0, 1.0],
+                    "name": None,
+                },
+                {
+                    "extensions": {},
+                    "extras": {},
                     "bufferView": 1,
                     "byteOffset": 108,
                     "componentType": 5126,
@@ -151,7 +193,7 @@ class TestGLTFBuilder:
                 {
                     "extensions": {},
                     "extras": {},
-                    "bufferView": 3,
+                    "bufferView": 6,
                     "byteOffset": 0,
                     "componentType": 5126,
                     "normalized": False,
@@ -165,7 +207,7 @@ class TestGLTFBuilder:
                 {
                     "extensions": {},
                     "extras": {},
-                    "bufferView": 4,
+                    "bufferView": 7,
                     "byteOffset": 0,
                     "componentType": 5126,
                     "normalized": False,
@@ -199,9 +241,9 @@ class TestGLTFBuilder:
                         {
                             "extensions": {},
                             "extras": {},
-                            "input": 5,
+                            "input": 8,
                             "interpolation": "LINEAR",
-                            "output": 6,
+                            "output": 9,
                         }
                     ],
                 }
@@ -248,6 +290,36 @@ class TestGLTFBuilder:
                 {
                     "extensions": {},
                     "extras": {},
+                    "buffer": 3,
+                    "byteOffset": 0,
+                    "byteLength": 96,
+                    "byteStride": None,
+                    "target": 34963,
+                    "name": None,
+                },
+                {
+                    "extensions": {},
+                    "extras": {},
+                    "buffer": 3,
+                    "byteOffset": 96,
+                    "byteLength": 108,
+                    "byteStride": 12,
+                    "target": 34962,
+                    "name": None,
+                },
+                {
+                    "extensions": {},
+                    "extras": {},
+                    "buffer": 4,
+                    "byteOffset": 0,
+                    "byteLength": 144,
+                    "byteStride": 16,
+                    "target": 34962,
+                    "name": None,
+                },
+                {
+                    "extensions": {},
+                    "extras": {},
                     "buffer": 2,
                     "byteOffset": 0,
                     "byteLength": 8,
@@ -285,6 +357,18 @@ class TestGLTFBuilder:
                     "uri": "data:application/octet-stream;base64,AAAAAAAAgD8AAIA/AAAAAAAAAAAAAIA/",
                     "byteLength": 24,
                 },
+                {
+                    "extensions": {},
+                    "extras": {},
+                    "uri": "data:application/octet-stream;base64,AAAAAAMAAAAEAAAAAAAAAAQAAAABAAAAAQAAAAQAAAAFAAAAAQAAAAUAAAACAAAAAwAAAAYAAAAHAAAAAwAAAAcAAAAEAAAABAAAAAcAAAAIAAAABAAAAAgAAAAFAAAAAAAAAAAAAAAK1yM8AAAAAAAAgD8K1yM8AAAAAAAAAEAK1yM8AACAPwAAAAAK1yM8AACAPwAAgD8K1yM8AACAPwAAAEAK1yM8AAAAQAAAAAAK1yM8AAAAQAAAgD8K1yM8AAAAQAAAAEAK1yM8",
+                    "byteLength": 204,
+                },
+                {
+                    "extensions": {},
+                    "extras": {},
+                    "uri": "data:application/octet-stream;base64,AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/",
+                    "byteLength": 144,
+                },
             ],
             "cameras": [],
             "extensionsUsed": [],
@@ -314,7 +398,7 @@ class TestGLTFBuilder:
                             "material": None,
                             "targets": [
                                 {
-                                    "POSITION": 3,
+                                    "POSITION": 6,
                                     "NORMAL": None,
                                     "TANGENT": None,
                                     "TEXCOORD_0": None,
@@ -324,7 +408,7 @@ class TestGLTFBuilder:
                                     "WEIGHTS_0": None,
                                 },
                                 {
-                                    "POSITION": 4,
+                                    "POSITION": 7,
                                     "NORMAL": None,
                                     "TANGENT": None,
                                     "TEXCOORD_0": None,
@@ -338,7 +422,33 @@ class TestGLTFBuilder:
                     ],
                     "weights": [0.0, 0.0],
                     "name": None,
-                }
+                },
+                {
+                    "extensions": {},
+                    "extras": {},
+                    "primitives": [
+                        {
+                            "extensions": {},
+                            "extras": {},
+                            "attributes": {
+                                "POSITION": 4,
+                                "NORMAL": None,
+                                "TANGENT": None,
+                                "TEXCOORD_0": None,
+                                "TEXCOORD_1": None,
+                                "COLOR_0": 5,
+                                "JOINTS_0": None,
+                                "WEIGHTS_0": None,
+                            },
+                            "indices": 3,
+                            "mode": 4,
+                            "material": None,
+                            "targets": [],
+                        }
+                    ],
+                    "weights": [],
+                    "name": None,
+                },
             ],
             "nodes": [
                 {
@@ -353,11 +463,24 @@ class TestGLTFBuilder:
                     "matrix": None,
                     "camera": None,
                     "name": None,
-                }
+                },
+                {
+                    "extensions": {},
+                    "extras": {},
+                    "mesh": 1,
+                    "skin": None,
+                    "rotation": None,
+                    "translation": None,
+                    "scale": None,
+                    "children": [],
+                    "matrix": None,
+                    "camera": None,
+                    "name": None,
+                },
             ],
             "samplers": [],
             "scene": 0,
-            "scenes": [{"extensions": {}, "extras": {}, "name": None, "nodes": [0]}],
+            "scenes": [{"extensions": {}, "extras": {}, "name": None, "nodes": [0, 1]}],
             "skins": [],
             "textures": [],
         }

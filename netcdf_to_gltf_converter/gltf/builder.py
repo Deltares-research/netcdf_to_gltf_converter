@@ -50,7 +50,9 @@ class GLTFBuilder:
 
         self._mesh_index = add(self._gltf.meshes, Mesh())
         self._node_index = add(self._gltf.nodes, Node(mesh=self._mesh_index))
-        self._scene_index = add(self._gltf.scenes, Scene(nodes=[self._node_index]))
+        self._plane_mesh_index = add(self._gltf.meshes, Mesh())
+        self._plane_node_index = add(self._gltf.nodes, Node(mesh=self._plane_mesh_index))
+        self._scene_index = add(self._gltf.scenes, Scene(nodes=[self._node_index, self._plane_node_index]))
         self._gltf.scene = self._scene_index
 
         # Add a buffer for the mesh geometry, colors and animation
@@ -61,6 +63,12 @@ class GLTFBuilder:
             self._gltf.buffers, Buffer(byteLength=0, uri=b"")
         )
         self._animation_buffer_index = add(
+            self._gltf.buffers, Buffer(byteLength=0, uri=b"")
+        )
+        self._plane_geometry_buffer_index = add(
+            self._gltf.buffers, Buffer(byteLength=0, uri=b"")
+        )
+        self._plane_color_buffer_index = add(
             self._gltf.buffers, Buffer(byteLength=0, uri=b"")
         )
 
@@ -94,6 +102,40 @@ class GLTFBuilder:
                 buffer=self._color_buffer_index,
                 byteOffset=0,
                 byteLength=0,
+            ),
+        )
+        
+        self._plane_indices_buffer_view_index = add(
+            self._gltf.bufferViews,
+            BufferView(
+                buffer=self._plane_geometry_buffer_index,
+                byteOffset=0,
+                byteLength=0,
+                target=ELEMENT_ARRAY_BUFFER,
+            ),
+        )
+
+        # Add buffer view for the vertex positions and their displacements
+        self._plane_positions_buffer_view_index = add(
+            self._gltf.bufferViews,
+            BufferView(
+                buffer=self._plane_geometry_buffer_index,
+                byteOffset=0,
+                byteLength=0,
+                byteStride=12,
+                target=ARRAY_BUFFER,
+            ),
+        )
+
+        # Add buffer view for the vertex colors
+        self._plane_colors_buffer_view_index = add(
+            self._gltf.bufferViews,
+            BufferView(
+                buffer=self._plane_color_buffer_index,
+                byteOffset=0,
+                byteLength=0,
+                byteStride=16,
+                target=ARRAY_BUFFER,
             ),
         )
 
@@ -142,6 +184,33 @@ class GLTFBuilder:
             indices=indices_accessor_index,
         )
         self._gltf.meshes[self._mesh_index].primitives.append(primitive)
+        
+        plane_indices_accessor_index = self._add_accessor_to_bufferview(
+            triangular_mesh.triangles,
+            self._plane_indices_buffer_view_index,
+            UNSIGNED_INT,
+            SCALAR,
+        )
+        plane_positions_accessor_index = self._add_accessor_to_bufferview(
+            triangular_mesh.plane.vertex_positions,
+            self._plane_positions_buffer_view_index,
+            FLOAT,
+            VEC3,
+        )
+        plane_colors_accessor_index = self._add_accessor_to_bufferview(
+            triangular_mesh.plane.vertex_colors,
+            self._plane_colors_buffer_view_index,
+            FLOAT,
+            VEC4,
+        )
+        
+        plane_primitive = Primitive(
+            attributes=Attributes(
+                POSITION=plane_positions_accessor_index, COLOR_0=plane_colors_accessor_index
+            ),
+            indices=plane_indices_accessor_index,
+        )
+        self._gltf.meshes[self._plane_mesh_index].primitives.append(plane_primitive)
 
         self.add_mesh_geometry_animation(triangular_mesh.transformations, primitive)
 
