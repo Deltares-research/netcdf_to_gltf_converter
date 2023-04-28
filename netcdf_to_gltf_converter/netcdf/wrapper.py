@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List
+from typing import Generator, List
 
 import numpy as np
 import xarray as xr
@@ -46,7 +46,8 @@ class StandardName(str, Enum):
 
     water_depth = "sea_floor_depth_below_sea_surface"
     """The vertical distance between the sea surface and the seabed as measured at a given point in space including the variance caused by tides and possibly waves."""
-
+    water_level = "sea_surface_height"
+    """"Sea surface height" is a time-varying quantity."""
 
 class Wrapper:
     def __init__(self, dataset: xr.Dataset) -> None:
@@ -63,7 +64,7 @@ class Wrapper:
             data_coords, data_values, grid, Location.nodes
         )
 
-    def _get_coordinates(self, location: DataLocation):
+    def _get_coordinates(self, location: DataLocation) -> np.ndarray:
         if location == DataLocation.face:
             return self._grid.face_coordinates
         if location == DataLocation.edge:
@@ -92,8 +93,23 @@ class Wrapper:
             AttrKey.mesh: self._2d_topology,
         }
         variable = next(self._get_variables_by_attr_filter(**filter))
-        return variable
-
+        return variable\
+            
+    def _get_transformations(self, data: xr.DataArray, data_coords: np.ndarray, grid: Ugrid2d, base: MeshAttributes) -> Generator[MeshAttributes, None, None]:
+        n_times = data.sizes["time"]
+        for time_index in range(1, n_times):
+            data_values = data.isel(time=time_index)
+            interpolated_data = self._interpolate(
+                data_coords, data_values, grid
+            )
+            vertex_displacements = np.subtract(
+                interpolated_data,
+                base.vertex_positions,
+                dtype=np.float32,
+            )
+            transformation = MeshAttributes(vertex_positions=vertex_displacements)
+            yield transformation
+            
     def to_triangular_mesh(self):
         data = self._get_2d_variable(StandardName.water_depth)
         data_location = data.attrs.get(AttrKey.location)
@@ -105,31 +121,12 @@ class Wrapper:
             data_coords, data_values, triangulated_grid
         )
 
-        base_geometry = MeshAttributes(vertex_positions=interpolated_data)
+        base = MeshAttributes(vertex_positions=interpolated_data)
+        triangles = uint32_array(triangulated_grid.face_node_connectivity)
+        transformations = list(self._get_transformations(data, data_coords, triangulated_grid, base))
 
-        transformations = self._get_transformations(data, data_coords, triangulated_grid, base_geometry)
-
-        triangular_mesh = TriangularMesh(
-            base=base_geometry,
-            triangles=uint32_array(triangulated_grid.face_node_connectivity),
+        return TriangularMesh(
+            base=base,
+            triangles=triangles,
             transformations=transformations,
         )
-        return triangular_mesh
-
-    def _get_transformations(self, data, data_coords, triangulated_grid, base_geometry):
-        transformations: List[MeshAttributes] = []
-        n_times = data.sizes["time"]
-        for time_index in range(1, n_times):
-            data_values = data.isel(time=time_index)
-            interpolated_data = self._interpolate(
-                data_coords, data_values, triangulated_grid
-            )
-            vertex_displacements = np.subtract(
-                interpolated_data,
-                base_geometry.vertex_positions,
-                dtype=np.float32,
-            )
-            transformation = MeshAttributes(vertex_positions=vertex_displacements)
-            transformations.append(transformation)
-            
-        return transformations
