@@ -26,7 +26,7 @@ glTF is used in a variety of industries and applications, including gaming, virt
 curl -sSL https://install.python-poetry.org | python3 -
 ```
 2. Clone this repository to your local machine
-![download](docs/installation/img/download.png)
+<img src="docs/installation/img/download.png"  width=50% height=50%>
 
 3. From the root folder, open your command line and execute:
 ```
