@@ -4,8 +4,7 @@ import xugrid as xu
 class Triangulator:
     """Class to triangulate grid cells within a xu.Ugrid2d."""
 
-    @staticmethod
-    def triangulate(ugrid2d: xu.Ugrid2d):
+    def triangulate(self, ugrid2d: xu.Ugrid2d):
         """Triangulate the provided UGrid 2D.
 
         Args:

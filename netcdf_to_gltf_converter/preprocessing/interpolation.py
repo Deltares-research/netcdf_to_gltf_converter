@@ -35,8 +35,8 @@ class Interpolator:
 
         raise ValueError(f"Invalid location {location}")
 
-    @staticmethod
     def interpolate_nearest(
+        self,
         data_coords: np.ndarray,
         data_values: np.ndarray,
         grid: xu.Ugrid2d,
@@ -58,12 +58,12 @@ class Interpolator:
             ValueError: When the provided location is not supported.
         """
 
-        return Interpolator._interpolate(
+        return self._interpolate(
             data_coords, data_values, grid, location, Method.nearest
         )
 
-    @staticmethod
     def interpolate_linear(
+        self,
         data_coords: np.ndarray,
         data_values: np.ndarray,
         grid: xu.Ugrid2d,
@@ -85,12 +85,12 @@ class Interpolator:
             ValueError: When the provided location is not supported.
         """
 
-        return Interpolator._interpolate(
+        return self._interpolate(
             data_coords, data_values, grid, location, Method.linear
         )
 
-    @staticmethod
     def _interpolate(
+        self,
         data_coords: np.ndarray,
         data_values: np.ndarray,
         grid: xu.Ugrid2d,
