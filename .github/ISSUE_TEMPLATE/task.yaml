@@ -1,0 +1,16 @@
+name: Task
+description: A non-functional task
+title: ""
+labels:
+  - triage
+assignees:
+  - priscavdsluis
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Describe the task
+      placeholder: ""
+    validations:
+      required: true
