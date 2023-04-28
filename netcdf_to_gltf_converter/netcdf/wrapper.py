@@ -41,10 +41,12 @@ class AttrValue(str, Enum):
     mesh_topology = "mesh_topology"
     """Mesh topology"""
 
+
 class DataLocation(str, Enum):
     face = "face"
     node = "node"
     edge = "edge"
+
 
 class StandardName(str, Enum):
     """Enum containg the valid variable standard names according to the
@@ -55,8 +57,8 @@ class StandardName(str, Enum):
     water_depth = "sea_floor_depth_below_sea_surface"
     """The vertical distance between the sea surface and the seabed as measured at a given point in space including the variance caused by tides and possibly waves."""
 
-class Wrapper:
 
+class Wrapper:
     @staticmethod
     def interpolate(data_coords: np.ndarray, data_values: np.ndarray, grid):
         return Interpolator.interpolate_nearest(
@@ -74,14 +76,14 @@ class Wrapper:
             return self._grid.edge_coordinates
         if location == DataLocation.node:
             return self._grid.node_coordinates
-        
+
         raise ValueError(f"Location {location} not supported.")
-    
+
     def _get_variables_by_attr_filter(self, **filter):
         dataset = self._dataset.filter_by_attrs(**filter)
         for variable in dataset.values():
             yield variable
-            
+
     def _get_2d_topology(self) -> str:
         filter = {
             AttrKey.cf_role: AttrValue.mesh_topology,
