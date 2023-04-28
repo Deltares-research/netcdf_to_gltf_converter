@@ -69,18 +69,20 @@ class Wrapper:
         self._dataset = dataset
         self._grid = Ugrid2d.from_dataset(dataset, MeshType.mesh2d)
 
+    def _get_face_coordinates(self):
+        face_x = self._grid.face_x
+        face_y = self._grid.face_y
+        return np.array([face_x, face_y]).T
+    
     def to_triangular_mesh(self):
-        triangulated_grid = Triangulator.triangulate(self._grid)
-
+        face_coords = self._get_face_coordinates()
         ds_water_depth = Wrapper._get_water_depth_2d(self._dataset)
-        data_x_coords = ds_water_depth.coords["Mesh2d_face_x"].data
-        data_y_coords = ds_water_depth.coords["Mesh2d_face_y"].data
-        data_coords = np.array([data_x_coords, data_y_coords]).T
-
+        
+        triangulated_grid = Triangulator.triangulate(self._grid)
         data_values = Wrapper.get_water_depth_for_time(ds_water_depth, time_index=0)
 
         interpolated_vertex_positions = Wrapper.interpolate(
-            data_coords, data_values, triangulated_grid
+            face_coords, data_values, triangulated_grid
         )
         base_geometry = MeshAttributes(vertex_positions=interpolated_vertex_positions)
 
@@ -89,7 +91,7 @@ class Wrapper:
         for time_index in range(1, n_times):
             data_values = Wrapper.get_water_depth_for_time(ds_water_depth, time_index)
             interpolated_vertex_positions = Wrapper.interpolate(
-                data_coords, data_values, triangulated_grid
+                face_coords, data_values, triangulated_grid
             )
             vertex_displacements = np.subtract(
                 interpolated_vertex_positions,
