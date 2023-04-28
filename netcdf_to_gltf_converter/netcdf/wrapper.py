@@ -19,9 +19,10 @@ class MeshType(str, Enum):
     mesh2d = "Mesh2d"
     """2D mesh"""
 
+
 class AttrKey(str, Enum):
     """Enum containing variable attribute keys."""
-    
+
     cf_role = "cf_role"
     """CF role"""
     topology_dimension = "topology_dimension"
@@ -31,11 +32,13 @@ class AttrKey(str, Enum):
     standard_name = "standard_name"
     """Standard name"""
 
+
 class AttrValue(str, Enum):
     """Enum containing variable attribute values."""
-    
+
     mesh_topology = "mesh_topology"
     """Mesh topology"""
+
 
 class StandardName(str, Enum):
     """Enum containg the valid variable standard names according to the
@@ -52,7 +55,6 @@ class StandardName(str, Enum):
 
 
 class Wrapper:
-
     @staticmethod
     def data_for_time(variable: xr.DataArray, time_index: int):
         return variable.isel(time=time_index)
@@ -71,26 +73,31 @@ class Wrapper:
         face_x = self._grid.face_x
         face_y = self._grid.face_y
         return np.array([face_x, face_y]).T
-    
+
     def _get_2d_topology(self) -> str:
         for variable_name in self._dataset.data_vars:
             attr = self._dataset[variable_name].attrs
-            if attr.get(AttrKey.cf_role) == AttrValue.mesh_topology and attr.get(AttrKey.topology_dimension) == 2:
+            if (
+                attr.get(AttrKey.cf_role) == AttrValue.mesh_topology
+                and attr.get(AttrKey.topology_dimension) == 2
+            ):
                 return variable_name
-        
+
         raise ValueError("Dataset does not contain 2D topology")
-    
+
     def _get_variables_by_attr_filter(self, **filter):
         dataset = self._dataset.filter_by_attrs(**filter)
         for variable in dataset.values():
             yield variable
-    
+
     def _get_2d_variable(self, standard_name: str) -> xr.DataArray:
-        standard_name_filter = {AttrKey.standard_name: standard_name,
-                                AttrKey.mesh: self._get_2d_topology()}
+        standard_name_filter = {
+            AttrKey.standard_name: standard_name,
+            AttrKey.mesh: self._get_2d_topology(),
+        }
         variable = next(self._get_variables_by_attr_filter(**standard_name_filter))
         return variable
-    
+
     def to_triangular_mesh(self):
         face_coords = self._get_face_coordinates()
         water_depth_data = self._get_2d_variable(StandardName.water_depth)
