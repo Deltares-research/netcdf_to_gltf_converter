@@ -63,6 +63,7 @@ class Wrapper:
         self._dataset = dataset
         self._grid = Ugrid2d.from_dataset(dataset, MeshType.mesh2d)
         self._interpolator = Interpolator()
+        self._triangulator = Triangulator()
 
     def _interpolate(self, data_coords: np.ndarray, data_values: np.ndarray, grid: Ugrid2d):
         return self._interpolator.interpolate_nearest(data_coords, data_values, grid, Location.nodes)
@@ -104,7 +105,7 @@ class Wrapper:
         data_coords = self._get_coordinates(data_location)
         data_values = data.isel(time=0)
 
-        triangulated_grid = Triangulator.triangulate(self._grid)
+        triangulated_grid = self._triangulator.triangulate(self._grid)
         interpolated_data = self._interpolate(data_coords, data_values, triangulated_grid)
         
         base_geometry = MeshAttributes(vertex_positions=interpolated_data)

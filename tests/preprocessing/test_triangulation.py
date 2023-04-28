@@ -8,8 +8,9 @@ from tests.preprocessing.utils import Factory
 
 class TestTriangulator:
     def test_triangulate(self):
+        triangulator = Triangulator()
         rectilinear_grid = Factory.create_rectilinear_ugrid2d()
-        triangulated_grid = Triangulator.triangulate(rectilinear_grid)
+        triangulated_grid = triangulator.triangulate(rectilinear_grid)
 
         assert np.array_equal(rectilinear_grid.node_x, triangulated_grid.node_x)
         assert np.array_equal(rectilinear_grid.node_y, triangulated_grid.node_y)
