@@ -44,7 +44,7 @@ class TestTriangularMesh:
                 [0, 1, 0.01],
             ]
         )
-        
+
         exp_place_vertex_colors = float32_array(
             [
                 [1.0, 1.0, 1.0, 1.0],
@@ -53,11 +53,15 @@ class TestTriangularMesh:
                 [1.0, 1.0, 1.0, 1.0],
             ]
         )
-        
+
         assert triangular_mesh.base == base_geometry
         assert np.array_equal(triangular_mesh.triangles, triangles)
         assert len(triangular_mesh.transformations) == 1
         assert triangular_mesh.transformations[0] == transformation
-        
-        assert np.array_equal(triangular_mesh.plane.vertex_positions, exp_plane_vertex_positions)
-        assert np.array_equal(triangular_mesh.plane.vertex_colors, exp_place_vertex_colors)
+
+        assert np.array_equal(
+            triangular_mesh.plane.vertex_positions, exp_plane_vertex_positions
+        )
+        assert np.array_equal(
+            triangular_mesh.plane.vertex_colors, exp_place_vertex_colors
+        )

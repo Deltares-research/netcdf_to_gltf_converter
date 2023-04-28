@@ -7,7 +7,9 @@ from netcdf_to_gltf_converter.utils.arrays import float32_array, validate_2d_arr
 
 
 class MeshAttributes:
-    def __init__(self, vertex_positions: np.ndarray, mesh_color: List = DEFAULT_MESH_COLOR) -> None:
+    def __init__(
+        self, vertex_positions: np.ndarray, mesh_color: List = DEFAULT_MESH_COLOR
+    ) -> None:
         """Initialize a MeshAttributes with the specified arguments.
 
         Args:
@@ -50,14 +52,16 @@ class TriangularMesh:
         self.triangles = triangles
         self.transformations = transformations
         self.plane = self._get_plane_mesh(height=0.01)
-        
+
         self._validate()
 
     def _get_plane_mesh(self, height: float) -> MeshAttributes:
         vertex_positions = self.base.vertex_positions.copy()
         vertex_positions[:, -1] = height
-        return MeshAttributes(vertex_positions=vertex_positions, mesh_color=PLANE_MESH_COLOR)
-        
+        return MeshAttributes(
+            vertex_positions=vertex_positions, mesh_color=PLANE_MESH_COLOR
+        )
+
     def _validate(self):
         validate_2d_array(self.triangles, np.uint32, n_col=3)
 
