@@ -13,8 +13,23 @@ glTF is used in a variety of industries and applications, including gaming, virt
 ## Requirements
 - Python 3.9 or later
 
-## Usage
-1. Clone this repository to your local machine.
-2. ...
+## Installation
+1. Install dependency manager [Poetry](https://python-poetry.org/docs/):
 
+**Windows (PowerShell)**
+```
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
+```
+
+**Linux, macOS, Windows (WSL)**
+```
+curl -sSL https://install.python-poetry.org | python3 -
+```
+2. Clone this repository to your local machine
+[download](docs/installation/img/download.png")
+
+3. From the root folder, open your command line and execute:
+```
+poetry install
+```
 ## Example
