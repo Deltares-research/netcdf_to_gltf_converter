@@ -3,7 +3,7 @@ from typing import List
 
 import numpy as np
 import xarray as xr
-from xugrid import Ugrid2d, UgridDataset
+from xugrid import Ugrid2d
 
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
@@ -31,6 +31,8 @@ class AttrKey(str, Enum):
     """Mesh"""
     standard_name = "standard_name"
     """Standard name"""
+    location = "location"
+    """Mesh location of the data"""
 
 
 class AttrValue(str, Enum):
@@ -39,6 +41,10 @@ class AttrValue(str, Enum):
     mesh_topology = "mesh_topology"
     """Mesh topology"""
 
+class DataLocation(str, Enum):
+    face = "face"
+    node = "node"
+    edge = "edge"
 
 class StandardName(str, Enum):
     """Enum containg the valid variable standard names according to the
@@ -55,9 +61,6 @@ class StandardName(str, Enum):
 
 
 class Wrapper:
-    @staticmethod
-    def data_for_time(variable: xr.DataArray, time_index: int):
-        return variable.isel(time=time_index)
 
     @staticmethod
     def interpolate(data_coords: np.ndarray, data_values: np.ndarray, grid):
@@ -69,21 +72,23 @@ class Wrapper:
         self._dataset = dataset
         self._grid = Ugrid2d.from_dataset(dataset, MeshType.mesh2d)
 
-    def _get_face_coordinates(self):
-        face_x = self._grid.face_x
-        face_y = self._grid.face_y
-        return np.array([face_x, face_y]).T
+    def _get_coordinates(self, location: DataLocation):
+        if location == DataLocation.face:
+            return self._grid.face_coordinates
+        if location == DataLocation.edge:
+            return self._grid.edge_coordinates
+        if location == DataLocation.node:
+            return self._grid.node_coordinates
+        
+        raise ValueError(f"Location {location} not supported.")
 
     def _get_2d_topology(self) -> str:
-        for variable_name in self._dataset.data_vars:
-            attr = self._dataset[variable_name].attrs
-            if (
-                attr.get(AttrKey.cf_role) == AttrValue.mesh_topology
-                and attr.get(AttrKey.topology_dimension) == 2
-            ):
-                return variable_name
-
-        raise ValueError("Dataset does not contain 2D topology")
+        filter = {
+            AttrKey.cf_role: AttrValue.mesh_topology,
+            AttrKey.topology_dimension: 2,
+        }
+        variable = next(self._get_variables_by_attr_filter(**filter))
+        return variable.name
 
     def _get_variables_by_attr_filter(self, **filter):
         dataset = self._dataset.filter_by_attrs(**filter)
@@ -91,30 +96,31 @@ class Wrapper:
             yield variable
 
     def _get_2d_variable(self, standard_name: str) -> xr.DataArray:
-        standard_name_filter = {
+        filter = {
             AttrKey.standard_name: standard_name,
             AttrKey.mesh: self._get_2d_topology(),
         }
-        variable = next(self._get_variables_by_attr_filter(**standard_name_filter))
+        variable = next(self._get_variables_by_attr_filter(**filter))
         return variable
 
     def to_triangular_mesh(self):
-        face_coords = self._get_face_coordinates()
-        water_depth_data = self._get_2d_variable(StandardName.water_depth)
-        data_values = Wrapper.data_for_time(water_depth_data, time_index=0)
+        data = self._get_2d_variable(StandardName.water_depth)
+        data_location = data.attrs.get(AttrKey.location)
+        data_coords = self._get_coordinates(data_location)
+        data_values = data.isel(time=0)
 
         triangulated_grid = Triangulator.triangulate(self._grid)
         interpolated_vertex_positions = Wrapper.interpolate(
-            face_coords, data_values, triangulated_grid
+            data_coords, data_values, triangulated_grid
         )
         base_geometry = MeshAttributes(vertex_positions=interpolated_vertex_positions)
 
         transformations: List[MeshAttributes] = []
-        n_times = water_depth_data.sizes["time"]
+        n_times = data.sizes["time"]
         for time_index in range(1, n_times):
-            data_values = Wrapper.data_for_time(water_depth_data, time_index)
+            data_values = data.isel(time=time_index)
             interpolated_vertex_positions = Wrapper.interpolate(
-                face_coords, data_values, triangulated_grid
+                data_coords, data_values, triangulated_grid
             )
             vertex_displacements = np.subtract(
                 interpolated_vertex_positions,
