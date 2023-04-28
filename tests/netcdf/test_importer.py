@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -56,9 +57,14 @@ class TestImporter:
         )
 
         assert np.array_equal(triangular_grid.triangles, exp_triangles)
-        assert np.array_equal(triangular_grid.base.vertex_positions, exp_vertex_positions)
+        assert np.array_equal(
+            triangular_grid.base.vertex_positions, exp_vertex_positions
+        )
         assert len(triangular_grid.transformations) == 4
-        assert np.array_equal(triangular_grid.transformations[2].vertex_positions, exp_vertex_transformations)
+        assert np.array_equal(
+            triangular_grid.transformations[2].vertex_positions,
+            exp_vertex_transformations,
+        )
 
     def test_import_from_netcdf_does_not_exist_raises_error(self):
         netcdf = Path("path/to/file.netcdf")

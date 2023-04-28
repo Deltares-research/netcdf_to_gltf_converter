@@ -1,13 +1,15 @@
 from enum import Enum
 from typing import List
+
 import numpy as np
 import xarray as xr
 from xugrid import Ugrid2d, UgridDataset
-from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 
+from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
+
 
 class MeshType(str, Enum):
     """Enum containg the valid mesh types as stored in the "mesh" attribute of a data variable."""
@@ -16,6 +18,7 @@ class MeshType(str, Enum):
     """1D mesh"""
     mesh2d = "Mesh2d"
     """2D mesh"""
+
 
 class StandardName(str, Enum):
     """Enum containg the valid variable standard names according to the
@@ -49,6 +52,7 @@ class Wrapper:
         )
 
         return ds_water_depth
+
     @staticmethod
     def get_water_depth_for_time(ds_water_depth, time_index: int):
         ds_water_depth_for_time = ds_water_depth.isel(time=time_index)
@@ -60,13 +64,12 @@ class Wrapper:
         return Interpolator.interpolate_nearest(
             data_coords, data_values, grid, Location.nodes
         )
-        
+
     def __init__(self, dataset: xr.Dataset) -> None:
         self._dataset = dataset
         self._grid = Ugrid2d.from_dataset(dataset, MeshType.mesh2d)
-        
-    def to_triangular_mesh(self):
 
+    def to_triangular_mesh(self):
         triangulated_grid = Triangulator.triangulate(self._grid)
 
         ds_water_depth = Wrapper._get_water_depth_2d(self._dataset)
@@ -102,5 +105,3 @@ class Wrapper:
             transformations=transformations,
         )
         return triangular_mesh
-
-
