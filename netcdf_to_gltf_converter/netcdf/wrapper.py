@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Generator, List
+from typing import Generator
 
 import numpy as np
 import xarray as xr

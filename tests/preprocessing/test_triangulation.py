@@ -1,6 +1,4 @@
 import numpy as np
-import xugrid as xu
-from xugrid import Ugrid2d
 
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 from tests.preprocessing.utils import Factory
