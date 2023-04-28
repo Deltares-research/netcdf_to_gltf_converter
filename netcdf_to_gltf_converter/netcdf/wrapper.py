@@ -107,6 +107,16 @@ class Wrapper:
 
         base_geometry = MeshAttributes(vertex_positions=interpolated_data)
 
+        transformations = self._get_transformations(data, data_coords, triangulated_grid, base_geometry)
+
+        triangular_mesh = TriangularMesh(
+            base=base_geometry,
+            triangles=uint32_array(triangulated_grid.face_node_connectivity),
+            transformations=transformations,
+        )
+        return triangular_mesh
+
+    def _get_transformations(self, data, data_coords, triangulated_grid, base_geometry):
         transformations: List[MeshAttributes] = []
         n_times = data.sizes["time"]
         for time_index in range(1, n_times):
@@ -121,10 +131,5 @@ class Wrapper:
             )
             transformation = MeshAttributes(vertex_positions=vertex_displacements)
             transformations.append(transformation)
-
-        triangular_mesh = TriangularMesh(
-            base=base_geometry,
-            triangles=uint32_array(triangulated_grid.face_node_connectivity),
-            transformations=transformations,
-        )
-        return triangular_mesh
+            
+        return transformations
