@@ -111,8 +111,10 @@ class Wrapper:
         data_values = data.isel(time=0)
 
         triangulated_grid = self._triangulator.triangulate(self._grid)
-        interpolated_data = self._interpolate(data_coords, data_values, triangulated_grid)
-        
+        interpolated_data = self._interpolate(
+            data_coords, data_values, triangulated_grid
+        )
+
         base_geometry = MeshAttributes(vertex_positions=interpolated_data)
 
         transformations: List[MeshAttributes] = []
