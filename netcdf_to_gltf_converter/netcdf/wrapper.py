@@ -19,6 +19,23 @@ class MeshType(str, Enum):
     mesh2d = "Mesh2d"
     """2D mesh"""
 
+class AttrKey(str, Enum):
+    """Enum containing variable attribute keys."""
+    
+    cf_role = "cf_role"
+    """CF role"""
+    topology_dimension = "topology_dimension"
+    """Topology dimension"""
+    mesh = "mesh"
+    """Mesh"""
+    standard_name = "standard_name"
+    """Standard name"""
+
+class AttrValue(str, Enum):
+    """Enum containing variable attribute values."""
+    
+    mesh_topology = "mesh_topology"
+    """Mesh topology"""
 
 class StandardName(str, Enum):
     """Enum containg the valid variable standard names according to the
@@ -35,29 +52,10 @@ class StandardName(str, Enum):
 
 
 class Wrapper:
-    @staticmethod
-    def _filter_by_mesh(ds: xr.Dataset, mesh: MeshType):
-        return ds.filter_by_attrs(mesh=mesh)
 
     @staticmethod
-    def _filter_by_standard_name(ds: xr.Dataset, standard_name: str):
-        standard_name_filter = {"standard_name": standard_name}
-        return ds.filter_by_attrs(**standard_name_filter)
-
-    @staticmethod
-    def _get_water_depth_2d(ugrid_ds: UgridDataset) -> xr.Dataset:
-        ds_mesh2d: xr.Dataset = Wrapper._filter_by_mesh(ugrid_ds, MeshType.mesh2d)
-        ds_water_depth: xr.DataArray = Wrapper._filter_by_standard_name(
-            ds_mesh2d, StandardName.water_depth
-        )
-
-        return ds_water_depth
-
-    @staticmethod
-    def get_water_depth_for_time(ds_water_depth, time_index: int):
-        ds_water_depth_for_time = ds_water_depth.isel(time=time_index)
-        data_values = ds_water_depth_for_time["Mesh2d_waterdepth"].data
-        return data_values
+    def data_for_time(variable: xr.DataArray, time_index: int):
+        return variable.isel(time=time_index)
 
     @staticmethod
     def interpolate(data_coords: np.ndarray, data_values: np.ndarray, grid):
@@ -74,22 +72,40 @@ class Wrapper:
         face_y = self._grid.face_y
         return np.array([face_x, face_y]).T
     
+    def _get_2d_topology(self) -> str:
+        for variable_name in self._dataset.data_vars:
+            attr = self._dataset[variable_name].attrs
+            if attr.get(AttrKey.cf_role) == AttrValue.mesh_topology and attr.get(AttrKey.topology_dimension) == 2:
+                return variable_name
+        
+        raise ValueError("Dataset does not contain 2D topology")
+    
+    def _get_variables_by_attr_filter(self, **filter):
+        dataset = self._dataset.filter_by_attrs(**filter)
+        for variable in dataset.values():
+            yield variable
+    
+    def _get_2d_variable(self, standard_name: str) -> xr.DataArray:
+        standard_name_filter = {AttrKey.standard_name: standard_name,
+                                AttrKey.mesh: self._get_2d_topology()}
+        variable = next(self._get_variables_by_attr_filter(**standard_name_filter))
+        return variable
+    
     def to_triangular_mesh(self):
         face_coords = self._get_face_coordinates()
-        ds_water_depth = Wrapper._get_water_depth_2d(self._dataset)
-        
-        triangulated_grid = Triangulator.triangulate(self._grid)
-        data_values = Wrapper.get_water_depth_for_time(ds_water_depth, time_index=0)
+        water_depth_data = self._get_2d_variable(StandardName.water_depth)
+        data_values = Wrapper.data_for_time(water_depth_data, time_index=0)
 
+        triangulated_grid = Triangulator.triangulate(self._grid)
         interpolated_vertex_positions = Wrapper.interpolate(
             face_coords, data_values, triangulated_grid
         )
         base_geometry = MeshAttributes(vertex_positions=interpolated_vertex_positions)
 
         transformations: List[MeshAttributes] = []
-        n_times = ds_water_depth.dims["time"]
+        n_times = water_depth_data.sizes["time"]
         for time_index in range(1, n_times):
-            data_values = Wrapper.get_water_depth_for_time(ds_water_depth, time_index)
+            data_values = Wrapper.data_for_time(water_depth_data, time_index)
             interpolated_vertex_positions = Wrapper.interpolate(
                 face_coords, data_values, triangulated_grid
             )
