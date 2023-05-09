@@ -35,11 +35,11 @@ The converter operates through the following steps:
 2. The variable with the standard name sea_floor_depth_below_sea_surface is loaded from the NetCDF file.
 3. The data locations for the variable are determined as x- and y-coordinates.
 4. For the first time step:
--- The variable data is interpolated onto the vertices of the grid.
--- The interpolated variable data is defined as the base mesh for glTF.
+   * The variable data is interpolated onto the vertices of the grid.
+   * The interpolated variable data is defined as the base mesh for glTF.
 5. For each subsequent time step:
--- The variable data is interpolated onto the vertices of the grid.
--- With the interpolated variable data, the water depth displacements are calculated with respect to the base mesh, allowing it to be animated.
+   * The variable data is interpolated onto the vertices of the grid.
+   * With the interpolated variable data, the water depth displacements are calculated with respect to the base mesh, allowing it to be animated.
 6. From the derived geometries, a blue mesh is built for glTF.
 7. In addition to the blue mesh that renders the variable data, a static white mesh with a height of 0.01 is built. This is done to provide a clear visual distinction between dry and wet cells, which have depths <= 0.01 and > 0.01, respectively.
 
