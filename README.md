@@ -4,18 +4,19 @@
 
 # Contents
 
-1. [D-HYDRO NetCDF output to glTF converter](#intro)
-    1. [Why use glTF](#why-gltf)
-    2. [How it works](#how-it-works)
-2. [User guide](#user-guide)
-    1. [Requirements](#requirements)
-	2.	[Installation](#installation)
-	3.	[Usage](#usage)
-	4.	[View results](#view-results)
-3. [Contributing](#contributing)
-4. [Acknowledgements](#acknowledgements)
+- [Contents](#contents)
+- [D-HYDRO NetCDF output to glTF converter](#d-hydro-netcdf-output-to-gltf-converter)
+  - [Why use glTF](#why-use-gltf)
+  - [How it works](#how-it-works)
+- [User guide](#user-guide)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [View results](#view-results)
+- [Contributing](#contributing)
+- [Acknowledgments](#acknowledgments)
 
-# D-HYDRO NetCDF output to glTF converter <a name="intro"></a>
+# D-HYDRO NetCDF output to glTF converter
 
 This is a tool that converts D-HYDRO map output results that are stored in the NetCDF file format to the glTF file format. The goal is to allow users who work with D-HYDRO results to view their data in 3D renderers using the glTF format.
 
@@ -25,11 +26,11 @@ Currently, the tool is focused on converting the water depth data from the map r
   <img src="docs/readme/img/result.gif" alt="animated" />
 </p>
 
-## Why use glTF <a name="why-gltf"></a>
+## Why use glTF
 glTF (GL Transmission Format) is an open-standard file format developed by The Khronos Group. The glTF file format is used for 3D scenes and models designed for efficient transmission and loading of 3D content on the web and other real-time applications. This file format can store geometry, materials, textures, animations, and other scene data.
 glTF is used in a variety of industries and applications, including gaming, virtual and augmented reality, education, and more. It is particularly well-suited for web-based applications, as it allows 3D content to be easily and efficiently delivered over the internet, and can be rendered in real-time on a wide range of devices. 
 
-## How it works <a name="how-it-works"></a>
+## How it works
 The converter operates through the following steps:
 
 1. The 2D grid from the user-defined NetCDF file is triangulated, allowing it to be passed to glTF. In order to render a mesh, glTF requires a geometry definition that consists of triangles.
@@ -52,12 +53,12 @@ The converter operates through the following steps:
 
 By following these steps, the converter is able to take NetCDF files containing water depth data and convert the data into glTF files that can be used to view the data in 3D renderers. While the tool is currently focused on converting water depth data, it may be expanded to support other variables in the future.
 
-# User guide <a name="user-guide"></a>
+# User guide
 ## Requirements
 - Python >=3.9, <3.12
 - Poetry >=1.4.2 
 
-## Installation <a name="installation"></a>
+## Installation
 To install the converter, follow these steps:
 
 1. Install dependency manager [Poetry](https://python-poetry.org/docs/):
@@ -79,7 +80,7 @@ poetry install
 
 These steps will ensure that the converter is installed within a virtual environment (`.venv`) and you can start calling the converter script.
 
-## Usage <a name="usage"></a>
+## Usage
  After following the installation steps, the converter can be used from the command line. 
  Two arguments should be passed to the converter script.
 1. The path to the source NetCDF file. Only files with the following conventions are supported: `CF-1.8 UGRID-1.0 Deltares-0.10`
@@ -90,15 +91,15 @@ These steps will ensure that the converter is installed within a virtual environ
  poetry run python input_map.nc output.gltf
  ```
  
-## View results <a name="view-results"></a>
+## View results
  Several glTF viewers exist that can be used to view the produced glTF file. Simply drag and drop the file, and the glTF file will be rendered.
  * [glTF Sample Viewer](https://github.khronos.org/glTF-Sample-Viewer-Release/)
  * [Babylon.js Sandbox](https://sandbox.babylonjs.com/)
 
-# Contributing <a name="contributing"></a>
+# Contributing
 If you encounter any issues or have good ideas for this project please [create an issue](https://github.com/Deltares/netcdf_to_gltf_converter/issues/new/choose). This will help improve the project. Before creating any new issues, please check the [backlog](https://github.com/Deltares/netcdf_to_gltf_converter/issues) to see if your issue already exists. 
 
-# Acknowledgments <a name="acknowledgements"></a>
+# Acknowledgments
 [Connec2](https://connec2.nl/) is a company specialized in cross reality (XR) technology that guided us to setup this project. 
 
 This tool was developed as part of the fifth [Top consortium for Knowledge and Innovation (TKI) programme](https://www.tkiwatertechnologie.nl/).
