@@ -68,5 +68,5 @@ class TriangularMesh:
         n_vertices = len(self.base.vertex_positions)
         for transformation in self.transformations:
             assert len(transformation.vertex_positions) == n_vertices
-        
+
         assert len(self.plane.vertex_positions) == n_vertices
