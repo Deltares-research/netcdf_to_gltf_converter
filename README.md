@@ -18,6 +18,7 @@
 # D-HYDRO NetCDF output to glTF converter <a name="intro"></a>
 
 This is a tool that converts D-HYDRO map output results that are stored in the NetCDF file format to the glTF file format. The goal is to allow users who work with D-HYDRO results to view their data in 3D renderers using the glTF format.
+
 Currently, the tool is focused on converting the water depth data from the map results. Other variables are not supported yet.
 
 <p align="center">
@@ -99,5 +100,6 @@ If you encounter any issues or have good ideas for this project please [create a
 
 # Acknowledgments <a name="acknowledgements"></a>
 [Connec2](https://connec2.nl/) is a company specialized in cross reality (XR) technology that guided us to setup this project. 
+
 This tool was developed as part of the fifth [Top consortium for Knowledge and Innovation (TKI) programme](https://www.tkiwatertechnologie.nl/).
 
