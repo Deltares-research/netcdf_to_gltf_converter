@@ -33,7 +33,7 @@ glTF is used in a variety of industries and applications, including gaming, virt
 The converter operates through the following steps:
 
 1. The 2D grid from the user-defined NetCDF file is triangulated, allowing it to be passed to glTF. In order to render a mesh, glTF requires a geometry definition that consists of triangles.
-2. The variable with the standard name sea_floor_depth_below_sea_surface is loaded from the NetCDF file.
+2. The variable with the standard name `sea_floor_depth_below_sea_surface` is loaded from the NetCDF file.
 3. The data locations for the variable are determined as x- and y-coordinates.
 4. For the first time step:
    * The variable data is interpolated onto the vertices of the grid.
@@ -50,7 +50,7 @@ The converter operates through the following steps:
 
 8. The glTF data is exported to the user-defined glTF file.
 
-By following these steps, the converter is able to take NetCDF files containing D-HYDRO map output results and convert them into glTF files that can be used to view the data in 3D renderers. While the tool is currently focused on converting water depth data, it may be expanded to support other variables in the future.
+By following these steps, the converter is able to take NetCDF files containing water depth data and convert the data into glTF files that can be used to view the data in 3D renderers. While the tool is currently focused on converting water depth data, it may be expanded to support other variables in the future.
 
 # User guide <a name="user-guide"></a>
 ## Requirements
