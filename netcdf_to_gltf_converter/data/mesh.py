@@ -65,8 +65,8 @@ class TriangularMesh:
     def _validate(self):
         validate_2d_array(self.triangles, np.uint32, n_col=3)
 
+        n_vertices = len(self.base.vertex_positions)
         for transformation in self.transformations:
-            assert (
-                transformation.vertex_positions.size == self.base.vertex_positions.size
-            )
-            assert transformation.vertex_colors.size == self.base.vertex_colors.size
+            assert len(transformation.vertex_positions) == n_vertices
+        
+        assert len(self.plane.vertex_positions) == n_vertices
