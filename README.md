@@ -44,7 +44,7 @@ The converter operates through the following steps:
 7. In addition to the blue mesh that renders the variable data, a static white mesh with a height of 0.01 is built. This is done to provide a clear visual distinction between dry and wet cells, which have depths <= 0.01 and > 0.01, respectively.
 
 <p align="center">
-  <img src="docs/readme/img/dry-wet-cells.png" />
+  <img src="docs/readme/img/dry-wet-cells.png" width="50%" height="50%" />
 </p>
 
 8. The glTF data is exported to the user-defined glTF file.
