@@ -14,7 +14,7 @@ class TestImporter:
 
         variable = Variable(standard_name="sea_floor_depth_below_sea_surface")
         variable.threshold = Threshold(height=0.01, color=[1.0, 1.0, 1.0, 1.0])
-        config = Config(variables=[variable])
+        config = Config(shift_coordinates=False, variables=[variable])
 
         triangular_meshes = Importer.import_from(file_path, config)
         data_mesh = triangular_meshes[0]
@@ -75,6 +75,6 @@ class TestImporter:
         netcdf = Path("path/to/file.netcdf")
 
         with pytest.raises(ValueError) as error:
-            _ = Importer.import_from(netcdf, Config())
+            _ = Importer.import_from(netcdf, Config(shift_coordinates=False, variables=[]))
 
         assert str(error.value) == rf"NetCDF file does not exist: {netcdf}"
