@@ -2,7 +2,7 @@ from typing import List
 
 import numpy as np
 
-from netcdf_to_gltf_converter.data.colors import DEFAULT_MESH_COLOR, PLANE_MESH_COLOR
+from netcdf_to_gltf_converter.data.colors import DEFAULT_MESH_COLOR
 from netcdf_to_gltf_converter.utils.arrays import float32_array, validate_2d_array
 
 
@@ -51,15 +51,28 @@ class TriangularMesh:
         self.base = base
         self.triangles = triangles
         self.transformations = transformations
-        self.plane = self._get_plane_mesh(height=0.01)
 
         self._validate()
 
-    def _get_plane_mesh(self, height: float) -> MeshAttributes:
+    def get_threshold_mesh(self, height: float, color: List[float]) -> "TriangularMesh":
+        """Gets a triangular mesh with the same x- and y-geometry, but with the z-coordinates set at a fixed height.
+
+        Args:
+            height (float): The desired height of the threshold mesh.
+            color (List[float]): The vertex color in the threshold mesh defined by the normalized red, green, blue and alpha (RGBA) values.
+
+        Returns:
+            TriangularMesh: The triangular mesh with the fixed height.
+        """
         vertex_positions = self.base.vertex_positions.copy()
         vertex_positions[:, -1] = height
-        return MeshAttributes(
-            vertex_positions=vertex_positions, mesh_color=PLANE_MESH_COLOR
+
+        mesh_attributes = MeshAttributes(
+            vertex_positions=vertex_positions, mesh_color=color
+        )
+
+        return TriangularMesh(
+            base=mesh_attributes, triangles=self.triangles, transformations=[]
         )
 
     def _validate(self):
@@ -68,5 +81,3 @@ class TriangularMesh:
         n_vertices = len(self.base.vertex_positions)
         for transformation in self.transformations:
             assert len(transformation.vertex_positions) == n_vertices
-
-        assert len(self.plane.vertex_positions) == n_vertices
