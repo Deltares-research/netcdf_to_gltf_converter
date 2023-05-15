@@ -131,6 +131,9 @@ class Wrapper:
         data_coords = self._get_coordinates(data_location)
         data_values = data.isel(time=0)
 
+        if self._config.shift_coordinates:
+            self._shift_coordinates(data_coords)
+            
         triangulated_grid = self._triangulator.triangulate(self._grid)
         interpolated_data = self._interpolate(
             data_coords, data_values, triangulated_grid
@@ -147,3 +150,13 @@ class Wrapper:
             triangles=triangles,
             transformations=transformations,
         )
+
+    def _shift_coordinates(self, coordinates: np.ndarray):
+        shift_x = self._grid.node_x.min()
+        shift_y = self._grid.node_y.min()
+
+        coordinates[:, 0] -= shift_x
+        coordinates[:, 1] -= shift_y
+        
+        self._grid.node_x -= shift_x
+        self._grid.node_y -= shift_y
