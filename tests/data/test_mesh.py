@@ -90,7 +90,9 @@ class TestTriangularMesh:
             ]
         )
 
-        threshold_mesh = triangular_mesh.get_threshold_mesh(height=0.01, color=[1.0, 1.0, 1.0, 1.0])
+        threshold_mesh = triangular_mesh.get_threshold_mesh(
+            height=0.01, color=[1.0, 1.0, 1.0, 1.0]
+        )
 
         assert np.array_equal(threshold_mesh.triangles, triangular_mesh.triangles)
         assert np.array_equal(
