@@ -1,5 +1,6 @@
 {
   "file_version": "0.1.0",
+  "shift_coordinates": false,
   "variables": [
 	{
       "standard_name": "sea_floor_depth_below_sea_surface",

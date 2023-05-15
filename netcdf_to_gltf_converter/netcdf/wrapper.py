@@ -5,6 +5,7 @@ import numpy as np
 import xarray as xr
 from xugrid import Ugrid2d
 
+from netcdf_to_gltf_converter.config import Config
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
@@ -52,8 +53,16 @@ class StandardName(str, Enum):
 
 
 class Wrapper:
-    def __init__(self, dataset: xr.Dataset) -> None:
+    def __init__(self, dataset: xr.Dataset, config: Config) -> None:
+        """Initialize a Wrapper with the specified arguments.
+
+        Args:
+            dataset (xr.Dataset): The NetCDF dataset.
+            config (Config): The converter configuration.
+        """
+
         self._dataset = dataset
+        self._config = config
         self._2d_topology = self._get_2d_topology()
         self._grid = Ugrid2d.from_dataset(dataset, self._2d_topology)
         self._interpolator = Interpolator()
@@ -122,6 +131,9 @@ class Wrapper:
         data_coords = self._get_coordinates(data_location)
         data_values = data.isel(time=0)
 
+        if self._config.shift_coordinates:
+            self._shift_coordinates(data_coords)
+
         triangulated_grid = self._triangulator.triangulate(self._grid)
         interpolated_data = self._interpolate(
             data_coords, data_values, triangulated_grid
@@ -138,3 +150,13 @@ class Wrapper:
             triangles=triangles,
             transformations=transformations,
         )
+
+    def _shift_coordinates(self, coordinates: np.ndarray):
+        shift_x = self._grid.node_x.min()
+        shift_y = self._grid.node_y.min()
+
+        coordinates[:, 0] -= shift_x
+        coordinates[:, 1] -= shift_y
+
+        self._grid.node_x -= shift_x
+        self._grid.node_y -= shift_y

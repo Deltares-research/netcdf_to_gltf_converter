@@ -125,5 +125,7 @@ class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
 
     _expected_file_version = Version("0.1.0")
 
-    variables: List[Variable] = Field(alias="variables", default_factory=list)
+    shift_coordinates: bool = Field(alias="shift_coordinates")
+    """bool: Whether or not to shift the x- and y-coordinates, such that the smallest x and y become the origin (0,0)."""
+    variables: List[Variable] = Field(alias="variables")
     """List[Variable]: List of configuration of the variables that should be converted to glTF."""
