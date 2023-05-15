@@ -133,7 +133,7 @@ class Wrapper:
 
         if self._config.shift_coordinates:
             self._shift_coordinates(data_coords)
-            
+
         triangulated_grid = self._triangulator.triangulate(self._grid)
         interpolated_data = self._interpolate(
             data_coords, data_values, triangulated_grid
@@ -157,6 +157,6 @@ class Wrapper:
 
         coordinates[:, 0] -= shift_x
         coordinates[:, 1] -= shift_y
-        
+
         self._grid.node_x -= shift_x
         self._grid.node_y -= shift_y
