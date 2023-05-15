@@ -63,12 +63,8 @@ class GLTFBuilder:
         scene.nodes.append(node_index)
 
         # Add a buffer for the mesh geometry, colors and animation
-        geometry_buffer_index = add(
-            self._gltf.buffers, Buffer(byteLength=0, uri=b"")
-        )
-        color_buffer_index = add(
-            self._gltf.buffers, Buffer(byteLength=0, uri=b"")
-        )
+        geometry_buffer_index = add(self._gltf.buffers, Buffer(byteLength=0, uri=b""))
+        color_buffer_index = add(self._gltf.buffers, Buffer(byteLength=0, uri=b""))
 
         # Add a buffer view for the indices
         indices_buffer_view_index = add(
@@ -102,7 +98,7 @@ class GLTFBuilder:
                 byteLength=0,
             ),
         )
-        
+
         indices_accessor_index = self._add_accessor_to_bufferview(
             triangular_mesh.triangles,
             indices_buffer_view_index,
@@ -129,15 +125,13 @@ class GLTFBuilder:
             indices=indices_accessor_index,
         )
         self._gltf.meshes[mesh_index].primitives.append(primitive)
-        
+
         n_transformations = len(triangular_mesh.transformations)
         if n_transformations == 0:
             return
-        
-        animation_buffer_index = add(
-            self._gltf.buffers, Buffer(byteLength=0, uri=b"")
-        )
-                
+
+        animation_buffer_index = add(self._gltf.buffers, Buffer(byteLength=0, uri=b""))
+
         # Add buffer view for the sampler inputs: the time frames in seconds
         time_frames_buffer_view_index = add(
             self._gltf.bufferViews,
@@ -149,12 +143,11 @@ class GLTFBuilder:
             self._gltf.bufferViews,
             BufferView(buffer=animation_buffer_index, byteOffset=0, byteLength=0),
         )
-          
+
         time_frames = []
         weights = []
 
         for frame_index, transformation in enumerate(triangular_mesh.transformations):
-
             positions_accessor_index = self._add_accessor_to_bufferview(
                 transformation.vertex_positions,
                 positions_buffer_view_index,
@@ -172,7 +165,7 @@ class GLTFBuilder:
             weights_for_frame = n_transformations * [0.0]
             weights_for_frame[frame_index] = 1.0
             weights.append(weights_for_frame)
-        
+
         # Add time frames accessor
         time_frames_accessor_index = self._add_accessor_to_bufferview(
             float32_array(time_frames),

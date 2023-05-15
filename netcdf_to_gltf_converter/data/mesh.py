@@ -2,7 +2,10 @@ from typing import List
 
 import numpy as np
 
-from netcdf_to_gltf_converter.data.colors import DEFAULT_MESH_COLOR, THRESHOLD_MESH_COLOR
+from netcdf_to_gltf_converter.data.colors import (
+    DEFAULT_MESH_COLOR,
+    THRESHOLD_MESH_COLOR,
+)
 from netcdf_to_gltf_converter.utils.arrays import float32_array, validate_2d_array
 
 
@@ -65,12 +68,14 @@ class TriangularMesh:
         """
         vertex_positions = self.base.vertex_positions.copy()
         vertex_positions[:, -1] = height
-        
+
         mesh_attributes = MeshAttributes(
             vertex_positions=vertex_positions, mesh_color=THRESHOLD_MESH_COLOR
         )
-    
-        return TriangularMesh(base=mesh_attributes, triangles=self.triangles, transformations=[])
+
+        return TriangularMesh(
+            base=mesh_attributes, triangles=self.triangles, transformations=[]
+        )
 
     def _validate(self):
         validate_2d_array(self.triangles, np.uint32, n_col=3)

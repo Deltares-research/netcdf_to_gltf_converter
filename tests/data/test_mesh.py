@@ -71,7 +71,7 @@ class TestTriangularMesh:
         )
 
         triangular_mesh = TriangularMesh(base_geometry, triangles, [transformation])
-        
+
         exp_vertex_positions = float32_array(
             [
                 [0, 0, 0.01],
@@ -89,10 +89,12 @@ class TestTriangularMesh:
                 [1.0, 1.0, 1.0, 1.0],
             ]
         )
-        
+
         threshold_mesh = triangular_mesh.get_threshold_mesh(height=0.01)
 
         assert np.array_equal(threshold_mesh.triangles, triangular_mesh.triangles)
-        assert np.array_equal(threshold_mesh.base.vertex_positions, exp_vertex_positions)
+        assert np.array_equal(
+            threshold_mesh.base.vertex_positions, exp_vertex_positions
+        )
         assert np.array_equal(threshold_mesh.base.vertex_colors, exp_vertex_colors)
         assert len(threshold_mesh.transformations) == 0

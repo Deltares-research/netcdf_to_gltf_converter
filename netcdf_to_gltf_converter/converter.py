@@ -1,6 +1,6 @@
 from pathlib import Path
-from netcdf_to_gltf_converter.config import Config
 
+from netcdf_to_gltf_converter.config import Config
 from netcdf_to_gltf_converter.gltf.builder import GLTFBuilder
 from netcdf_to_gltf_converter.gltf.exporter import Exporter
 from netcdf_to_gltf_converter.netcdf.importer import Importer
@@ -34,11 +34,11 @@ class Converter:
         """Run the conversion."""
 
         triangular_meshes = Importer.import_from(self._netcdf, self._config)
-        
+
         builder = GLTFBuilder()
         for triangular_grid in triangular_meshes:
             builder.add_triangular_mesh(triangular_grid)
-            
+
         gltf = builder.finish()
 
         Exporter.export(gltf, self._gltf)

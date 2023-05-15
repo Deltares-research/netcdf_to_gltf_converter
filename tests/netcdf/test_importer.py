@@ -2,8 +2,8 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from netcdf_to_gltf_converter.config import Config, Threshold, Variable
 
+from netcdf_to_gltf_converter.config import Config, Threshold, Variable
 from netcdf_to_gltf_converter.netcdf.importer import Importer
 from tests.utils import resources
 
@@ -15,10 +15,10 @@ class TestImporter:
         variable = Variable(standard_name="sea_floor_depth_below_sea_surface")
         variable.threshold = Threshold(height=0.01, color=[1.0, 1.0, 1.0, 1.0])
         config = Config(variables=[variable])
-        
+
         triangular_meshes = Importer.import_from(file_path, config)
         data_mesh = triangular_meshes[0]
-        
+
         exp_triangles = np.array(
             [
                 [5, 2, 0],

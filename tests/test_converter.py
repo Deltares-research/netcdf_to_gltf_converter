@@ -16,7 +16,7 @@ class TestConverter:
             _ = Converter(netcdf, gltf, config)
 
         assert str(error.value) == rf"NetCDF file does not exist: {netcdf}"
-        
+
     def test_initialize_config_does_not_exist_raises_error(self):
         netcdf = resources / "3x3nodes_rectilinear_map.nc"
         gltf = Path("path/to/file.gltf")
@@ -26,7 +26,7 @@ class TestConverter:
             _ = Converter(netcdf, gltf, config)
 
         assert str(error.value) == rf"Config file does not exist: {config}"
-            
+
     def test_run(self):
         netcdf = resources / "3x3nodes_rectilinear_map.nc"
         reference_gltf = reference_files / "3x3nodes_rectilinear_map.gltf"

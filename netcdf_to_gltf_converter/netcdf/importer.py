@@ -2,8 +2,8 @@ from pathlib import Path
 from typing import List
 
 import xarray as xr
-from netcdf_to_gltf_converter.config import Config
 
+from netcdf_to_gltf_converter.config import Config
 from netcdf_to_gltf_converter.data.mesh import TriangularMesh
 from netcdf_to_gltf_converter.netcdf.wrapper import Wrapper
 
@@ -28,15 +28,15 @@ class Importer:
 
         ds = xr.open_dataset(str(file_path))
         wrapper = Wrapper(ds)
-        
+
         triangular_meshes = []
-        
+
         for variable in config.variables:
             data_mesh = wrapper.to_triangular_mesh(variable.standard_name)
             triangular_meshes.append(data_mesh)
-            
+
             if variable.threshold:
                 threshold_mesh = data_mesh.get_threshold_mesh(variable.threshold.height)
                 triangular_meshes.append(threshold_mesh)
-        
+
         return triangular_meshes
