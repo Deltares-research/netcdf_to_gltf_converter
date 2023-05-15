@@ -1,0 +1,13 @@
+{
+  "file_version": "0.1.0",
+  "variables": [
+	{
+      "standard_name": "sea_floor_depth_below_sea_surface",
+      "threshold": 
+        {
+          "height": 0.01,
+          "color": [1.0, 1.0, 1.0, 1.0]
+        }
+	}
+  ]
+}

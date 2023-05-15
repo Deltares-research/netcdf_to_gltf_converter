@@ -2,18 +2,20 @@ from pathlib import Path
 from typing import List
 
 import xarray as xr
+from netcdf_to_gltf_converter.config import Config
 
 from netcdf_to_gltf_converter.data.mesh import TriangularMesh
-from netcdf_to_gltf_converter.netcdf.wrapper import StandardName, Wrapper
+from netcdf_to_gltf_converter.netcdf.wrapper import Wrapper
 
 
 class Importer:
     @staticmethod
-    def import_from(file_path: Path) -> List[TriangularMesh]:
+    def import_from(file_path: Path, config: Config) -> List[TriangularMesh]:
         """Imports triangular meshes from the given NetCDF file.
 
         Args:
             file_path (Path): Path to the source NetCDF file.
+            config (Path): Path to the converter configuration file.
 
         Returns:
             List[TriangularMesh]: The list of imported triangular meshes.
@@ -26,7 +28,15 @@ class Importer:
 
         ds = xr.open_dataset(str(file_path))
         wrapper = Wrapper(ds)
-        water_depth_mesh = wrapper.to_triangular_mesh(standard_name=StandardName.water_depth)
-        threshold_mesh = water_depth_mesh.get_threshold_mesh(height=0.01)
         
-        return [water_depth_mesh, threshold_mesh]
+        triangular_meshes = []
+        
+        for variable in config.variables:
+            data_mesh = wrapper.to_triangular_mesh(variable.standard_name)
+            triangular_meshes.append(data_mesh)
+            
+            if variable.threshold:
+                threshold_mesh = data_mesh.get_threshold_mesh(variable.threshold.height)
+                triangular_meshes.append(threshold_mesh)
+        
+        return triangular_meshes
