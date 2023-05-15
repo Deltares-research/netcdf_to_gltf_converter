@@ -10,8 +10,9 @@ from tests.utils import resources
 class TestImporter:
     def test_import_from(self):
         file_path = resources / "3x3nodes_rectilinear_map.nc"
-        triangular_grid = Importer.import_from(file_path)
-
+        triangular_meshes = Importer.import_from(file_path)
+        data_mesh = triangular_meshes[0]
+        
         exp_triangles = np.array(
             [
                 [5, 2, 0],
@@ -56,13 +57,11 @@ class TestImporter:
             dtype=np.float32,
         )
 
-        assert np.array_equal(triangular_grid.triangles, exp_triangles)
+        assert np.array_equal(data_mesh.triangles, exp_triangles)
+        assert np.array_equal(data_mesh.base.vertex_positions, exp_vertex_positions)
+        assert len(data_mesh.transformations) == 4
         assert np.array_equal(
-            triangular_grid.base.vertex_positions, exp_vertex_positions
-        )
-        assert len(triangular_grid.transformations) == 4
-        assert np.array_equal(
-            triangular_grid.transformations[2].vertex_positions,
+            data_mesh.transformations[2].vertex_positions,
             exp_vertex_transformations,
         )
 

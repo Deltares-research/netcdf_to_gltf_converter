@@ -28,10 +28,12 @@ class Converter:
     def run(self):
         """Run the conversion."""
 
-        triangular_grid = Importer.import_from(self._netcdf)
+        triangular_grids = Importer.import_from(self._netcdf)
 
         builder = GLTFBuilder()
-        builder.add_triangular_mesh(triangular_grid)
+        for triangular_grid in triangular_grids:
+            builder.add_triangular_mesh(triangular_grid)
+            
         gltf = builder.finish()
 
         Exporter.export(gltf, self._gltf)

@@ -36,7 +36,43 @@ class TestTriangularMesh:
 
         triangular_mesh = TriangularMesh(base_geometry, triangles, [transformation])
 
-        exp_plane_vertex_positions = float32_array(
+        assert triangular_mesh.base == base_geometry
+        assert np.array_equal(triangular_mesh.triangles, triangles)
+        assert len(triangular_mesh.transformations) == 1
+        assert triangular_mesh.transformations[0] == transformation
+
+    def test_get_threshold_mesh(self):
+        vertex_positions = float32_array(
+            [
+                [0, 0, 1],
+                [1, 0, 2],
+                [1, 1, 3],
+                [0, 1, 4],
+            ]
+        )
+        base_geometry = MeshAttributes(vertex_positions=vertex_positions)
+
+        triangles = uint32_array(
+            [
+                [0, 1, 2],
+                [0, 2, 3],
+            ]
+        )
+
+        transformation = MeshAttributes(
+            vertex_positions=float32_array(
+                [
+                    [0, 0, 0.5],
+                    [0, 0, -0.5],
+                    [0, 0, 0.5],
+                    [0, 0, -1.0],
+                ]
+            )
+        )
+
+        triangular_mesh = TriangularMesh(base_geometry, triangles, [transformation])
+        
+        exp_vertex_positions = float32_array(
             [
                 [0, 0, 0.01],
                 [1, 0, 0.01],
@@ -45,7 +81,7 @@ class TestTriangularMesh:
             ]
         )
 
-        exp_place_vertex_colors = float32_array(
+        exp_vertex_colors = float32_array(
             [
                 [1.0, 1.0, 1.0, 1.0],
                 [1.0, 1.0, 1.0, 1.0],
@@ -53,15 +89,10 @@ class TestTriangularMesh:
                 [1.0, 1.0, 1.0, 1.0],
             ]
         )
+        
+        threshold_mesh = triangular_mesh.get_threshold_mesh(height=0.01)
 
-        assert triangular_mesh.base == base_geometry
-        assert np.array_equal(triangular_mesh.triangles, triangles)
-        assert len(triangular_mesh.transformations) == 1
-        assert triangular_mesh.transformations[0] == transformation
-
-        assert np.array_equal(
-            triangular_mesh.plane.vertex_positions, exp_plane_vertex_positions
-        )
-        assert np.array_equal(
-            triangular_mesh.plane.vertex_colors, exp_place_vertex_colors
-        )
+        assert np.array_equal(threshold_mesh.triangles, triangular_mesh.triangles)
+        assert np.array_equal(threshold_mesh.base.vertex_positions, exp_vertex_positions)
+        assert np.array_equal(threshold_mesh.base.vertex_colors, exp_vertex_colors)
+        assert len(threshold_mesh.transformations) == 0

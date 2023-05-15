@@ -116,8 +116,8 @@ class Wrapper:
 
             yield MeshAttributes(vertex_positions=vertex_displacements)
 
-    def to_triangular_mesh(self):
-        data = self._get_2d_variable(StandardName.water_depth)
+    def to_triangular_mesh(self, standard_name: str):
+        data = self._get_2d_variable(standard_name)
         data_location = data.attrs.get(AttrKey.location)
         data_coords = self._get_coordinates(data_location)
         data_values = data.isel(time=0)
