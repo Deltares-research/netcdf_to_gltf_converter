@@ -4,8 +4,8 @@ from typing import Generator
 import numpy as np
 import xarray as xr
 from xugrid import Ugrid2d
-from netcdf_to_gltf_converter.config import Config
 
+from netcdf_to_gltf_converter.config import Config
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
@@ -60,7 +60,7 @@ class Wrapper:
             dataset (xr.Dataset): The NetCDF dataset.
             config (Config): The converter configuration.
         """
-        
+
         self._dataset = dataset
         self._config = config
         self._2d_topology = self._get_2d_topology()

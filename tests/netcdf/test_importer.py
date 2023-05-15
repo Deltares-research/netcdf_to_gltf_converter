@@ -75,6 +75,8 @@ class TestImporter:
         netcdf = Path("path/to/file.netcdf")
 
         with pytest.raises(ValueError) as error:
-            _ = Importer.import_from(netcdf, Config(shift_coordinates=False, variables=[]))
+            _ = Importer.import_from(
+                netcdf, Config(shift_coordinates=False, variables=[])
+            )
 
         assert str(error.value) == rf"NetCDF file does not exist: {netcdf}"
