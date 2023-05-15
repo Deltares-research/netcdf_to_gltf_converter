@@ -2,10 +2,7 @@ from typing import List
 
 import numpy as np
 
-from netcdf_to_gltf_converter.data.colors import (
-    DEFAULT_MESH_COLOR,
-    THRESHOLD_MESH_COLOR,
-)
+from netcdf_to_gltf_converter.data.colors import DEFAULT_MESH_COLOR
 from netcdf_to_gltf_converter.utils.arrays import float32_array, validate_2d_array
 
 
@@ -57,11 +54,12 @@ class TriangularMesh:
 
         self._validate()
 
-    def get_threshold_mesh(self, height: float) -> "TriangularMesh":
+    def get_threshold_mesh(self, height: float, color: List[float]) -> "TriangularMesh":
         """Gets a triangular mesh with the same x- and y-geometry, but with the z-coordinates set at a fixed height.
 
         Args:
             height (float): The desired height of the threshold mesh.
+            color (List[float]): The vertex color in the threshold mesh defined by the normalized red, green, blue and alpha (RGBA) values.
 
         Returns:
             TriangularMesh: The triangular mesh with the fixed height.
@@ -70,7 +68,7 @@ class TriangularMesh:
         vertex_positions[:, -1] = height
 
         mesh_attributes = MeshAttributes(
-            vertex_positions=vertex_positions, mesh_color=THRESHOLD_MESH_COLOR
+            vertex_positions=vertex_positions, mesh_color=color
         )
 
         return TriangularMesh(

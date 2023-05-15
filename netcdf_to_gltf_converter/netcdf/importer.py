@@ -36,7 +36,7 @@ class Importer:
             triangular_meshes.append(data_mesh)
 
             if variable.threshold:
-                threshold_mesh = data_mesh.get_threshold_mesh(variable.threshold.height)
+                threshold_mesh = data_mesh.get_threshold_mesh(variable.threshold.height, variable.threshold.color)
                 triangular_meshes.append(threshold_mesh)
 
         return triangular_meshes
