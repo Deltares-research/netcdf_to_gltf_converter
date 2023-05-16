@@ -138,7 +138,7 @@ class Wrapper:
 
         if self._config.scale != 1.0:
             self._scale_coordinates(data_coords, data_values)
-            
+
         triangulated_grid = self._triangulator.triangulate(self._grid)
         interpolated_data = self._interpolate(
             data_coords, data_values, triangulated_grid
@@ -165,7 +165,7 @@ class Wrapper:
 
         self._grid.node_x -= shift_x
         self._grid.node_y -= shift_y
-        
+
     def _scale_coordinates(self, coordinates: np.ndarray, data_values: np.ndarray):
         scale = self._config.scale
 
