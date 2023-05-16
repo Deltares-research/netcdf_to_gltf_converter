@@ -115,7 +115,8 @@ class Wrapper:
     ) -> Generator[MeshAttributes, None, None]:
         n_times = data.sizes["time"]
         for time_index in range(1, n_times):
-            data_values = data.isel(time=time_index)
+            data_values = data.isel(time=time_index).to_numpy()
+            np.multiply(data_values, self._config.scale, out=data_values)
             interpolated_data = self._interpolate(data_coords, data_values, grid)
             vertex_displacements = np.subtract(
                 interpolated_data,
@@ -129,11 +130,15 @@ class Wrapper:
         data = self._get_2d_variable(standard_name)
         data_location = data.attrs.get(AttrKey.location)
         data_coords = self._get_coordinates(data_location)
-        data_values = data.isel(time=0)
+        data_values = data.isel(time=0).to_numpy()
 
+        self._config.shift_coordinates = True
         if self._config.shift_coordinates:
             self._shift_coordinates(data_coords)
 
+        if self._config.scale != 1.0:
+            self._scale_coordinates(data_coords, data_values)
+            
         triangulated_grid = self._triangulator.triangulate(self._grid)
         interpolated_data = self._interpolate(
             data_coords, data_values, triangulated_grid
@@ -160,3 +165,11 @@ class Wrapper:
 
         self._grid.node_x -= shift_x
         self._grid.node_y -= shift_y
+        
+    def _scale_coordinates(self, coordinates: np.ndarray, data_values: np.ndarray):
+        scale = self._config.scale
+
+        np.multiply(coordinates, scale, out=coordinates)
+        np.multiply(data_values, scale, out=data_values)
+        np.multiply(self._grid.node_x, scale, out=self._grid.node_x)
+        np.multiply(self._grid.node_y, scale, out=self._grid.node_y)
