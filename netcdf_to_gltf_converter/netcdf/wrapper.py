@@ -6,14 +6,19 @@ import xarray as xr
 from xugrid import Ugrid2d
 
 from netcdf_to_gltf_converter.config import Config
-from netcdf_to_gltf_converter.netcdf.conventions import AttrKey, CfRoleAttrValue, LocationAttrValue
+from netcdf_to_gltf_converter.netcdf.conventions import (
+    AttrKey,
+    CfRoleAttrValue,
+    LocationAttrValue,
+)
 
 
 class Topology(str, Enum):
     nodes = "node_coordinates"
     edges = "edge_coordinates"
     faces = "face_coordinates"
-    
+
+
 class Wrapper:
     def __init__(self, dataset: xr.Dataset, config: Config) -> None:
         self._dataset = dataset
@@ -22,29 +27,29 @@ class Wrapper:
         self._topology_2d = self._get_topology_2d()
         self.grid = Ugrid2d.from_dataset(dataset, self._topology_2d)
         self._topologies = dataset.ugrid_roles.coordinates[self._topology_2d]
-        
+
         self._coord_vars = {
             LocationAttrValue.node: self._get_coord_vars(Topology.nodes),
             LocationAttrValue.edge: self._get_coord_vars(Topology.edges),
-            LocationAttrValue.face: self._get_coord_vars(Topology.faces)
+            LocationAttrValue.face: self._get_coord_vars(Topology.faces),
         }
 
     def _get_coord_vars(self, location: str) -> Tuple:
         var_names = self._topologies[location]
         x_coord_var = self._dataset[var_names[0][0]]
         y_coord_var = self._dataset[var_names[1][0]]
-        
+
         return x_coord_var, y_coord_var
-    
+
     def _get_coordinates(self, location: str) -> np.ndarray:
         var_names = self._dataset.coords[location]
-        
+
         x_coords = self._dataset[var_names[0]].values
         y_coords = self._dataset[var_names[1]].values
         coords = np.column_stack([x_coords, y_coords])
-        
+
         return coords
-    
+
     def _get_topology_2d(self) -> str:
         attr_filter = {
             AttrKey.cf_role: CfRoleAttrValue.mesh_topology,
@@ -63,7 +68,7 @@ class Wrapper:
         x_coords = x_coord_var.values
         y_coords = y_coord_var.values
         coords = np.column_stack([x_coords, y_coords])
-        
+
         return coords
 
     def get_2d_variable(self, standard_name: str) -> xr.DataArray:

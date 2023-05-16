@@ -15,11 +15,14 @@ class AttrKey(str, Enum):
     location = "location"
     """Mesh location of the data"""
 
+
 class LocationAttrValue(str, Enum):
     """Enum containing variable attribute values for the 'location' attribute."""
+
     face = "face"
     node = "node"
     edge = "edge"
+
 
 class CfRoleAttrValue(str, Enum):
     """Enum containing variable attribute values for the 'cf_role' attribute."""
