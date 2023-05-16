@@ -26,7 +26,7 @@ class Parser:
         self._triangulator = Triangulator()
         self._tranformer = Transformer(dataset, config)
         self._wrapper = Wrapper(dataset, config)
-
+        self._grid = Ugrid2d.from_dataset(dataset, self._wrapper.topology_2d)
         self._dataset = dataset
         self._config = config
 
@@ -69,7 +69,7 @@ class Parser:
         if self._config.scale != 1.0:
             self._scale_coordinates(data_coords, data_values)
 
-        triangulated_grid = self._triangulator.triangulate(self._wrapper.grid)
+        triangulated_grid = self._triangulator.triangulate(self._grid)
         interpolated_data = self._interpolate(
             data_coords, data_values, triangulated_grid
         )
@@ -87,19 +87,19 @@ class Parser:
         )
 
     def _shift_coordinates(self, coordinates: np.ndarray):
-        shift_x = self._wrapper.grid.node_x.min()
-        shift_y = self._wrapper.grid.node_y.min()
+        shift_x = self._grid.node_x.min()
+        shift_y = self._grid.node_y.min()
 
         coordinates[:, 0] -= shift_x
         coordinates[:, 1] -= shift_y
 
-        self._wrapper.grid.node_x -= shift_x
-        self._wrapper.grid.node_y -= shift_y
+        self._grid.node_x -= shift_x
+        self._grid.node_y -= shift_y
 
     def _scale_coordinates(self, coordinates: np.ndarray, data_values: np.ndarray):
         scale = self._config.scale
 
         np.multiply(coordinates, scale, out=coordinates)
         np.multiply(data_values, scale, out=data_values)
-        np.multiply(self._wrapper.grid.node_x, scale, out=self._wrapper.grid.node_x)
-        np.multiply(self._wrapper.grid.node_y, scale, out=self._wrapper.grid.node_y)
+        np.multiply(self._grid.node_x, scale, out=self._grid.node_x)
+        np.multiply(self._grid.node_y, scale, out=self._grid.node_y)

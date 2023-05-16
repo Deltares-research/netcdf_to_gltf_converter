@@ -24,9 +24,8 @@ class Wrapper:
         self._dataset = dataset
         self._config = config
 
-        self._topology_2d = self._get_topology_2d()
-        self.grid = Ugrid2d.from_dataset(dataset, self._topology_2d)
-        self._topologies = dataset.ugrid_roles.coordinates[self._topology_2d]
+        self.topology_2d = self._get_topology_2d()
+        self._topologies = dataset.ugrid_roles.coordinates[self.topology_2d]
 
         self._coord_vars = {
             LocationAttrValue.node: self._get_coord_vars(Topology.nodes),
@@ -74,7 +73,7 @@ class Wrapper:
     def get_2d_variable(self, standard_name: str) -> xr.DataArray:
         attr_filter = {
             AttrKey.standard_name: standard_name,
-            AttrKey.mesh: self._topology_2d,
+            AttrKey.mesh: self.topology_2d,
         }
         variable = next(self._get_variables_by_attr_filter(**attr_filter))
         return variable
