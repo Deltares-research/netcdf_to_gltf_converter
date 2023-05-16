@@ -7,31 +7,10 @@ from xugrid import Ugrid2d
 
 from netcdf_to_gltf_converter.config import Config
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
+from netcdf_to_gltf_converter.netcdf.conventions import AttrKey, AttrValue
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
-
-
-class AttrKey(str, Enum):
-    """Enum containing variable attribute keys."""
-
-    cf_role = "cf_role"
-    """CF role"""
-    topology_dimension = "topology_dimension"
-    """Topology dimension"""
-    mesh = "mesh"
-    """Mesh"""
-    standard_name = "standard_name"
-    """Standard name"""
-    location = "location"
-    """Mesh location of the data"""
-
-
-class AttrValue(str, Enum):
-    """Enum containing variable attribute values."""
-
-    mesh_topology = "mesh_topology"
-    """Mesh topology"""
 
 
 class DataLocation(str, Enum):
