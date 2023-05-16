@@ -9,6 +9,7 @@ from netcdf_to_gltf_converter.config import Config
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.netcdf.conventions import AttrKey, AttrValue
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
+from netcdf_to_gltf_converter.preprocessing.transformation import Transformer
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
@@ -19,19 +20,7 @@ class DataLocation(str, Enum):
     edge = "edge"
 
 
-class StandardName(str, Enum):
-    """Enum containg the valid variable standard names according to the
-    NetCDF Climate and Forecast (CF) Metadata Conventions version 1.8.
-    See also: http://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html
-    """
-
-    water_depth = "sea_floor_depth_below_sea_surface"
-    """The vertical distance between the sea surface and the seabed as measured at a given point in space including the variance caused by tides and possibly waves."""
-    water_level = "sea_surface_height"
-    """"Sea surface height" is a time-varying quantity."""
-
-
-class Wrapper:
+class Parser:
     def __init__(self, dataset: xr.Dataset, config: Config) -> None:
         """Initialize a Wrapper with the specified arguments.
 
@@ -40,12 +29,15 @@ class Wrapper:
             config (Config): The converter configuration.
         """
 
+        self._interpolator = Interpolator()
+        self._triangulator = Triangulator()
+        self._tranformer = Transformer(dataset, config)
+
         self._dataset = dataset
         self._config = config
         self._2d_topology = self._get_2d_topology()
         self._grid = Ugrid2d.from_dataset(dataset, self._2d_topology)
-        self._interpolator = Interpolator()
-        self._triangulator = Triangulator()
+
 
     def _interpolate(
         self, data_coords: np.ndarray, data_values: np.ndarray, grid: Ugrid2d
