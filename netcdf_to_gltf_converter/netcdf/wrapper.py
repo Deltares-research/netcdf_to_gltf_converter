@@ -6,13 +6,8 @@ import xarray as xr
 from xugrid import Ugrid2d
 
 from netcdf_to_gltf_converter.config import Config
-from netcdf_to_gltf_converter.netcdf.conventions import AttrKey, AttrValue
+from netcdf_to_gltf_converter.netcdf.conventions import AttrKey, CfRoleAttrValue, LocationAttrValue
 
-
-class DataLocation(str, Enum):
-    face = "face"
-    node = "node"
-    edge = "edge"
 
 class Topology(str, Enum):
     nodes = "node_coordinates"
@@ -29,13 +24,11 @@ class Wrapper:
         self._topologies = dataset.ugrid_roles.coordinates[self._topology_2d]
         
         self._coord_vars = {
-            DataLocation.node: self._get_coord_vars(Topology.nodes),
-            DataLocation.edge: self._get_coord_vars(Topology.edges),
-            DataLocation.face: self._get_coord_vars(Topology.faces)
+            LocationAttrValue.node: self._get_coord_vars(Topology.nodes),
+            LocationAttrValue.edge: self._get_coord_vars(Topology.edges),
+            LocationAttrValue.face: self._get_coord_vars(Topology.faces)
         }
 
-
-    
     def _get_coord_vars(self, location: str) -> Tuple:
         var_names = self._topologies[location]
         x_coord_var = self._dataset[var_names[0][0]]
@@ -51,9 +44,10 @@ class Wrapper:
         coords = np.column_stack([x_coords, y_coords])
         
         return coords
+    
     def _get_topology_2d(self) -> str:
         attr_filter = {
-            AttrKey.cf_role: AttrValue.mesh_topology,
+            AttrKey.cf_role: CfRoleAttrValue.mesh_topology,
             AttrKey.topology_dimension: 2,
         }
         variable = next(self._get_variables_by_attr_filter(**attr_filter))
@@ -64,7 +58,7 @@ class Wrapper:
         for variable in dataset.values():
             yield variable
 
-    def _get_coordinates(self, location: DataLocation) -> np.ndarray:
+    def _get_coordinates(self, location: LocationAttrValue) -> np.ndarray:
         x_coord_var, y_coord_var = self._coord_vars[location]
         x_coords = x_coord_var.values
         y_coords = y_coord_var.values

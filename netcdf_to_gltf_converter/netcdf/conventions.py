@@ -15,17 +15,22 @@ class AttrKey(str, Enum):
     location = "location"
     """Mesh location of the data"""
 
+class LocationAttrValue(str, Enum):
+    """Enum containing variable attribute values for the 'location' attribute."""
+    face = "face"
+    node = "node"
+    edge = "edge"
 
-class AttrValue(str, Enum):
-    """Enum containing variable attribute values."""
+class CfRoleAttrValue(str, Enum):
+    """Enum containing variable attribute values for the 'cf_role' attribute."""
 
     mesh_topology = "mesh_topology"
     """Mesh topology"""
 
 
-class StandardName(str, Enum):
-    """Enum containg the valid variable standard names according to the
-    NetCDF Climate and Forecast (CF) Metadata Conventions version 1.8.
+class StandardNameAttrValue(str, Enum):
+    """Enum containing variable attribute values for the 'standard_name' attribute.
+    The standard names are according to the NetCDF Climate and Forecast (CF) Metadata Conventions version 1.8.
     See also: http://cfconventions.org/Data/cf-standard-names/current/build/cf-standard-name-table.html
     """
 
