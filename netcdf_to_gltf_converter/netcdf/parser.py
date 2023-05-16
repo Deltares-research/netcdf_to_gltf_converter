@@ -1,4 +1,3 @@
-
 from typing import Generator
 
 import numpy as np
@@ -13,6 +12,7 @@ from netcdf_to_gltf_converter.preprocessing.transformation import Transformer
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
+
 class Parser:
     def __init__(self, dataset: xr.Dataset, config: Config) -> None:
         """Initialize a Wrapper with the specified arguments.
@@ -26,11 +26,9 @@ class Parser:
         self._triangulator = Triangulator()
         self._tranformer = Transformer(dataset, config)
         self._wrapper = Wrapper(dataset, config)
-        
+
         self._dataset = dataset
         self._config = config
-
-
 
     def _interpolate(
         self, data_coords: np.ndarray, data_values: np.ndarray, grid: Ugrid2d
@@ -38,8 +36,6 @@ class Parser:
         return self._interpolator.interpolate_nearest(
             data_coords, data_values, grid, Location.nodes
         )
-
-
 
     def _get_transformations(
         self,

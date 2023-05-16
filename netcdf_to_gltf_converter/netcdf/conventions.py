@@ -22,6 +22,7 @@ class AttrValue(str, Enum):
     mesh_topology = "mesh_topology"
     """Mesh topology"""
 
+
 class StandardName(str, Enum):
     """Enum containg the valid variable standard names according to the
     NetCDF Climate and Forecast (CF) Metadata Conventions version 1.8.
