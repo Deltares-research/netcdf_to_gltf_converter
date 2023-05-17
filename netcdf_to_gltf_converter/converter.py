@@ -31,6 +31,7 @@ class Converter:
         self._config = Config.from_file(config)
         
         self._importer = Importer()
+        self._exporter = Exporter()
 
     def run(self):
         """Run the conversion."""
@@ -43,4 +44,4 @@ class Converter:
 
         gltf = builder.finish()
 
-        Exporter.export(gltf, self._gltf)
+        self._exporter.export(gltf, self._gltf)
