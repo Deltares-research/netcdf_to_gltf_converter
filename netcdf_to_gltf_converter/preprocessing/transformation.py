@@ -18,8 +18,9 @@ class Transformer:
         self._config = config
 
     def shift(self):
-        """Shift the x- and y-coordinates in the data set, such that the smallest x and y become the origin (0,0).
-        The original data set is updated with the shifted coordinates.
+        """
+        Shift the x- and y-coordinates in the data set, such that the smallest x and y become the origin (0,0).
+        The original data set is updated with the new coordinates.
         """
 
         if self._config.shift_coordinates == False:
@@ -43,10 +44,26 @@ class Transformer:
         shifted_coords_var = coords_var - shift
         self._dataset.update(shifted_coords_var)
         
-    def scale(self) -> xr.Dataset:
-        """Scale the x- and y-coordinates, with the scaling factor that is specified in the Config.
-
-        Returns:
-            xr.Dataset: The dataset with the scaled geometry.
+    def scale(self):
         """
-        return self._dataset
+        Scale the x- and y-coordinates, with the scaling factor that is specified in the Config.
+        The original data set is updated with the new coordinates.
+        """
+        
+        if self._config.scale == 1.0:
+            return
+        
+        node_x_var, node_y_var = self._dataset.node_coord_vars
+        edge_x_var, edge_y_var = self._dataset.edge_coord_vars
+        face_x_var, face_y_var = self._dataset.face_coord_vars
+
+        self._scale(node_x_var)
+        self._scale(node_y_var)
+        self._scale(edge_x_var)
+        self._scale(edge_y_var)
+        self._scale(face_x_var)
+        self._scale(face_y_var)
+    
+    def _scale(self, coords_var: xr.DataArray):
+        scaled_coords_var = coords_var * self._config.scale
+        self._dataset.update(scaled_coords_var)

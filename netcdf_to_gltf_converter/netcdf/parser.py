@@ -27,6 +27,7 @@ class Parser:
         self._ugrid_dataset = UgridDataset(dataset, config)
         self._tranformer = Transformer(self._ugrid_dataset, config)
         self._tranformer.shift()
+        self._tranformer.scale()
         self._grid = Ugrid2d.from_dataset(dataset, self._ugrid_dataset.topology_2d)
         self._dataset = dataset
         self._config = config
@@ -62,9 +63,7 @@ class Parser:
         data = self._ugrid_dataset.get_2d_variable(standard_name)
         data_coords = self._ugrid_dataset.get_data_coordinates(data)
         data_values = data.isel(time=0).to_numpy()
-
-        if self._config.scale != 1.0:
-            self._scale_coordinates(data_coords, data_values)
+        np.multiply(data_values, self._config.scale, out=data_values)
 
         triangulated_grid = self._triangulator.triangulate(self._grid)
         interpolated_data = self._interpolate(
@@ -82,11 +81,3 @@ class Parser:
             triangles=triangles,
             transformations=transformations,
         )
-
-    def _scale_coordinates(self, coordinates: np.ndarray, data_values: np.ndarray):
-        scale = self._config.scale
-
-        np.multiply(coordinates, scale, out=coordinates)
-        np.multiply(data_values, scale, out=data_values)
-        np.multiply(self._grid.node_x, scale, out=self._grid.node_x)
-        np.multiply(self._grid.node_y, scale, out=self._grid.node_y)
