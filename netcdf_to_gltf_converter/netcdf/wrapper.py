@@ -26,13 +26,36 @@ class UgridDataset:
         self.topology_2d = self._get_topology_2d()
         self._topologies = dataset.ugrid_roles.coordinates[self.topology_2d]
 
-        self._coord_vars = {
-            LocationAttrValue.node: self._get_coord_vars(Topology.nodes),
-            LocationAttrValue.edge: self._get_coord_vars(Topology.edges),
-            LocationAttrValue.face: self._get_coord_vars(Topology.faces),
+    def get_2d_variable(self, standard_name: str) -> xr.DataArray:
+        attr_filter = {
+            AttrKey.standard_name: standard_name,
+            AttrKey.mesh: self.topology_2d,
         }
+        variable = next(self._get_variables_by_attr_filter(**attr_filter))
+        return variable
 
-    def _get_coord_vars(self, location: str) -> Tuple:
+    def get_data_coordinates(self, data: xr.DataArray):
+        location = data.attrs.get(AttrKey.location)
+        return self._get_coordinates_for_location(location)
+
+    def _get_coordinates_for_location(self, location: LocationAttrValue) -> np.ndarray:
+        x_coord_var, y_coord_var = self._get_coord_vars_for_location(location)
+        x_coords = x_coord_var.values
+        y_coords = y_coord_var.values
+        coords = np.column_stack([x_coords, y_coords])
+
+        return coords
+    
+    def _get_coord_vars_for_location(self, location: LocationAttrValue) -> np.ndarray:
+        if location == LocationAttrValue.node:
+            return self._get_coord_vars_for_topology(Topology.nodes)
+        if location == LocationAttrValue.edge:
+            return self._get_coord_vars_for_topology(Topology.edges)
+        if location == LocationAttrValue.face:
+            return self._get_coord_vars_for_topology(Topology.faces)
+        raise ValueError(f"Location {location} not supported.")
+    
+    def _get_coord_vars_for_topology(self, location: Topology) -> Tuple:
         var_names = self._topologies[location]
         x_coord_var = self._dataset[var_names[0][0]]
         y_coord_var = self._dataset[var_names[1][0]]
@@ -51,23 +74,3 @@ class UgridDataset:
         dataset = self._dataset.filter_by_attrs(**filter)
         for variable in dataset.values():
             yield variable
-
-    def _get_coordinates(self, location: LocationAttrValue) -> np.ndarray:
-        x_coord_var, y_coord_var = self._coord_vars[location]
-        x_coords = x_coord_var.values
-        y_coords = y_coord_var.values
-        coords = np.column_stack([x_coords, y_coords])
-
-        return coords
-
-    def get_2d_variable(self, standard_name: str) -> xr.DataArray:
-        attr_filter = {
-            AttrKey.standard_name: standard_name,
-            AttrKey.mesh: self.topology_2d,
-        }
-        variable = next(self._get_variables_by_attr_filter(**attr_filter))
-        return variable
-
-    def get_data_coordinates(self, data: xr.DataArray):
-        data_location = data.attrs.get(AttrKey.location)
-        return self._get_coordinates(data_location)
