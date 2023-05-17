@@ -4,7 +4,7 @@ import numpy as np
 import xarray as xr
 from xugrid import Ugrid2d
 
-from netcdf_to_gltf_converter.config import Config
+from netcdf_to_gltf_converter.config import Color, Config
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
@@ -47,6 +47,7 @@ class Parser:
         data_coords: np.ndarray,
         grid: Ugrid2d,
         base: MeshAttributes,
+        color: Color
     ) -> Generator[MeshAttributes, None, None]:
         n_times = data.sizes["time"]
         for time_index in range(1, n_times):
@@ -58,9 +59,9 @@ class Parser:
                 dtype=np.float32,
             )
 
-            yield MeshAttributes(vertex_positions=vertex_displacements)
+            yield MeshAttributes(vertex_positions=vertex_displacements, mesh_color=color)
 
-    def to_triangular_mesh(self, variable_name: str):
+    def to_triangular_mesh(self, variable_name: str, color: Color):
         data = self._ugrid_dataset.get_variable(variable_name)
         data_coords = self._ugrid_dataset.get_data_coordinates(data)
         data_values = data.isel(time=0).to_numpy()
@@ -70,10 +71,10 @@ class Parser:
             data_coords, data_values, triangulated_grid
         )
 
-        base = MeshAttributes(vertex_positions=interpolated_data)
+        base = MeshAttributes(vertex_positions=interpolated_data, mesh_color=color)
         triangles = uint32_array(triangulated_grid.face_node_connectivity)
         transformations = list(
-            self._get_transformations(data, data_coords, triangulated_grid, base)
+            self._get_transformations(data, data_coords, triangulated_grid, base, color)
         )
 
         return TriangularMesh(

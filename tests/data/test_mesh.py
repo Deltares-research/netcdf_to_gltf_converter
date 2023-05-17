@@ -14,7 +14,7 @@ class TestTriangularMesh:
                 [0, 1, 4],
             ]
         )
-        base_geometry = MeshAttributes(vertex_positions=vertex_positions)
+        base_geometry = MeshAttributes(vertex_positions=vertex_positions,mesh_color=[0.38, 0.73, 0.78, 1.0])
 
         triangles = uint32_array(
             [
@@ -31,7 +31,7 @@ class TestTriangularMesh:
                     [0, 0, 0.5],
                     [0, 0, -1.0],
                 ]
-            )
+            ),mesh_color=[0.38, 0.73, 0.78, 1.0]
         )
 
         triangular_mesh = TriangularMesh(base_geometry, triangles, [transformation])
@@ -50,7 +50,7 @@ class TestTriangularMesh:
                 [0, 1, 4],
             ]
         )
-        base_geometry = MeshAttributes(vertex_positions=vertex_positions)
+        base_geometry = MeshAttributes(vertex_positions=vertex_positions,mesh_color=[0.38, 0.73, 0.78, 1.0])
 
         triangles = uint32_array(
             [
@@ -67,7 +67,7 @@ class TestTriangularMesh:
                     [0, 0, 0.5],
                     [0, 0, -1.0],
                 ]
-            )
+            ), mesh_color=[0.38, 0.73, 0.78, 1.0]
         )
 
         triangular_mesh = TriangularMesh(base_geometry, triangles, [transformation])
