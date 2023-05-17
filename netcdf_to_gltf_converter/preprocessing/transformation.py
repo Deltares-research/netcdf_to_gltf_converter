@@ -63,6 +63,11 @@ class Transformer:
         self._scale(edge_y_var)
         self._scale(face_x_var)
         self._scale(face_y_var)
+        
+        for variable in self._config.variables:
+            standard_name = variable.standard_name
+            variable = self._dataset.get_2d_variable(standard_name)
+            self._scale(variable)
     
     def _scale(self, coords_var: xr.DataArray):
         scaled_coords_var = coords_var * self._config.scale

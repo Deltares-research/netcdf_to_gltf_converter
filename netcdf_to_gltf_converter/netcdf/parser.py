@@ -12,6 +12,7 @@ from netcdf_to_gltf_converter.preprocessing.transformation import Transformer
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
+xr.set_options(keep_attrs=True)
 
 class Parser:
     def __init__(self, dataset: xr.Dataset, config: Config) -> None:
@@ -49,7 +50,6 @@ class Parser:
         n_times = data.sizes["time"]
         for time_index in range(1, n_times):
             data_values = data.isel(time=time_index).to_numpy()
-            np.multiply(data_values, self._config.scale, out=data_values)
             interpolated_data = self._interpolate(data_coords, data_values, grid)
             vertex_displacements = np.subtract(
                 interpolated_data,
@@ -63,7 +63,6 @@ class Parser:
         data = self._ugrid_dataset.get_2d_variable(standard_name)
         data_coords = self._ugrid_dataset.get_data_coordinates(data)
         data_values = data.isel(time=0).to_numpy()
-        np.multiply(data_values, self._config.scale, out=data_values)
 
         triangulated_grid = self._triangulator.triangulate(self._grid)
         interpolated_data = self._interpolate(
