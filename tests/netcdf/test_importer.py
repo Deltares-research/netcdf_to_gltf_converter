@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from netcdf_to_gltf_converter.config import Config, Threshold, Variable
+from netcdf_to_gltf_converter.config import Config, Variable
 from netcdf_to_gltf_converter.netcdf.importer import Importer
 from tests.utils import resources
 
@@ -12,8 +12,11 @@ class TestImporter:
     def test_import_from(self):
         file_path = resources / "3x3nodes_rectilinear_map.nc"
 
-        variable = Variable(standard_name="sea_floor_depth_below_sea_surface")
-        variable.threshold = Threshold(height=0.01, color=[1.0, 1.0, 1.0, 1.0])
+        variable = Variable(standard_name="sea_floor_depth_below_sea_surface", 
+                            use_threshold = True,
+                            threshold_height = 0.01,
+                            threshold_color = [1.0, 1.0, 1.0, 1.0])
+        
         config = Config(shift_coordinates=True, scale=1.0, variables=[variable])
 
         triangular_meshes = Importer.import_from(file_path, config)

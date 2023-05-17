@@ -1,10 +1,10 @@
 import logging
 from abc import ABC
 from pathlib import Path
-from typing import List, Optional, Type, TypeVar
+from typing import Any, Dict, List, Optional, Type, TypeVar
 
 from packaging.version import Version
-from pydantic import BaseModel as PydanticBaseModel
+from pydantic import BaseModel as PydanticBaseModel, root_validator
 from pydantic import Extra, Field, validator
 
 
@@ -87,18 +87,37 @@ class AbstractJsonConfigFile(BaseModel, ABC):
         return cls.parse_file(path)
 
 
-class Threshold(BaseModel):
-    """Configuration properties of a variable threshold mesh."""
+class Variable(BaseModel):
+    """Configuration properties of a variable."""
 
-    color: List[float] = Field(alias="color")
-    """List[float]: The vertex color in the threshold mesh defined by the normalized red, green, blue and alpha (RGBA) values."""
-    height: float = Field(alias="height")
-    """float: The height (vertex z-values) of the threshold mesh."""
+    standard_name: str = Field("standard_name")
+    """str: The standard name of the NetCDF variable"""
+    use_threshold: bool = Field(None, alias="threshold")
+    """bool: Whether or not to add a threshold mesh to filter values below the threshold height."""
+    threshold_color: Optional[List[float]] = Field(None, alias="threshold_color")
+    """Optional[List[float]]: The vertex color in the threshold mesh defined by the normalized red, green, blue and alpha (RGBA) values."""
+    threshold_height: Optional[float] = Field(None, alias="threshold_height")
+    """Optional[float]: The height (vertex z-values) of the threshold mesh."""
 
-    @validator("color")
+    @root_validator
+    def validate_threshold(cls, values: Dict[str, Any]):
+        def validate_required(field: str):
+            if values[field] is None:
+                raise ValueError(f"'{field}' is required when 'use_threshold' is true.")
+        
+        if values["use_threshold"]:
+            validate_required("threshold_color")
+            validate_required("threshold_height")
+        
+        return values
+            
+    @validator("threshold_color")
     def validate_color(cls, color):
         """Validate the color. The color should be a list that contains 4 floating values between 0.0 and 1.0 (inclusive)."""
 
+        if color is None:
+            return color
+        
         if len(color) != 4:
             msg = "A color should be defined as a list of 4 floating values: the normalized red, green, blue and alpha (RGBA) values."
             raise ValueError(msg)
@@ -109,15 +128,6 @@ class Threshold(BaseModel):
                 raise ValueError(msg)
 
         return color
-
-
-class Variable(BaseModel):
-    """Configuration properties of a variable."""
-
-    standard_name: str = Field("standard_name")
-    """str: The standard name of the NetCDF variable"""
-    threshold: Optional[Threshold] = Field(None, alias="threshold")
-    """Optional[Threshold]: The threshold mesh configuration properties."""
 
 
 class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
