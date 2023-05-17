@@ -104,7 +104,7 @@ class UgridDataset:
 
         Returns:
             xr.DataArray: An xr.DataArray containing the variable data.
-            
+
         Raises:
             ValueError: When the dataset does not contain a variable with the name.
         """
