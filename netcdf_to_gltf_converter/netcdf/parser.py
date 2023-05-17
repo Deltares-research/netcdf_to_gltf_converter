@@ -18,7 +18,7 @@ xr.set_options(keep_attrs=True)
 
 class Parser:
     """Class to parse a xr.DataArray into a set of TriangularMeshes."""
-    
+
     def __init__(self) -> None:
         """Initialize a Parser."""
 
@@ -32,17 +32,19 @@ class Parser:
             dataset (xr.Dataset): The NetCDF dataset.
             config (Config): The converter configuration.
         """
-        ugrid_dataset = UgridDataset(dataset, config)       
+        ugrid_dataset = UgridDataset(dataset, config)
         tranformer = Transformer(ugrid_dataset, config)
         tranformer.shift()
         tranformer.scale()
         grid = Ugrid2d.from_dataset(dataset, ugrid_dataset.topology_2d)
         triangulated_grid = self._triangulator.triangulate(grid)
-        
+
         triangular_meshes = []
 
         for variable in config.variables:
-            data_mesh = self.to_triangular_mesh(variable, triangulated_grid, ugrid_dataset)
+            data_mesh = self.to_triangular_mesh(
+                variable, triangulated_grid, ugrid_dataset
+            )
             triangular_meshes.append(data_mesh)
 
             if variable.use_threshold:
@@ -82,19 +84,18 @@ class Parser:
                 vertex_positions=vertex_displacements, mesh_color=color
             )
 
-
-    
-    def to_triangular_mesh(self, variable: Variable, grid: Ugrid2d, ugrid_dataset: UgridDataset):
+    def to_triangular_mesh(
+        self, variable: Variable, grid: Ugrid2d, ugrid_dataset: UgridDataset
+    ):
         data = ugrid_dataset.get_variable(variable.name)
         data_coords = ugrid_dataset.get_data_coordinates(data)
         data_values = data.isel(time=0).to_numpy()
 
-        
-        interpolated_data = self._interpolate(
-            data_coords, data_values, grid
-        )
+        interpolated_data = self._interpolate(data_coords, data_values, grid)
 
-        base = MeshAttributes(vertex_positions=interpolated_data, mesh_color=variable.color)
+        base = MeshAttributes(
+            vertex_positions=interpolated_data, mesh_color=variable.color
+        )
         triangles = uint32_array(grid.face_node_connectivity)
         transformations = list(
             self._get_transformations(data, data_coords, grid, base, variable.color)

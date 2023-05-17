@@ -21,11 +21,11 @@ class TestImporter:
         )
 
         config = Config(
-            time_index_start=0, 
-            times_per_frame=1, 
-            shift_coordinates=True, 
-            scale=1.0, 
-            variables=[variable]
+            time_index_start=0,
+            times_per_frame=1,
+            shift_coordinates=True,
+            scale=1.0,
+            variables=[variable],
         )
 
         triangular_meshes = Importer.import_from(file_path, config)
@@ -86,11 +86,11 @@ class TestImporter:
     def test_import_from_netcdf_does_not_exist_raises_error(self):
         netcdf = Path("path/to/file.netcdf")
         config = Config(
-            time_index_start=0, 
-            times_per_frame=1, 
-            shift_coordinates=True, 
-            scale=1.0, 
-            variables=[]
+            time_index_start=0,
+            times_per_frame=1,
+            shift_coordinates=True,
+            scale=1.0,
+            variables=[],
         )
 
         with pytest.raises(ValueError) as error:
