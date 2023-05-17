@@ -82,14 +82,28 @@ These steps will ensure that the converter is installed within a virtual environ
 
 ## Usage
  After following the installation steps, the converter can be used from the command line. 
- Two arguments should be passed to the converter script.
+ Three arguments should be passed to the converter script.
 1. The path to the source netCDF file. Only files with the following conventions are supported: `CF-1.8 UGRID-1.0 Deltares-0.10`
 2. The path to the target glTF file. If the path already exist it will be overwritten.
- 
+3. The path to the configuration JSON file.
+
 **Example**
  ```
- poetry run python input_map.nc output.gltf
+ poetry run python input_map.nc output.gltf config.json
  ```
+ 
+**Configuration file**
+ The configuration JSON file allows you to customize various settings and parameters for the conversion process. It provides flexibility in defining how the netCDF data is transformed into the glTF format. 
+ 
+ - `file_version`: Specifies the version of the configuration file format.
+- `shift_coordinates`: A boolean value indicating whether to shift the coordinates of the data during conversion. When set to `true`, the converter will shift the coordinates such that the smallest x and y become the origin (0,0).
+- `scale`: A floating value indicating the scale factor for the data. It determines the scaling of the converted geometry. A smaller scale value will result in a smaller representation of the data in the 3D renderer.
+- `variables`: An array containing the configurations for each variable to be converted. Each variable configuration consists of the following options:
+  - `name`: The name of the variable as it appears in the netCDF file.
+  - `color`: An array representing the color of the rendered variable in the glTF model. The color values should be in the range of 0.0 to 1.0 for each channel (red, green, blue, alpha).
+  - `use_threshold`: A boolean value indicating whether to apply a threshold to the variable data. When set to `true`, the converter will add a threshold mesh to on the specified threshold height to distinguish between variable values above and below this height. When a scaling factor is applied to the conversion, this height will also be multiplied by this factor. 
+  - `threshold_height`: The threshold height value used to distinguish between variable values above and below this value. This option is only required when `use_threshold` is `true`.
+  - `threshold_color`: An array containg four floating values representing the color of the threshold mesh. The color values should be in the range of 0.0 to 1.0 for each channel (red, green, blue, alpha). This option is only required when `use_threshold` is `true`.
  
 ## View results
  Several glTF viewers exist that can be used to view the produced glTF file. Simply drag and drop the file, and the glTF file will be rendered.
