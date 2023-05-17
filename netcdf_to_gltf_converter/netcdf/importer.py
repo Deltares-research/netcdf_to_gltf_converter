@@ -28,17 +28,5 @@ class Importer:
 
         ds = xr.open_dataset(str(file_path))
         parser = Parser(ds, config)
-
-        triangular_meshes = []
-
-        for variable in config.variables:
-            data_mesh = parser.to_triangular_mesh(variable.name, variable.color)
-            triangular_meshes.append(data_mesh)
-
-            if variable.use_threshold:
-                threshold_mesh = data_mesh.get_threshold_mesh(
-                    variable.threshold_height * config.scale, variable.threshold_color
-                )
-                triangular_meshes.append(threshold_mesh)
-
+        triangular_meshes = parser.parse()
         return triangular_meshes

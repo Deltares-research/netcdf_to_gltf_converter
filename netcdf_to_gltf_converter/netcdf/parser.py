@@ -1,4 +1,4 @@
-from typing import Generator
+from typing import Generator, List
 
 import numpy as np
 import xarray as xr
@@ -64,6 +64,21 @@ class Parser:
                 vertex_positions=vertex_displacements, mesh_color=color
             )
 
+    def parse(self) -> List[TriangularMesh]:
+        triangular_meshes = []
+
+        for variable in self._config.variables:
+            data_mesh = self.to_triangular_mesh(variable.name, variable.color)
+            triangular_meshes.append(data_mesh)
+
+            if variable.use_threshold:
+                threshold_mesh = data_mesh.get_threshold_mesh(
+                    variable.threshold_height * self._config.scale, variable.threshold_color
+                )
+                triangular_meshes.append(threshold_mesh)
+
+        return triangular_meshes
+    
     def to_triangular_mesh(self, variable_name: str, color: Color):
         data = self._ugrid_dataset.get_variable(variable_name)
         data_coords = self._ugrid_dataset.get_data_coordinates(data)
