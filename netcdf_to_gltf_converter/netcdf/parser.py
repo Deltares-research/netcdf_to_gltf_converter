@@ -54,6 +54,29 @@ class Parser:
 
         return triangular_meshes
 
+    def to_triangular_mesh(
+        self, variable: Variable, grid: Ugrid2d, ugrid_dataset: UgridDataset
+    ):
+        data = ugrid_dataset.get_variable(variable.name)
+        data_coords = ugrid_dataset.get_data_coordinates(data)
+        data_values = data.isel(time=0).to_numpy()
+
+        interpolated_data = self._interpolate(data_coords, data_values, grid)
+
+        base = MeshAttributes(
+            vertex_positions=interpolated_data, mesh_color=variable.color
+        )
+        triangles = uint32_array(grid.face_node_connectivity)
+        transformations = list(
+            self._get_transformations(data, data_coords, grid, base, variable.color)
+        )
+
+        return TriangularMesh(
+            base=base,
+            triangles=triangles,
+            transformations=transformations,
+        )
+        
     def _interpolate(
         self, data_coords: np.ndarray, data_values: np.ndarray, grid: Ugrid2d
     ):
@@ -83,25 +106,4 @@ class Parser:
                 vertex_positions=vertex_displacements, mesh_color=color
             )
 
-    def to_triangular_mesh(
-        self, variable: Variable, grid: Ugrid2d, ugrid_dataset: UgridDataset
-    ):
-        data = ugrid_dataset.get_variable(variable.name)
-        data_coords = ugrid_dataset.get_data_coordinates(data)
-        data_values = data.isel(time=0).to_numpy()
 
-        interpolated_data = self._interpolate(data_coords, data_values, grid)
-
-        base = MeshAttributes(
-            vertex_positions=interpolated_data, mesh_color=variable.color
-        )
-        triangles = uint32_array(grid.face_node_connectivity)
-        transformations = list(
-            self._get_transformations(data, data_coords, grid, base, variable.color)
-        )
-
-        return TriangularMesh(
-            base=base,
-            triangles=triangles,
-            transformations=transformations,
-        )
