@@ -14,6 +14,7 @@ from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
 xr.set_options(keep_attrs=True)
 
+
 class Parser:
     def __init__(self, dataset: xr.Dataset, config: Config) -> None:
         """Initialize a Wrapper with the specified arguments.
