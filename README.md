@@ -93,12 +93,7 @@ These steps will ensure that the converter is installed within a virtual environ
 		  "color":[0.372, 0.635, 0.8, 1.0],
 		  "use_threshold":false,
 		  "threshold_height":0.01,
-		  "threshold_color":[
-			 1.0,
-			 1.0,
-			 1.0,
-			 1.0
-		  ]
+		  "threshold_color":[1.0, 1.0, 1.0, 1.0]
 	   },
 	   {
 		  "name":"Mesh2d_s1",
