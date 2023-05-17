@@ -11,7 +11,7 @@ class Transformer:
         """Initialize a Transformer with the specified arguments.
 
         Args:
-            dataset (xr.Dataset): The dataset to transform the coordinates for.
+            dataset (xr.UgridDataset): The Ugrid dataset to transform the coordinates for.
             config (Config): The converter configuration.
         """
         self._dataset = dataset
@@ -19,11 +19,11 @@ class Transformer:
 
     def shift(self):
         """
-        Shift the x- and y-coordinates in the data set, such that the smallest x and y become the origin (0,0).
+        If shifting is required, shift the x- and y-coordinates in the data set, such that the smallest x and y become the origin (0,0).
         The original data set is updated with the new coordinates.
         """
 
-        if self._config.shift_coordinates == False:
+        if not self._config.shift_coordinates:
             return
 
         node_x_var, node_y_var = self._dataset.node_coord_vars
@@ -40,13 +40,13 @@ class Transformer:
         self._shift(face_x_var, shift_x)
         self._shift(face_y_var, shift_y)
 
-    def _shift(self, coords_var: xr.DataArray, shift: float):
-        shifted_coords_var = coords_var - shift
+    def _shift(self, variable: xr.DataArray, shift: float):
+        shifted_coords_var = variable - shift
         self._dataset.update(shifted_coords_var)
 
     def scale(self):
         """
-        Scale the x- and y-coordinates, with the scaling factor that is specified in the Config.
+        If scaling is required, scale the x- and y-coordinates and the data values, with the scaling factor that is specified in the Config.
         The original data set is updated with the new coordinates.
         """
 
@@ -64,11 +64,13 @@ class Transformer:
         self._scale(face_x_var)
         self._scale(face_y_var)
 
-        for variable in self._config.variables:
-            standard_name = variable.standard_name
-            variable = self._dataset.get_2d_variable(standard_name)
-            self._scale(variable)
+        self._scale_data()
 
-    def _scale(self, coords_var: xr.DataArray):
-        scaled_coords_var = coords_var * self._config.scale
+    def _scale(self, variable: xr.DataArray):
+        scaled_coords_var = variable * self._config.scale
         self._dataset.update(scaled_coords_var)
+
+    def _scale_data(self):
+        for variable in self._config.variables:
+            variable = self._dataset.get_2d_variable(variable.standard_name)
+            self._scale(variable)
