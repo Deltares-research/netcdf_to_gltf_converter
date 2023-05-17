@@ -27,6 +27,6 @@ class Importer:
             raise ValueError(f"NetCDF file does not exist: {file_path}")
 
         ds = xr.open_dataset(str(file_path))
-        parser = Parser(ds, config)
-        triangular_meshes = parser.parse()
+        parser = Parser()
+        triangular_meshes = parser.parse(ds, config)
         return triangular_meshes
