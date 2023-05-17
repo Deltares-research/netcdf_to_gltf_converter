@@ -14,6 +14,7 @@ from netcdf_to_gltf_converter.netcdf.conventions import (
 
 class Topology(str, Enum):
     """The topology as described by the ugrid_roles."""
+
     nodes = "node_coordinates"
     edges = "edge_coordinates"
     faces = "face_coordinates"
@@ -23,7 +24,7 @@ class UgridDataset:
     """Class that serves as a wrapper object for an xarray.DataArray with UGrid conventions.
     The wrapper allows for easier retrieval of relevant data.
     """
-    
+
     def __init__(self, dataset: xr.Dataset, config: Config) -> None:
         """Initialize a UgridDataset with the specified arguments.
 
@@ -42,7 +43,7 @@ class UgridDataset:
         """Get the two node coordinate variables, one for the x-coordinates and one for the y-coordinates.
 
         Returns:
-            Tuple[xr.DataArray, xr.DataArray]: A tuple where the first item is the DataArray containing the node x-coordinates 
+            Tuple[xr.DataArray, xr.DataArray]: A tuple where the first item is the DataArray containing the node x-coordinates
             and the second item is the DataArray containing the node y-coordinates.
         """
         return self._get_coord_vars_for_topology(Topology.nodes)
@@ -52,7 +53,7 @@ class UgridDataset:
         """Get the two edge coordinate variables, one for the x-coordinates and one for the y-coordinates.
 
         Returns:
-            Tuple[xr.DataArray, xr.DataArray]: A tuple where the first item is the DataArray containing the edge x-coordinates 
+            Tuple[xr.DataArray, xr.DataArray]: A tuple where the first item is the DataArray containing the edge x-coordinates
             and the second item is the DataArray containing the edge y-coordinates.
         """
         return self._get_coord_vars_for_topology(Topology.edges)
@@ -62,7 +63,7 @@ class UgridDataset:
         """Get the two face coordinate variables, one for the x-coordinates and one for the y-coordinates.
 
         Returns:
-            Tuple[xr.DataArray, xr.DataArray]: A tuple where the first item is the DataArray containing the face x-coordinates 
+            Tuple[xr.DataArray, xr.DataArray]: A tuple where the first item is the DataArray containing the face x-coordinates
             and the second item is the DataArray containing the face y-coordinates.
         """
         return self._get_coord_vars_for_topology(Topology.faces)
@@ -83,7 +84,6 @@ class UgridDataset:
         variable = next(self._get_variables_by_attr_filter(**attr_filter))
         return variable
 
-
     def get_data_coordinates(self, data: xr.DataArray) -> np.ndarray:
         """Get the coordinates for the provided data.
 
@@ -101,13 +101,15 @@ class UgridDataset:
 
         Args:
             data (xr.DataArray): The data to update.
-            
+
         Raises:
             ValueError: When the dataset does not contain a variable with the same name.
         """
         if data.name not in self._dataset:
-            raise ValueError(f"Cannot update variable '{data.name}' in dataset: variable does not exist")
-        
+            raise ValueError(
+                f"Cannot update variable '{data.name}' in dataset: variable does not exist"
+            )
+
         self._dataset[data.name] = data
 
     def _get_coordinates_for_location(self, location: LocationAttrValue) -> np.ndarray:
