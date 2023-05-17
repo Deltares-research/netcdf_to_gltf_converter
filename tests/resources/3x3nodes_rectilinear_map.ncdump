@@ -1,0 +1,355 @@
+netcdf \3x3nodes_rectilinear_map {
+dimensions:
+	Two = 2 ;
+	Mesh2d_nEdges = 12 ;
+	Mesh2d_nNodes = 9 ;
+	Mesh2d_nFaces = 4 ;
+	Mesh2d_nMax_face_nodes = 4 ;
+	time = UNLIMITED ; // (5 currently)
+variables:
+	int projected_coordinate_system ;
+		projected_coordinate_system:name = "Unknown projected" ;
+		projected_coordinate_system:epsg = 0 ;
+		projected_coordinate_system:grid_mapping_name = "Unknown projected" ;
+		projected_coordinate_system:longitude_of_prime_meridian = 0. ;
+		projected_coordinate_system:semi_major_axis = 6378137. ;
+		projected_coordinate_system:semi_minor_axis = 6356752.314245 ;
+		projected_coordinate_system:inverse_flattening = 298.257223563 ;
+		projected_coordinate_system:EPSG_code = "EPSG:0" ;
+		projected_coordinate_system:value = "value is equal to EPSG code" ;
+		projected_coordinate_system:proj4_params = "" ;
+	int Mesh2d ;
+		Mesh2d:cf_role = "mesh_topology" ;
+		Mesh2d:long_name = "Topology data of 2D mesh" ;
+		Mesh2d:topology_dimension = 2 ;
+		Mesh2d:node_coordinates = "Mesh2d_node_x Mesh2d_node_y" ;
+		Mesh2d:node_dimension = "Mesh2d_nNodes" ;
+		Mesh2d:max_face_nodes_dimension = "Mesh2d_nMax_face_nodes" ;
+		Mesh2d:edge_node_connectivity = "Mesh2d_edge_nodes" ;
+		Mesh2d:edge_dimension = "Mesh2d_nEdges" ;
+		Mesh2d:edge_coordinates = "Mesh2d_edge_x Mesh2d_edge_y" ;
+		Mesh2d:face_node_connectivity = "Mesh2d_face_nodes" ;
+		Mesh2d:face_dimension = "Mesh2d_nFaces" ;
+		Mesh2d:edge_face_connectivity = "Mesh2d_edge_faces" ;
+		Mesh2d:face_coordinates = "Mesh2d_face_x Mesh2d_face_y" ;
+	double Mesh2d_node_x(Mesh2d_nNodes) ;
+		Mesh2d_node_x:units = "m" ;
+		Mesh2d_node_x:standard_name = "projection_x_coordinate" ;
+		Mesh2d_node_x:long_name = "x-coordinate of mesh nodes" ;
+	double Mesh2d_node_y(Mesh2d_nNodes) ;
+		Mesh2d_node_y:units = "m" ;
+		Mesh2d_node_y:standard_name = "projection_y_coordinate" ;
+		Mesh2d_node_y:long_name = "y-coordinate of mesh nodes" ;
+	double Mesh2d_node_z(Mesh2d_nNodes) ;
+		Mesh2d_node_z:mesh = "Mesh2d" ;
+		Mesh2d_node_z:location = "node" ;
+		Mesh2d_node_z:coordinates = "Mesh2d_node_x Mesh2d_node_y" ;
+		Mesh2d_node_z:standard_name = "altitude" ;
+		Mesh2d_node_z:long_name = "z-coordinate of mesh nodes" ;
+		Mesh2d_node_z:units = "m" ;
+		Mesh2d_node_z:grid_mapping = "projected_coordinate_system" ;
+		Mesh2d_node_z:_FillValue = -999. ;
+	double Mesh2d_edge_x(Mesh2d_nEdges) ;
+		Mesh2d_edge_x:units = "m" ;
+		Mesh2d_edge_x:standard_name = "projection_x_coordinate" ;
+		Mesh2d_edge_x:long_name = "characteristic x-coordinate of the mesh edge (e.g. midpoint)" ;
+	double Mesh2d_edge_y(Mesh2d_nEdges) ;
+		Mesh2d_edge_y:units = "m" ;
+		Mesh2d_edge_y:standard_name = "projection_y_coordinate" ;
+		Mesh2d_edge_y:long_name = "characteristic y-coordinate of the mesh edge (e.g. midpoint)" ;
+	int Mesh2d_edge_nodes(Mesh2d_nEdges, Two) ;
+		Mesh2d_edge_nodes:cf_role = "edge_node_connectivity" ;
+		Mesh2d_edge_nodes:long_name = "Start and end nodes of mesh edges" ;
+		Mesh2d_edge_nodes:start_index = 1 ;
+	int Mesh2d_face_nodes(Mesh2d_nFaces, Mesh2d_nMax_face_nodes) ;
+		Mesh2d_face_nodes:cf_role = "face_node_connectivity" ;
+		Mesh2d_face_nodes:long_name = "Vertex nodes of mesh faces (counterclockwise)" ;
+		Mesh2d_face_nodes:start_index = 1 ;
+		Mesh2d_face_nodes:_FillValue = -999 ;
+	int Mesh2d_edge_faces(Mesh2d_nEdges, Two) ;
+		Mesh2d_edge_faces:cf_role = "edge_face_connectivity" ;
+		Mesh2d_edge_faces:long_name = "Neighboring faces of mesh edges" ;
+		Mesh2d_edge_faces:start_index = 1 ;
+		Mesh2d_edge_faces:_FillValue = -999 ;
+	double Mesh2d_face_x(Mesh2d_nFaces) ;
+		Mesh2d_face_x:units = "m" ;
+		Mesh2d_face_x:standard_name = "projection_x_coordinate" ;
+		Mesh2d_face_x:long_name = "Characteristic x-coordinate of mesh face" ;
+		Mesh2d_face_x:bounds = "Mesh2d_face_x_bnd" ;
+	double Mesh2d_face_y(Mesh2d_nFaces) ;
+		Mesh2d_face_y:units = "m" ;
+		Mesh2d_face_y:standard_name = "projection_y_coordinate" ;
+		Mesh2d_face_y:long_name = "Characteristic y-coordinate of mesh face" ;
+		Mesh2d_face_y:bounds = "Mesh2d_face_y_bnd" ;
+	double Mesh2d_face_x_bnd(Mesh2d_nFaces, Mesh2d_nMax_face_nodes) ;
+		Mesh2d_face_x_bnd:units = "m" ;
+		Mesh2d_face_x_bnd:standard_name = "projection_x_coordinate" ;
+		Mesh2d_face_x_bnd:long_name = "x-coordinate bounds of mesh faces (i.e. corner coordinates)" ;
+		Mesh2d_face_x_bnd:_FillValue = -999. ;
+	double Mesh2d_face_y_bnd(Mesh2d_nFaces, Mesh2d_nMax_face_nodes) ;
+		Mesh2d_face_y_bnd:units = "m" ;
+		Mesh2d_face_y_bnd:standard_name = "projection_y_coordinate" ;
+		Mesh2d_face_y_bnd:long_name = "y-coordinate bounds of mesh faces (i.e. corner coordinates)" ;
+		Mesh2d_face_y_bnd:_FillValue = -999. ;
+	int Mesh2d_edge_type(Mesh2d_nEdges) ;
+		Mesh2d_edge_type:mesh = "Mesh2d" ;
+		Mesh2d_edge_type:location = "edge" ;
+		Mesh2d_edge_type:coordinates = "Mesh2d_edge_x Mesh2d_edge_y" ;
+		Mesh2d_edge_type:long_name = "edge type (relation between edge and flow geometry)" ;
+		Mesh2d_edge_type:_FillValue = -999 ;
+		Mesh2d_edge_type:flag_values = 0, 1, 2, 3 ;
+		Mesh2d_edge_type:flag_meanings = "internal_closed internal boundary boundary_closed" ;
+	double Mesh2d_flowelem_ba(Mesh2d_nFaces) ;
+		Mesh2d_flowelem_ba:mesh = "Mesh2d" ;
+		Mesh2d_flowelem_ba:location = "face" ;
+		Mesh2d_flowelem_ba:coordinates = "Mesh2d_face_x Mesh2d_face_y" ;
+		Mesh2d_flowelem_ba:cell_methods = "Mesh2d_nFaces: mean" ;
+		Mesh2d_flowelem_ba:cell_measures = "area: Mesh2d_flowelem_ba" ;
+		Mesh2d_flowelem_ba:standard_name = "cell_area" ;
+		Mesh2d_flowelem_ba:units = "m2" ;
+		Mesh2d_flowelem_ba:grid_mapping = "projected_coordinate_system" ;
+		Mesh2d_flowelem_ba:_FillValue = -999. ;
+	double Mesh2d_flowelem_bl(Mesh2d_nFaces) ;
+		Mesh2d_flowelem_bl:mesh = "Mesh2d" ;
+		Mesh2d_flowelem_bl:location = "face" ;
+		Mesh2d_flowelem_bl:coordinates = "Mesh2d_face_x Mesh2d_face_y" ;
+		Mesh2d_flowelem_bl:cell_methods = "Mesh2d_nFaces: mean" ;
+		Mesh2d_flowelem_bl:cell_measures = "area: Mesh2d_flowelem_ba" ;
+		Mesh2d_flowelem_bl:standard_name = "altitude" ;
+		Mesh2d_flowelem_bl:long_name = "flow element center bedlevel (bl)" ;
+		Mesh2d_flowelem_bl:units = "m" ;
+		Mesh2d_flowelem_bl:grid_mapping = "projected_coordinate_system" ;
+		Mesh2d_flowelem_bl:_FillValue = -999. ;
+	double time(time) ;
+		time:standard_name = "time" ;
+		time:units = "seconds since 2023-04-27 00:00:00 +00:00" ;
+	double timestep(time) ;
+		timestep:long_name = "Latest computational timestep size in each output interval" ;
+		timestep:units = "s" ;
+	double Mesh2d_Numlimdt(time, Mesh2d_nFaces) ;
+		Mesh2d_Numlimdt:mesh = "Mesh2d" ;
+		Mesh2d_Numlimdt:location = "face" ;
+		Mesh2d_Numlimdt:coordinates = "Mesh2d_face_x Mesh2d_face_y" ;
+		Mesh2d_Numlimdt:cell_methods = "Mesh2d_nFaces: point" ;
+		Mesh2d_Numlimdt:cell_measures = "area: Mesh2d_flowelem_ba" ;
+		Mesh2d_Numlimdt:long_name = "Number of times flow element was Courant limiting" ;
+		Mesh2d_Numlimdt:units = "1" ;
+		Mesh2d_Numlimdt:grid_mapping = "projected_coordinate_system" ;
+		Mesh2d_Numlimdt:_FillValue = -999. ;
+	double Mesh2d_s1(time, Mesh2d_nFaces) ;
+		Mesh2d_s1:mesh = "Mesh2d" ;
+		Mesh2d_s1:location = "face" ;
+		Mesh2d_s1:coordinates = "Mesh2d_face_x Mesh2d_face_y" ;
+		Mesh2d_s1:cell_methods = "Mesh2d_nFaces: mean" ;
+		Mesh2d_s1:cell_measures = "area: Mesh2d_flowelem_ba" ;
+		Mesh2d_s1:standard_name = "sea_surface_height" ;
+		Mesh2d_s1:long_name = "Water level" ;
+		Mesh2d_s1:units = "m" ;
+		Mesh2d_s1:grid_mapping = "projected_coordinate_system" ;
+		Mesh2d_s1:_FillValue = -999. ;
+	double Mesh2d_waterdepth(time, Mesh2d_nFaces) ;
+		Mesh2d_waterdepth:mesh = "Mesh2d" ;
+		Mesh2d_waterdepth:location = "face" ;
+		Mesh2d_waterdepth:coordinates = "Mesh2d_face_x Mesh2d_face_y" ;
+		Mesh2d_waterdepth:cell_methods = "Mesh2d_nFaces: mean" ;
+		Mesh2d_waterdepth:cell_measures = "area: Mesh2d_flowelem_ba" ;
+		Mesh2d_waterdepth:standard_name = "sea_floor_depth_below_sea_surface" ;
+		Mesh2d_waterdepth:long_name = "Water depth at pressure points" ;
+		Mesh2d_waterdepth:units = "m" ;
+		Mesh2d_waterdepth:grid_mapping = "projected_coordinate_system" ;
+		Mesh2d_waterdepth:_FillValue = -999. ;
+	double Mesh2d_u1(time, Mesh2d_nEdges) ;
+		Mesh2d_u1:mesh = "Mesh2d" ;
+		Mesh2d_u1:location = "edge" ;
+		Mesh2d_u1:coordinates = "Mesh2d_edge_x Mesh2d_edge_y" ;
+		Mesh2d_u1:cell_methods = "Mesh2d_nEdges: mean" ;
+		Mesh2d_u1:long_name = "Velocity at velocity point, n-component" ;
+		Mesh2d_u1:units = "m s-1" ;
+		Mesh2d_u1:grid_mapping = "projected_coordinate_system" ;
+		Mesh2d_u1:_FillValue = -999. ;
+		Mesh2d_u1:comment = "Positive direction is from first to second neighbouring face (flow element)." ;
+	double Mesh2d_ucx(time, Mesh2d_nFaces) ;
+		Mesh2d_ucx:mesh = "Mesh2d" ;
+		Mesh2d_ucx:location = "face" ;
+		Mesh2d_ucx:coordinates = "Mesh2d_face_x Mesh2d_face_y" ;
+		Mesh2d_ucx:cell_methods = "Mesh2d_nFaces: mean" ;
+		Mesh2d_ucx:cell_measures = "area: Mesh2d_flowelem_ba" ;
+		Mesh2d_ucx:standard_name = "sea_water_x_velocity" ;
+		Mesh2d_ucx:long_name = "Flow element center velocity vector, x-component" ;
+		Mesh2d_ucx:units = "m s-1" ;
+		Mesh2d_ucx:grid_mapping = "projected_coordinate_system" ;
+		Mesh2d_ucx:_FillValue = -999. ;
+	double Mesh2d_ucy(time, Mesh2d_nFaces) ;
+		Mesh2d_ucy:mesh = "Mesh2d" ;
+		Mesh2d_ucy:location = "face" ;
+		Mesh2d_ucy:coordinates = "Mesh2d_face_x Mesh2d_face_y" ;
+		Mesh2d_ucy:cell_methods = "Mesh2d_nFaces: mean" ;
+		Mesh2d_ucy:cell_measures = "area: Mesh2d_flowelem_ba" ;
+		Mesh2d_ucy:standard_name = "sea_water_y_velocity" ;
+		Mesh2d_ucy:long_name = "Flow element center velocity vector, y-component" ;
+		Mesh2d_ucy:units = "m s-1" ;
+		Mesh2d_ucy:grid_mapping = "projected_coordinate_system" ;
+		Mesh2d_ucy:_FillValue = -999. ;
+	double Mesh2d_ucmag(time, Mesh2d_nFaces) ;
+		Mesh2d_ucmag:mesh = "Mesh2d" ;
+		Mesh2d_ucmag:location = "face" ;
+		Mesh2d_ucmag:coordinates = "Mesh2d_face_x Mesh2d_face_y" ;
+		Mesh2d_ucmag:cell_methods = "Mesh2d_nFaces: mean" ;
+		Mesh2d_ucmag:cell_measures = "area: Mesh2d_flowelem_ba" ;
+		Mesh2d_ucmag:standard_name = "sea_water_speed" ;
+		Mesh2d_ucmag:long_name = "Flow element center velocity magnitude" ;
+		Mesh2d_ucmag:units = "m s-1" ;
+		Mesh2d_ucmag:grid_mapping = "projected_coordinate_system" ;
+		Mesh2d_ucmag:_FillValue = -999. ;
+	double Mesh2d_q1(time, Mesh2d_nEdges) ;
+		Mesh2d_q1:mesh = "Mesh2d" ;
+		Mesh2d_q1:location = "edge" ;
+		Mesh2d_q1:coordinates = "Mesh2d_edge_x Mesh2d_edge_y" ;
+		Mesh2d_q1:cell_methods = "Mesh2d_nEdges: sum" ;
+		Mesh2d_q1:standard_name = "discharge" ;
+		Mesh2d_q1:long_name = "Discharge through flow link at current time" ;
+		Mesh2d_q1:units = "m3 s-1" ;
+		Mesh2d_q1:grid_mapping = "projected_coordinate_system" ;
+		Mesh2d_q1:_FillValue = -999. ;
+		Mesh2d_q1:comment = "Positive direction is from first to second neighbouring face (flow element)." ;
+
+// global attributes:
+		:institution = "Deltares" ;
+		:references = "http://www.deltares.nl" ;
+		:source = "D-Flow FM 1.2.143.140737. Model:" ;
+		:history = "Created on 2023-04-27T22:14:49+0200, D-Flow FM" ;
+		:date_created = "2023-04-27T22:14:49+0200" ;
+		:date_modified = "2023-04-27T22:14:49+0200" ;
+		:Conventions = "CF-1.8 UGRID-1.0 Deltares-0.10" ;
+data:
+
+ projected_coordinate_system = _ ;
+
+ Mesh2d = _ ;
+
+ Mesh2d_node_x = 0, -1, 0, 0, 1, -1, -1, 1, 1 ;
+
+ Mesh2d_node_y = 0, 0, -1, 1, 0, -1, 1, -1, 1 ;
+
+ Mesh2d_node_z = _, _, _, _, _, _, _, _, _ ;
+
+ Mesh2d_edge_x = -0.5, 0, 0, 0.5, -1, -0.5, -0.5, -1, 1, 0.5, 1, 0.5 ;
+
+ Mesh2d_edge_y = 0, -0.5, 0.5, 0, -0.5, -1, 1, 0.5, -0.5, -1, 0.5, 1 ;
+
+ Mesh2d_edge_nodes =
+  1, 2,
+  3, 1,
+  1, 4,
+  5, 1,
+  6, 2,
+  6, 3,
+  7, 4,
+  2, 7,
+  8, 5,
+  3, 8,
+  5, 9,
+  4, 9 ;
+
+ Mesh2d_face_nodes =
+  6, 3, 1, 2,
+  2, 1, 4, 7,
+  3, 8, 5, 1,
+  1, 5, 9, 4 ;
+
+ Mesh2d_edge_faces =
+  1, 2,
+  1, 3,
+  2, 4,
+  3, 4,
+  1, 0,
+  1, 0,
+  2, 0,
+  2, 0,
+  3, 0,
+  3, 0,
+  4, 0,
+  4, 0 ;
+
+ Mesh2d_face_x = -0.5, -0.5, 0.5, 0.5 ;
+
+ Mesh2d_face_y = -0.5, 0.5, -0.5, 0.5 ;
+
+ Mesh2d_face_x_bnd =
+  -1, 0, 0, -1,
+  -1, 0, 0, -1,
+  0, 1, 1, 0,
+  0, 1, 1, 0 ;
+
+ Mesh2d_face_y_bnd =
+  -1, -1, 0, 0,
+  0, 0, 1, 1,
+  -1, -1, 0, 0,
+  0, 0, -1, -1 ;
+
+ Mesh2d_edge_type = 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3 ;
+
+ Mesh2d_flowelem_ba = 1, 1, 1, 1 ;
+
+ Mesh2d_flowelem_bl = -5, -5, -5, -5 ;
+
+ time = 0, 21600, 43200, 64800, 86400 ;
+
+ timestep = 1, 29.9604959999633, 30, 30, 30 ;
+
+ Mesh2d_Numlimdt =
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0 ;
+
+ Mesh2d_s1 =
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0 ;
+
+ Mesh2d_waterdepth =
+  5, 5, 4, 4,
+  4, 4, 5, 5,
+  5, 4, 5, 4,
+  4, 5, 4, 5,
+  5, 4, 4, 5 ;
+
+ Mesh2d_u1 =
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ;
+
+ Mesh2d_ucx =
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0 ;
+
+ Mesh2d_ucy =
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0 ;
+
+ Mesh2d_ucmag =
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0 ;
+
+ Mesh2d_q1 =
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ;
+}

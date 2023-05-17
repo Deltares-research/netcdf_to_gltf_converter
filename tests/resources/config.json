@@ -1,7 +1,7 @@
 {
   "file_version": "0.1.0",
-  "shift_coordinates": false,
-  "scale": 1.0,
+  "shift_coordinates": true,
+  "scale": 0.5,
   "variables": [
 	{
       "standard_name": "sea_floor_depth_below_sea_surface",
