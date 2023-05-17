@@ -11,6 +11,7 @@
   - [Requirements](#requirements)
   - [Installation](#installation)
   - [Usage](#usage)
+  - [Configuration file](#configuration-file)
   - [View results](#view-results)
 - [Methodology](#methodology)
 - [Contributing](#contributing)
@@ -67,7 +68,7 @@ These steps will ensure that the converter is installed within a virtual environ
  poetry run python input_map.nc output.gltf config.json
  ```
  
-**Configuration file**
+## Configuration file
  The configuration JSON file allows you to customize various settings and parameters for the conversion process. It provides flexibility in defining how the netCDF data is transformed into the glTF format. 
  
  - `file_version`: Specifies the version of the configuration file format.
@@ -80,6 +81,34 @@ These steps will ensure that the converter is installed within a virtual environ
   - `threshold_height`: The threshold height value used to distinguish between variable values above and below this value. This option is only required when `use_threshold` is `true`.
   - `threshold_color`: An array containg four floating values representing the color of the threshold mesh. The color values should be in the range of 0.0 to 1.0 for each channel (red, green, blue, alpha). This option is only required when `use_threshold` is `true`.
  
+ **Example**
+```json
+{
+	"file_version":"0.1.0",
+	"shift_coordinates":true,
+	"scale":0.5,
+	"variables":[
+	   {
+		  "name":"Mesh2d_waterdepth",
+		  "color":[0.372, 0.635, 0.8, 1.0],
+		  "use_threshold":false,
+		  "threshold_height":0.01,
+		  "threshold_color":[
+			 1.0,
+			 1.0,
+			 1.0,
+			 1.0
+		  ]
+	   },
+	   {
+		  "name":"Mesh2d_s1",
+		  "color":[0.686, 0.831, 0.937, 1.0],
+		  "use_threshold":false
+	   }
+	]
+ }
+```
+
 ## View results
  Several glTF viewers exist that can be used to view the produced glTF file. Simply drag and drop the file, and the glTF file will be rendered.
  * [glTF Sample Viewer](https://github.khronos.org/glTF-Sample-Viewer-Release/)
