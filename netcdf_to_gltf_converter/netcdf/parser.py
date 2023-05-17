@@ -48,7 +48,7 @@ class Parser:
         data_coords: np.ndarray,
         grid: Ugrid2d,
         base: MeshAttributes,
-        color: Color
+        color: Color,
     ) -> Generator[MeshAttributes, None, None]:
         n_times = data.sizes["time"]
         for time_index in range(1, n_times):
@@ -60,7 +60,9 @@ class Parser:
                 dtype=np.float32,
             )
 
-            yield MeshAttributes(vertex_positions=vertex_displacements, mesh_color=color)
+            yield MeshAttributes(
+                vertex_positions=vertex_displacements, mesh_color=color
+            )
 
     def to_triangular_mesh(self, variable_name: str, color: Color):
         data = self._ugrid_dataset.get_variable(variable_name)

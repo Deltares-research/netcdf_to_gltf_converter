@@ -1,15 +1,13 @@
 from typing import List
 
 import numpy as np
-from netcdf_to_gltf_converter.types import Color
 
+from netcdf_to_gltf_converter.types import Color
 from netcdf_to_gltf_converter.utils.arrays import float32_array, validate_2d_array
 
 
 class MeshAttributes:
-    def __init__(
-        self, vertex_positions: np.ndarray, mesh_color: Color
-    ) -> None:
+    def __init__(self, vertex_positions: np.ndarray, mesh_color: Color) -> None:
         """Initialize a MeshAttributes with the specified arguments.
 
         Args:

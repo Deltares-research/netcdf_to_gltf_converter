@@ -7,8 +7,8 @@ from packaging.version import Version
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra, Field, root_validator, validator
 
-
 Color = List[float]
+
 
 class BaseModel(PydanticBaseModel):
     """BaseModel defines the base for Pydantic model classes."""

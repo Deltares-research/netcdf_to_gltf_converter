@@ -44,10 +44,15 @@ def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
         triangles.append(triangle2)
 
     return TriangularMesh(
-        MeshAttributes(vertex_positions=float32_array(base_geometry_vertex_positions), mesh_color=[0.38, 0.73, 0.78, 1.0]),
+        MeshAttributes(
+            vertex_positions=float32_array(base_geometry_vertex_positions),
+            mesh_color=[0.38, 0.73, 0.78, 1.0],
+        ),
         uint32_array(triangles),
         [
-            MeshAttributes(vertex_positions=float32_array(p), mesh_color=[0.38, 0.73, 0.78, 1.0])
+            MeshAttributes(
+                vertex_positions=float32_array(p), mesh_color=[0.38, 0.73, 0.78, 1.0]
+            )
             for p in transformations_vertex_positions
         ],
     )
