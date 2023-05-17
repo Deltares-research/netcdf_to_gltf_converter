@@ -80,27 +80,27 @@ class UgridDataset:
         location = data.attrs.get(AttrKey.location)
         return self._get_coordinates_for_location(location)
 
-    def update(self, data: xr.DataArray):
-        """Update the data in the data set.
+    def set_variable(self, variable: xr.DataArray):
+        """Update the variable in the data set.
 
         Args:
-            data (xr.DataArray): The data to update.
+            variable (xr.DataArray): The variable to update.
 
         Raises:
             ValueError: When the dataset does not contain a variable with the same name.
         """
-        if data.name not in self._dataset:
+        if variable.name not in self._dataset:
             raise ValueError(
-                f"Cannot update variable '{data.name}' in dataset: variable does not exist"
+                f"Cannot update variable '{variable.name}' in dataset: variable does not exist"
             )
 
-        self._dataset[data.name] = data
+        self._dataset[variable.name] = variable
 
-    def get_variable(self, name: str) -> xr.DataArray:
+    def get_variable(self, variable_name: str) -> xr.DataArray:
         """Get the variable with the specified name from the data set.
 
         Args:
-            name (str): The variable name.
+            variable_name (str): The variable name.
 
         Returns:
             xr.DataArray: An xr.DataArray containing the variable data.
@@ -108,12 +108,12 @@ class UgridDataset:
         Raises:
             ValueError: When the dataset does not contain a variable with the name.
         """
-        if name not in self._dataset:
+        if variable_name not in self._dataset:
             raise ValueError(
-                f"Cannot get variable '{name}' in dataset: variable does not exist"
+                f"Cannot get variable '{variable_name}' in dataset: variable does not exist"
             )
             
-        return self._dataset[name]
+        return self._dataset[variable_name]
     
     def _get_coordinates_for_location(self, location: LocationAttrValue) -> np.ndarray:
         x_coord_var, y_coord_var = self._get_coord_vars_for_location(location)

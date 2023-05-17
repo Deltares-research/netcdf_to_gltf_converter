@@ -42,7 +42,7 @@ class Transformer:
 
     def _shift(self, variable: xr.DataArray, shift: float):
         shifted_coords_var = variable - shift
-        self._dataset.update(shifted_coords_var)
+        self._dataset.set_variable(shifted_coords_var)
 
     def scale(self):
         """
@@ -68,7 +68,7 @@ class Transformer:
 
     def _scale(self, variable: xr.DataArray):
         scaled_coords_var = variable * self._config.scale
-        self._dataset.update(scaled_coords_var)
+        self._dataset.set_variable(scaled_coords_var)
 
     def _scale_data(self):
         for variable in self._config.variables:
