@@ -50,6 +50,9 @@ class UgridDataset:
         location = data.attrs.get(AttrKey.location)
         return self._get_coordinates_for_location(location)
 
+    def update(self, data: xr.DataArray):
+        self._dataset[data.name] = data
+        
     def _get_coordinates_for_location(self, location: LocationAttrValue) -> np.ndarray:
         x_coord_var, y_coord_var = self._get_coord_vars_for_location(location)
         x_coords = x_coord_var.values
