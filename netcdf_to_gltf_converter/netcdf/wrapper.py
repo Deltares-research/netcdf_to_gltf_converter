@@ -29,15 +29,15 @@ class UgridDataset:
     @property
     def node_coord_vars(self) -> Tuple[xr.DataArray, xr.DataArray]:
         return self._get_coord_vars_for_topology(Topology.nodes)
-    
+
     @property
     def edge_coord_vars(self):
         return self._get_coord_vars_for_topology(Topology.edges)
-    
+
     @property
     def face_coord_vars(self):
         return self._get_coord_vars_for_topology(Topology.faces)
-    
+
     def get_2d_variable(self, standard_name: str) -> xr.DataArray:
         attr_filter = {
             AttrKey.standard_name: standard_name,
@@ -52,7 +52,7 @@ class UgridDataset:
 
     def update(self, data: xr.DataArray):
         self._dataset[data.name] = data
-        
+
     def _get_coordinates_for_location(self, location: LocationAttrValue) -> np.ndarray:
         x_coord_var, y_coord_var = self._get_coord_vars_for_location(location)
         x_coords = x_coord_var.values
@@ -60,7 +60,7 @@ class UgridDataset:
         coords = np.column_stack([x_coords, y_coords])
 
         return coords
-    
+
     def _get_coord_vars_for_location(self, location: LocationAttrValue) -> np.ndarray:
         if location == LocationAttrValue.node:
             return self._get_coord_vars_for_topology(Topology.nodes)
@@ -69,7 +69,7 @@ class UgridDataset:
         if location == LocationAttrValue.face:
             return self._get_coord_vars_for_topology(Topology.faces)
         raise ValueError(f"Location {location} not supported.")
-    
+
     def _get_coord_vars_for_topology(self, location: Topology) -> Tuple:
         var_names = self._topologies[location]
         x_coord_var = self._dataset[var_names[0][0]]
