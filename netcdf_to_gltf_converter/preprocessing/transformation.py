@@ -72,5 +72,5 @@ class Transformer:
 
     def _scale_data(self):
         for variable in self._config.variables:
-            variable = self._dataset.get_2d_variable(variable.standard_name)
+            variable = self._dataset.get_variable(variable.name)
             self._scale(variable)

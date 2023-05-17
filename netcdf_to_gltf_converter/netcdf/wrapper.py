@@ -68,22 +68,6 @@ class UgridDataset:
         """
         return self._get_coord_vars_for_topology(Topology.faces)
 
-    def get_2d_variable(self, standard_name: str) -> xr.DataArray:
-        """Get the variable with 2D topology, with the specified standard name.
-
-        Args:
-            standard_name (str): The standard name of the variable.
-
-        Returns:
-            xr.DataArray: A xr.DataArray containing the variable data.
-        """
-        attr_filter = {
-            AttrKey.standard_name: standard_name,
-            AttrKey.mesh: self.topology_2d,
-        }
-        variable = next(self._get_variables_by_attr_filter(**attr_filter))
-        return variable
-
     def get_data_coordinates(self, data: xr.DataArray) -> np.ndarray:
         """Get the coordinates for the provided data.
 
@@ -112,6 +96,25 @@ class UgridDataset:
 
         self._dataset[data.name] = data
 
+    def get_variable(self, name: str) -> xr.DataArray:
+        """Get the variable with the specified name from the data set.
+
+        Args:
+            name (str): The variable name.
+
+        Returns:
+            xr.DataArray: An xr.DataArray containing the variable data.
+            
+        Raises:
+            ValueError: When the dataset does not contain a variable with the name.
+        """
+        if name not in self._dataset:
+            raise ValueError(
+                f"Cannot get variable '{name}' in dataset: variable does not exist"
+            )
+            
+        return self._dataset[name]
+    
     def _get_coordinates_for_location(self, location: LocationAttrValue) -> np.ndarray:
         x_coord_var, y_coord_var = self._get_coord_vars_for_location(location)
         x_coords = x_coord_var.values
@@ -131,8 +134,8 @@ class UgridDataset:
 
     def _get_coord_vars_for_topology(self, location: Topology) -> Tuple:
         var_names = self._topologies[location]
-        x_coord_var = self._dataset[var_names[0][0]]
-        y_coord_var = self._dataset[var_names[1][0]]
+        x_coord_var = self.get_variable(var_names[0][0])
+        y_coord_var = self.get_variable(var_names[1][0])
 
         return x_coord_var, y_coord_var
 

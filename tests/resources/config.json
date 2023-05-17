@@ -3,7 +3,7 @@
 	"shift_coordinates": true,
 	"scale": 0.5,
 	"variables": [{
-		"standard_name": "sea_floor_depth_below_sea_surface",
+		"name": "Mesh2d_waterdepth",
 		"use_threshold": true,
 		"threshold_height": 0.01,
 		"threshold_color": [1.0, 1.0, 1.0, 1.0]

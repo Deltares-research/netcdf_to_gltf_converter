@@ -90,8 +90,8 @@ class AbstractJsonConfigFile(BaseModel, ABC):
 class Variable(BaseModel):
     """Configuration properties of a variable."""
 
-    standard_name: str = Field("standard_name")
-    """str: The standard name of the NetCDF variable"""
+    name: str = Field("name")
+    """str: The name of the NetCDF variable"""
     use_threshold: bool = Field(None, alias="threshold")
     """bool: Whether or not to add a threshold mesh to filter values below the threshold height."""
     threshold_color: Optional[List[float]] = Field(None, alias="threshold_color")

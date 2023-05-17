@@ -32,7 +32,7 @@ class Importer:
         triangular_meshes = []
 
         for variable in config.variables:
-            data_mesh = parser.to_triangular_mesh(variable.standard_name)
+            data_mesh = parser.to_triangular_mesh(variable.name)
             triangular_meshes.append(data_mesh)
 
             if variable.use_threshold:

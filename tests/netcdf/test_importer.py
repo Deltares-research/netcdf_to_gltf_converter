@@ -12,7 +12,7 @@ class TestImporter:
     def test_import_from(self):
         file_path = resources / "3x3nodes_rectilinear_map.nc"
 
-        variable = Variable(standard_name="sea_floor_depth_below_sea_surface", 
+        variable = Variable(name="Mesh2d_waterdepth", 
                             use_threshold = True,
                             threshold_height = 0.01,
                             threshold_color = [1.0, 1.0, 1.0, 1.0])
