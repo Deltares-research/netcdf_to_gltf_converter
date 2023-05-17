@@ -14,6 +14,7 @@
   - [Configuration file](#configuration-file)
   - [View results](#view-results)
 - [Methodology](#methodology)
+- [Limitations](#limitations)
 - [Contributing](#contributing)
 - [Acknowledgments](#acknowledgments)
 
@@ -132,6 +133,18 @@ The converter operates through the following steps:
 8. The glTF data is exported to the user-defined glTF file.
 
 By following these steps, the converter is able to take netCDF files containing time and location dependent data and convert the data into glTF files that can be used to view the data in 3D renderers.
+
+# Limitations
+**Color animation**
+In theory, glTF does support the animation of colors, allowing for dynamic and engaging visual effects. However, it's important to note that [this feature is optional](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#morph-targets) and not all glTF viewers or software implementations can effectively handle it. As a result, the practical use and compatibility of color animation in glTF is limited, as many viewers lack the necessary support. Until glTF makes this feature required or more viewers support this feature, the meshes in the rendered glTF will have a uniform color. As a result, the rendered meshes will have a uniform color until this feature becomes required or more viewers provide support for it.
+
+**Performance**
+Currently, the converter's performance is suboptimal, especially when dealing with larger datasets that contain many locations and/or time steps. In such scenarios, it may encounter challenges in efficiently processing and delivering the glTF file. Performance improvements will be introduced in the long term.
+
+**Accuracy interpolation**
+The converter currently uses nearest point interpolation, which is a basic method for interpolating the data onto the vertices. However, in the future, the converter aims to offer additional interpolation methods. This would allow the user to choose the most suitable interpolation method for their dataset.
+
+
 
 # Contributing
 If you encounter any issues or have good ideas for this project please [create an issue](https://github.com/Deltares/netcdf_to_gltf_converter/issues/new/choose). This will help improve the project. Before creating any new issues, please check the [backlog](https://github.com/Deltares/netcdf_to_gltf_converter/issues) to see if your issue already exists. 
