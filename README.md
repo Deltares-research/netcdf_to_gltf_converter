@@ -50,7 +50,7 @@ To install the converter, follow these steps:
 curl -sSL https://install.python-poetry.org | python3 -
 ```
 2. Clone or [download](https://github.com/Deltares/netcdf_to_gltf_converter/archive/refs/heads/main.zip) this repository to your local machine
-3. From the root folder, open your command line and execute:
+3. From the root folder, open your command line interface and run the following command:
 ```
 poetry install
 ```
@@ -143,8 +143,6 @@ Currently, the converter's performance is suboptimal, especially when dealing wi
 
 **Accuracy interpolation**
 The converter currently uses nearest point interpolation, which is a basic method for interpolating the data onto the vertices. However, in the future, the converter aims to offer additional interpolation methods. This would allow the user to choose the most suitable interpolation method for their dataset.
-
-
 
 # Contributing
 If you encounter any issues or have good ideas for this project please [create an issue](https://github.com/Deltares/netcdf_to_gltf_converter/issues/new/choose). This will help improve the project. Before creating any new issues, please check the [backlog](https://github.com/Deltares/netcdf_to_gltf_converter/issues) to see if your issue already exists. 
