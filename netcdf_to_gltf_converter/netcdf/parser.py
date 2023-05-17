@@ -17,7 +17,7 @@ xr.set_options(keep_attrs=True)
 
 class Parser:
     def __init__(self, dataset: xr.Dataset, config: Config) -> None:
-        """Initialize a Wrapper with the specified arguments.
+        """Initialize a Parser with the specified arguments.
 
         Args:
             dataset (xr.Dataset): The NetCDF dataset.
