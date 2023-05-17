@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import Tuple
-
+import xugrid as xu
 import numpy as np
 import xarray as xr
 
@@ -38,6 +38,15 @@ class UgridDataset:
         self.topology_2d = self._get_topology_2d()
         self._topologies = dataset.ugrid_roles.coordinates[self.topology_2d]
 
+    @property
+    def ugrid2d(self) -> xu.Ugrid2d:
+        """Get the xu.Ugrid2d from the data set.
+
+        Returns:
+            xu.Ugrid2d: A xu.Ugrid2d created from the data set.
+        """
+        return xu.Ugrid2d.from_dataset(self._dataset, self.topology_2d)
+    
     @property
     def node_coord_vars(self) -> Tuple[xr.DataArray, xr.DataArray]:
         """Get the two node coordinate variables, one for the x-coordinates and one for the y-coordinates.

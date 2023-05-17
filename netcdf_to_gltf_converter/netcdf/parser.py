@@ -35,13 +35,12 @@ class Parser:
         tranformer = Transformer(ugrid_dataset, config)
         tranformer.shift()
         tranformer.scale()
-        grid = Ugrid2d.from_dataset(dataset, ugrid_dataset.topology_2d)
-        triangulated_grid = self._triangulator.triangulate(grid)
+        triangulated_grid = self._triangulator.triangulate(ugrid_dataset.ugrid2d)
 
         triangular_meshes = []
 
         for variable in config.variables:
-            data_mesh = self.to_triangular_mesh(
+            data_mesh = self.parse_variable(
                 variable, triangulated_grid, ugrid_dataset
             )
             triangular_meshes.append(data_mesh)
@@ -54,7 +53,7 @@ class Parser:
 
         return triangular_meshes
 
-    def to_triangular_mesh(
+    def parse_variable(
         self, variable: Variable, grid: Ugrid2d, ugrid_dataset: UgridDataset
     ):
         data = ugrid_dataset.get_variable(variable.name)
