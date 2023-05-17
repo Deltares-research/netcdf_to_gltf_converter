@@ -74,6 +74,3 @@ class Transformer:
         for variable in self._config.variables:
             variable = self._dataset.get_variable(variable.name)
             self._scale(variable)
-
-
-
