@@ -105,7 +105,8 @@ class Variable(BaseModel):
     @root_validator
     def validate_threshold(cls, values: Dict[str, Any]):
         def validate_required(field: str):
-            if values[field] is None:
+            field_value = values.get(field)
+            if field_value is None:
                 raise ValueError(f"'{field}' is required when 'use_threshold' is true.")
 
         if values["use_threshold"]:
