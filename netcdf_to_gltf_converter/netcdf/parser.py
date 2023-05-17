@@ -60,8 +60,8 @@ class Parser:
 
             yield MeshAttributes(vertex_positions=vertex_displacements)
 
-    def to_triangular_mesh(self, standard_name: str):
-        data = self._ugrid_dataset.get_2d_variable(standard_name)
+    def to_triangular_mesh(self, variable_name: str):
+        data = self._ugrid_dataset.get_variable(variable_name)
         data_coords = self._ugrid_dataset.get_data_coordinates(data)
         data_values = data.isel(time=0).to_numpy()
 

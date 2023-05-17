@@ -32,12 +32,12 @@ class Importer:
         triangular_meshes = []
 
         for variable in config.variables:
-            data_mesh = parser.to_triangular_mesh(variable.standard_name)
+            data_mesh = parser.to_triangular_mesh(variable.name)
             triangular_meshes.append(data_mesh)
 
-            if variable.threshold:
+            if variable.use_threshold:
                 threshold_mesh = data_mesh.get_threshold_mesh(
-                    variable.threshold.height * config.scale, variable.threshold.color
+                    variable.threshold_height * config.scale, variable.threshold_color
                 )
                 triangular_meshes.append(threshold_mesh)
 
