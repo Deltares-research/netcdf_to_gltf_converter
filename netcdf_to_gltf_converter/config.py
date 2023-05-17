@@ -7,6 +7,8 @@ from packaging.version import Version
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra, Field, root_validator, validator
 
+Color = List[float]
+
 
 class BaseModel(PydanticBaseModel):
     """BaseModel defines the base for Pydantic model classes."""
@@ -92,17 +94,20 @@ class Variable(BaseModel):
 
     name: str = Field("name")
     """str: The name of the NetCDF variable"""
+    color: Color = Field(alias="color")
+    """Color: The vertex color in the mesh defined by the normalized red, green, blue and alpha (RGBA) values."""
     use_threshold: bool = Field(None, alias="threshold")
     """bool: Whether or not to add a threshold mesh to filter values below the threshold height."""
-    threshold_color: Optional[List[float]] = Field(None, alias="threshold_color")
-    """Optional[List[float]]: The vertex color in the threshold mesh defined by the normalized red, green, blue and alpha (RGBA) values."""
+    threshold_color: Optional[Color] = Field(None, alias="threshold_color")
+    """Optional[Color]: The vertex color in the threshold mesh defined by the normalized red, green, blue and alpha (RGBA) values."""
     threshold_height: Optional[float] = Field(None, alias="threshold_height")
     """Optional[float]: The height (vertex z-values) of the threshold mesh."""
 
     @root_validator
     def validate_threshold(cls, values: Dict[str, Any]):
         def validate_required(field: str):
-            if values[field] is None:
+            field_value = values.get(field)
+            if field_value is None:
                 raise ValueError(f"'{field}' is required when 'use_threshold' is true.")
 
         if values["use_threshold"]:
@@ -111,9 +116,9 @@ class Variable(BaseModel):
 
         return values
 
-    @validator("threshold_color")
-    def validate_color(cls, color):
-        """Validate the color. The color should be a list that contains 4 floating values between 0.0 and 1.0 (inclusive)."""
+    @validator("color", "threshold_color")
+    def validate_color(cls, color: Color) -> Color:
+        """Validate a color. The color should be a list that contains 4 floating values between 0.0 and 1.0 (inclusive)."""
 
         if color is None:
             return color

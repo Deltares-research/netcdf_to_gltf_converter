@@ -14,6 +14,7 @@ class TestImporter:
 
         variable = Variable(
             name="Mesh2d_waterdepth",
+            color=[0.38, 0.73, 0.78, 1.0],
             use_threshold=True,
             threshold_height=0.01,
             threshold_color=[1.0, 1.0, 1.0, 1.0],
