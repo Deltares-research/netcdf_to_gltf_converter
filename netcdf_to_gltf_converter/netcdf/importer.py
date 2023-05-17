@@ -10,7 +10,7 @@ from netcdf_to_gltf_converter.netcdf.parser import Parser
 
 class Importer:
     """Class to import TriangularMeshes from a source file."""
-    
+
     def __init__(self) -> None:
         """Initialize an Importer."""
         self._parser = Parser()

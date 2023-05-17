@@ -29,7 +29,7 @@ class Converter:
         self._netcdf = netcdf
         self._gltf = gltf
         self._config = Config.from_file(config)
-        
+
         self._importer = Importer()
 
     def run(self):
