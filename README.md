@@ -5,7 +5,7 @@
 # Contents
 
 - [Contents](#contents)
-- [D-HYDRO NetCDF output to glTF converter](#d-hydro-netcdf-output-to-gltf-converter)
+- [D-HYDRO netCDF output to glTF converter](#d-hydro-netcdf-output-to-gltf-converter)
   - [Why use glTF](#why-use-gltf)
   - [How it works](#how-it-works)
 - [User guide](#user-guide)
@@ -16,9 +16,9 @@
 - [Contributing](#contributing)
 - [Acknowledgments](#acknowledgments)
 
-# D-HYDRO NetCDF output to glTF converter
+# D-HYDRO netCDF output to glTF converter
 
-This is a tool that converts D-HYDRO map output results that are stored in the NetCDF file format to the glTF file format. The goal is to allow users who work with D-HYDRO results to view their data in 3D renderers using the glTF format.
+This is a tool that converts D-HYDRO map output results that are stored in the netCDF file format to the glTF file format. The goal is to allow users who work with D-HYDRO results to view their data in 3D renderers using the glTF format.
 
 Currently, the tool is specifically designed to convert water depth data from map results and does not support the conversion of other variables.
 
@@ -33,8 +33,8 @@ glTF is used in a variety of industries and applications, including gaming, virt
 ## How it works
 The converter operates through the following steps:
 
-1. The 2D grid from the user-defined NetCDF file is triangulated, allowing it to be passed to glTF. In order to render a mesh, glTF requires a geometry definition that consists of triangles.
-2. The variable with the standard name `sea_floor_depth_below_sea_surface` is loaded from the NetCDF file.
+1. The 2D grid from the user-defined netCDF file is triangulated, allowing it to be passed to glTF. In order to render a mesh, glTF requires a geometry definition that consists of triangles.
+2. The variable with the standard name `sea_floor_depth_below_sea_surface` is loaded from the netCDF file.
 3. The data locations for the variable are determined as x- and y-coordinates.
 4. For the first time step:
    * The variable data is interpolated onto the vertices of the grid.
@@ -51,7 +51,7 @@ The converter operates through the following steps:
 
 8. The glTF data is exported to the user-defined glTF file.
 
-By following these steps, the converter is able to take NetCDF files containing water depth data and convert the data into glTF files that can be used to view the data in 3D renderers. While the tool is currently focused on converting water depth data, it may be expanded to support other variables in the future.
+By following these steps, the converter is able to take netCDF files containing water depth data and convert the data into glTF files that can be used to view the data in 3D renderers. While the tool is currently focused on converting water depth data, it may be expanded to support other variables in the future.
 
 # User guide
 ## Requirements
@@ -83,7 +83,7 @@ These steps will ensure that the converter is installed within a virtual environ
 ## Usage
  After following the installation steps, the converter can be used from the command line. 
  Two arguments should be passed to the converter script.
-1. The path to the source NetCDF file. Only files with the following conventions are supported: `CF-1.8 UGRID-1.0 Deltares-0.10`
+1. The path to the source netCDF file. Only files with the following conventions are supported: `CF-1.8 UGRID-1.0 Deltares-0.10`
 2. The path to the target glTF file. If the path already exist it will be overwritten.
  
 **Example**
