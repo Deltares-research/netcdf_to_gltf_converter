@@ -5,7 +5,7 @@ import xarray as xr
 
 from netcdf_to_gltf_converter.config import Config
 from netcdf_to_gltf_converter.data.mesh import TriangularMesh
-from netcdf_to_gltf_converter.netcdf.wrapper import Wrapper
+from netcdf_to_gltf_converter.netcdf.parser import Parser
 
 
 class Importer:
@@ -27,17 +27,17 @@ class Importer:
             raise ValueError(f"NetCDF file does not exist: {file_path}")
 
         ds = xr.open_dataset(str(file_path))
-        wrapper = Wrapper(ds, config)
+        parser = Parser(ds, config)
 
         triangular_meshes = []
 
         for variable in config.variables:
-            data_mesh = wrapper.to_triangular_mesh(variable.standard_name)
+            data_mesh = parser.to_triangular_mesh(variable.standard_name)
             triangular_meshes.append(data_mesh)
 
             if variable.threshold:
                 threshold_mesh = data_mesh.get_threshold_mesh(
-                    variable.threshold.height, variable.threshold.color
+                    variable.threshold.height * config.scale, variable.threshold.color
                 )
                 triangular_meshes.append(threshold_mesh)
 
