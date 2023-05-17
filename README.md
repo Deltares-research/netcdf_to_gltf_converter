@@ -107,7 +107,7 @@ The converter operates through the following steps:
 
 8. The glTF data is exported to the user-defined glTF file.
 
-By following these steps, the converter is able to take netCDF files containing water depth data and convert the data into glTF files that can be used to view the data in 3D renderers. While the tool is currently focused on converting water depth data, it may be expanded to support other variables in the future.
+By following these steps, the converter is able to take netCDF files containing time and location dependent data and convert the data into glTF files that can be used to view the data in 3D renderers.
 
 # Contributing
 If you encounter any issues or have good ideas for this project please [create an issue](https://github.com/Deltares/netcdf_to_gltf_converter/issues/new/choose). This will help improve the project. Before creating any new issues, please check the [backlog](https://github.com/Deltares/netcdf_to_gltf_converter/issues) to see if your issue already exists. 
