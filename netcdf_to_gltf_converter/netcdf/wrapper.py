@@ -3,7 +3,6 @@ from typing import Tuple
 
 import numpy as np
 import xarray as xr
-from xugrid import Ugrid2d
 
 from netcdf_to_gltf_converter.config import Config
 from netcdf_to_gltf_converter.netcdf.conventions import (
@@ -19,7 +18,7 @@ class Topology(str, Enum):
     faces = "face_coordinates"
 
 
-class Wrapper:
+class UgridDataset:
     def __init__(self, dataset: xr.Dataset, config: Config) -> None:
         self._dataset = dataset
         self._config = config

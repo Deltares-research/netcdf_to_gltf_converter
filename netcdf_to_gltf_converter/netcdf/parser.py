@@ -6,7 +6,7 @@ from xugrid import Ugrid2d
 
 from netcdf_to_gltf_converter.config import Config
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
-from netcdf_to_gltf_converter.netcdf.wrapper import Wrapper
+from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.transformation import Transformer
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
@@ -25,8 +25,8 @@ class Parser:
         self._interpolator = Interpolator()
         self._triangulator = Triangulator()
         self._tranformer = Transformer(dataset, config)
-        self._wrapper = Wrapper(dataset, config)
-        self._grid = Ugrid2d.from_dataset(dataset, self._wrapper.topology_2d)
+        self._ugrid_dataset = UgridDataset(dataset, config)
+        self._grid = Ugrid2d.from_dataset(dataset, self._ugrid_dataset.topology_2d)
         self._dataset = dataset
         self._config = config
 
@@ -58,8 +58,8 @@ class Parser:
             yield MeshAttributes(vertex_positions=vertex_displacements)
 
     def to_triangular_mesh(self, standard_name: str):
-        data = self._wrapper.get_2d_variable(standard_name)
-        data_coords = self._wrapper.get_data_coordinates(data)
+        data = self._ugrid_dataset.get_2d_variable(standard_name)
+        data_coords = self._ugrid_dataset.get_data_coordinates(data)
         data_values = data.isel(time=0).to_numpy()
 
         self._config.shift_coordinates = True
