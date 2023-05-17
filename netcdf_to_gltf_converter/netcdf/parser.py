@@ -4,12 +4,13 @@ import numpy as np
 import xarray as xr
 from xugrid import Ugrid2d
 
-from netcdf_to_gltf_converter.config import Color, Config
+from netcdf_to_gltf_converter.config import Config
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.transformation import Transformer
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
+from netcdf_to_gltf_converter.types import Color
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
 xr.set_options(keep_attrs=True)

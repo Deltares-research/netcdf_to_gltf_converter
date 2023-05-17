@@ -1,7 +1,7 @@
 from typing import List
 
 import numpy as np
-from netcdf_to_gltf_converter.config import Color
+from netcdf_to_gltf_converter.types import Color
 
 from netcdf_to_gltf_converter.utils.arrays import float32_array, validate_2d_array
 

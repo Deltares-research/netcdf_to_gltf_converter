@@ -7,7 +7,7 @@ from packaging.version import Version
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra, Field, root_validator, validator
 
-Color = List[float]
+from netcdf_to_gltf_converter.types import Color
 
 class BaseModel(PydanticBaseModel):
     """BaseModel defines the base for Pydantic model classes."""
