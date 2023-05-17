@@ -12,11 +12,13 @@ class TestImporter:
     def test_import_from(self):
         file_path = resources / "3x3nodes_rectilinear_map.nc"
 
-        variable = Variable(name="Mesh2d_waterdepth", 
-                            use_threshold = True,
-                            threshold_height = 0.01,
-                            threshold_color = [1.0, 1.0, 1.0, 1.0])
-        
+        variable = Variable(
+            name="Mesh2d_waterdepth",
+            use_threshold=True,
+            threshold_height=0.01,
+            threshold_color=[1.0, 1.0, 1.0, 1.0],
+        )
+
         config = Config(shift_coordinates=True, scale=1.0, variables=[variable])
 
         triangular_meshes = Importer.import_from(file_path, config)

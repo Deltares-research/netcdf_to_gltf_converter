@@ -104,7 +104,7 @@ class UgridDataset:
 
         Returns:
             xr.DataArray: An xr.DataArray containing the variable data.
-            
+
         Raises:
             ValueError: When the dataset does not contain a variable with the name.
         """
@@ -112,9 +112,9 @@ class UgridDataset:
             raise ValueError(
                 f"Cannot get variable '{name}' in dataset: variable does not exist"
             )
-            
+
         return self._dataset[name]
-    
+
     def _get_coordinates_for_location(self, location: LocationAttrValue) -> np.ndarray:
         x_coord_var, y_coord_var = self._get_coord_vars_for_location(location)
         x_coords = x_coord_var.values

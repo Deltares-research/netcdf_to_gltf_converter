@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Type, TypeVar
 
 from packaging.version import Version
-from pydantic import BaseModel as PydanticBaseModel, root_validator
-from pydantic import Extra, Field, validator
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import Extra, Field, root_validator, validator
 
 
 class BaseModel(PydanticBaseModel):
@@ -104,20 +104,20 @@ class Variable(BaseModel):
         def validate_required(field: str):
             if values[field] is None:
                 raise ValueError(f"'{field}' is required when 'use_threshold' is true.")
-        
+
         if values["use_threshold"]:
             validate_required("threshold_color")
             validate_required("threshold_height")
-        
+
         return values
-            
+
     @validator("threshold_color")
     def validate_color(cls, color):
         """Validate the color. The color should be a list that contains 4 floating values between 0.0 and 1.0 (inclusive)."""
 
         if color is None:
             return color
-        
+
         if len(color) != 4:
             msg = "A color should be defined as a list of 4 floating values: the normalized red, green, blue and alpha (RGBA) values."
             raise ValueError(msg)
