@@ -87,18 +87,19 @@ These steps will ensure that the converter is installed within a virtual environ
 
 # Methodology
 The converter operates through the following steps:
-
-1. The 2D grid from the user-defined netCDF file is triangulated, allowing it to be passed to glTF. In order to render a mesh, glTF requires a geometry definition that consists of triangles.
-2. The variable with the standard name `sea_floor_depth_below_sea_surface` is loaded from the netCDF file.
-3. The data locations for the variable are determined as x- and y-coordinates.
-4. For the first time step:
-   * The variable data is interpolated onto the vertices of the grid.
-   * The interpolated variable data is defined as the base mesh for glTF.
-5. For each subsequent time step:
-   * The variable data is interpolated onto the vertices of the grid.
-   * With the interpolated variable data, the water depth displacements are calculated with respect to the base mesh, allowing it to be animated.
-6. From the derived geometries, a blue mesh is built for glTF.
-7. In addition to the blue mesh that renders the variable data, a static white mesh with a height of 0.01 is built. This is done to provide a clear visual distinction between dry and wet cells, which have depths <= 0.01 and > 0.01, respectively.
+1. If specified in the configuration file, the x- and y-coordinates are shifted such that the smallest x and y become the origin (0,0).
+2. If specified in the configuration file, the geometry is scaled with the desired scaling factor.
+3. The 2D grid from the netCDF file is triangulated, allowing it to be passed to glTF. In order to render a mesh, glTF requires a geometry definition that consists of triangles.
+4. For each specified variable in the configuration file:
+   1. The data point locations for the variable are retrieved as x- and y-coordinates. Variables from the netCDF file can be defined on either cell nodes, edges or faces.
+   2. For the first time step:
+      1. The data points are interpolated onto the nodes of the grid.
+      2. The geometry of the interpolated variable data is defined as the base mesh geometry for glTF.
+   3. For each subsequent time step:
+      1. The data points are interpolated onto the nodes of the grid.
+      2. With the interpolated variable data, the value displacements are calculated with respect to the base mesh geometry, allowing it to be animated.
+   4. For each created mesh geometry, the specified color for this variable in the configuration file is applied.
+   5. If specified in the configuration file, an addtional static threshold mesh with the desired color is creayed. The mesh geometry will consist of the same x- and y- coordinates as the first mesh, but with the desired fixed height. 
 
 <p align="center">
   <img src="docs/readme/img/dry-wet-cells.png" width="50%" height="50%" />
