@@ -39,15 +39,6 @@ class UgridDataset:
 
         return x_coord_var, y_coord_var
 
-    def _get_coordinates(self, location: str) -> np.ndarray:
-        var_names = self._dataset.coords[location]
-
-        x_coords = self._dataset[var_names[0]].values
-        y_coords = self._dataset[var_names[1]].values
-        coords = np.column_stack([x_coords, y_coords])
-
-        return coords
-
     def _get_topology_2d(self) -> str:
         attr_filter = {
             AttrKey.cf_role: CfRoleAttrValue.mesh_topology,
