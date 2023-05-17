@@ -7,12 +7,12 @@
 - [Contents](#contents)
 - [D-HYDRO netCDF output to glTF converter](#d-hydro-netcdf-output-to-gltf-converter)
   - [Why use glTF](#why-use-gltf)
-  - [How it works](#how-it-works)
 - [User guide](#user-guide)
   - [Requirements](#requirements)
   - [Installation](#installation)
   - [Usage](#usage)
   - [View results](#view-results)
+- [Methodology](#methodology)
 - [Contributing](#contributing)
 - [Acknowledgments](#acknowledgments)
 
@@ -29,29 +29,6 @@ Currently, the tool is specifically designed to convert water depth data from ma
 ## Why use glTF
 [glTF (GL Transmission Format)](https://www.khronos.org/gltf/) is an open-standard file format developed by [The Khronos Group](https://www.khronos.org/). The glTF file format is used for 3D scenes and models designed for efficient transmission and loading of 3D content on the web and other real-time applications. This file format can store geometry, materials, textures, animations, and other scene data.
 glTF is used in a variety of industries and applications, including gaming, virtual and augmented reality, education, and more. It is particularly well-suited for web-based applications, as it allows 3D content to be easily and efficiently delivered over the internet, and can be rendered in real-time on a wide range of devices. 
-
-## How it works
-The converter operates through the following steps:
-
-1. The 2D grid from the user-defined netCDF file is triangulated, allowing it to be passed to glTF. In order to render a mesh, glTF requires a geometry definition that consists of triangles.
-2. The variable with the standard name `sea_floor_depth_below_sea_surface` is loaded from the netCDF file.
-3. The data locations for the variable are determined as x- and y-coordinates.
-4. For the first time step:
-   * The variable data is interpolated onto the vertices of the grid.
-   * The interpolated variable data is defined as the base mesh for glTF.
-5. For each subsequent time step:
-   * The variable data is interpolated onto the vertices of the grid.
-   * With the interpolated variable data, the water depth displacements are calculated with respect to the base mesh, allowing it to be animated.
-6. From the derived geometries, a blue mesh is built for glTF.
-7. In addition to the blue mesh that renders the variable data, a static white mesh with a height of 0.01 is built. This is done to provide a clear visual distinction between dry and wet cells, which have depths <= 0.01 and > 0.01, respectively.
-
-<p align="center">
-  <img src="docs/readme/img/dry-wet-cells.png" width="50%" height="50%" />
-</p>
-
-8. The glTF data is exported to the user-defined glTF file.
-
-By following these steps, the converter is able to take netCDF files containing water depth data and convert the data into glTF files that can be used to view the data in 3D renderers. While the tool is currently focused on converting water depth data, it may be expanded to support other variables in the future.
 
 # User guide
 ## Requirements
@@ -109,6 +86,29 @@ These steps will ensure that the converter is installed within a virtual environ
  Several glTF viewers exist that can be used to view the produced glTF file. Simply drag and drop the file, and the glTF file will be rendered.
  * [glTF Sample Viewer](https://github.khronos.org/glTF-Sample-Viewer-Release/)
  * [Babylon.js Sandbox](https://sandbox.babylonjs.com/)
+
+# Methodology
+The converter operates through the following steps:
+
+1. The 2D grid from the user-defined netCDF file is triangulated, allowing it to be passed to glTF. In order to render a mesh, glTF requires a geometry definition that consists of triangles.
+2. The variable with the standard name `sea_floor_depth_below_sea_surface` is loaded from the netCDF file.
+3. The data locations for the variable are determined as x- and y-coordinates.
+4. For the first time step:
+   * The variable data is interpolated onto the vertices of the grid.
+   * The interpolated variable data is defined as the base mesh for glTF.
+5. For each subsequent time step:
+   * The variable data is interpolated onto the vertices of the grid.
+   * With the interpolated variable data, the water depth displacements are calculated with respect to the base mesh, allowing it to be animated.
+6. From the derived geometries, a blue mesh is built for glTF.
+7. In addition to the blue mesh that renders the variable data, a static white mesh with a height of 0.01 is built. This is done to provide a clear visual distinction between dry and wet cells, which have depths <= 0.01 and > 0.01, respectively.
+
+<p align="center">
+  <img src="docs/readme/img/dry-wet-cells.png" width="50%" height="50%" />
+</p>
+
+8. The glTF data is exported to the user-defined glTF file.
+
+By following these steps, the converter is able to take netCDF files containing water depth data and convert the data into glTF files that can be used to view the data in 3D renderers. While the tool is currently focused on converting water depth data, it may be expanded to support other variables in the future.
 
 # Contributing
 If you encounter any issues or have good ideas for this project please [create an issue](https://github.com/Deltares/netcdf_to_gltf_converter/issues/new/choose). This will help improve the project. Before creating any new issues, please check the [backlog](https://github.com/Deltares/netcdf_to_gltf_converter/issues) to see if your issue already exists. 
