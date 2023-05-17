@@ -1,12 +1,13 @@
 import xarray as xr
 
 from netcdf_to_gltf_converter.config import Config
+from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset
 
 
 class Transformer:
     """A class for transforming the geometry in a dataset."""
 
-    def __init__(self, dataset: xr.Dataset, config: Config) -> None:
+    def __init__(self, dataset: UgridDataset, config: Config) -> None:
         """Initialize a Transformer with the specified arguments.
 
         Args:

@@ -24,8 +24,8 @@ class Parser:
 
         self._interpolator = Interpolator()
         self._triangulator = Triangulator()
-        self._tranformer = Transformer(dataset, config)
         self._ugrid_dataset = UgridDataset(dataset, config)
+        self._tranformer = Transformer(self._ugrid_dataset, config)
         self._grid = Ugrid2d.from_dataset(dataset, self._ugrid_dataset.topology_2d)
         self._dataset = dataset
         self._config = config
