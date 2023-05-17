@@ -72,7 +72,7 @@ These steps will ensure that the converter is installed within a virtual environ
 ## Configuration file
  The configuration JSON file allows you to customize various settings and parameters for the conversion process. It provides flexibility in defining how the netCDF data is transformed into the glTF format. 
  
- - `file_version`: Specifies the version of the configuration file format.
+- `file_version`: Specifies the version of the configuration file format.
 - `shift_coordinates`: A boolean value indicating whether to shift the coordinates of the data during conversion. When set to `true`, the converter will shift the coordinates such that the smallest x and y become the origin (0,0).
 - `scale`: A floating value indicating the scale factor for the data. It determines the scaling of the converted geometry. A smaller scale value will result in a smaller representation of the data in the 3D renderer.
 - `variables`: An array containing the configurations for each variable to be converted. Each variable configuration consists of the following options:
