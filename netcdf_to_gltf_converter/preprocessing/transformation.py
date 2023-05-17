@@ -25,11 +25,11 @@ class Transformer:
 
         if self._config.shift_coordinates == False:
             return
-        
+
         node_x_var, node_y_var = self._dataset.node_coord_vars
         edge_x_var, edge_y_var = self._dataset.edge_coord_vars
         face_x_var, face_y_var = self._dataset.face_coord_vars
-        
+
         shift_x = node_x_var.values.min()
         shift_y = node_y_var.values.min()
 
