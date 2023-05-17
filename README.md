@@ -59,7 +59,7 @@ These steps will ensure that the converter is installed within a virtual environ
  After following the installation steps, the converter can be used from the command line. 
  Three arguments should be passed to the converter script.
 1. The path to the source netCDF file. Only files with the following conventions are supported: `CF-1.8 UGRID-1.0 Deltares-0.10`
-2. The path to the target glTF file. If the path already exist it will be overwritten.
+2. The path to the target glTF file. A glTF file uses one of two possible file extensions: .gltf (JSON/ASCII) or .glb (binary). If the path already exists it will be overwritten. 
 3. The path to the configuration JSON file.
 
 **Example**
