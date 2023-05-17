@@ -26,6 +26,18 @@ class UgridDataset:
         self.topology_2d = self._get_topology_2d()
         self._topologies = dataset.ugrid_roles.coordinates[self.topology_2d]
 
+    @property
+    def node_coord_vars(self) -> Tuple[xr.DataArray, xr.DataArray]:
+        return self._get_coord_vars_for_topology(Topology.nodes)
+    
+    @property
+    def edge_coord_vars(self):
+        return self._get_coord_vars_for_topology(Topology.edges)
+    
+    @property
+    def face_coord_vars(self):
+        return self._get_coord_vars_for_topology(Topology.faces)
+    
     def get_2d_variable(self, standard_name: str) -> xr.DataArray:
         attr_filter = {
             AttrKey.standard_name: standard_name,
