@@ -28,7 +28,8 @@ class TestImporter:
             variables=[variable],
         )
 
-        triangular_meshes = Importer.import_from(file_path, config)
+        importer = Importer()
+        triangular_meshes = importer.import_from(file_path, config)
         data_mesh = triangular_meshes[0]
 
         exp_triangles = np.array(
@@ -93,7 +94,9 @@ class TestImporter:
             variables=[],
         )
 
+        importer = Importer()
+
         with pytest.raises(ValueError) as error:
-            _ = Importer.import_from(netcdf, config)
+            _ = importer.import_from(netcdf, config)
 
         assert str(error.value) == rf"NetCDF file does not exist: {netcdf}"

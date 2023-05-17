@@ -29,11 +29,13 @@ class Converter:
         self._netcdf = netcdf
         self._gltf = gltf
         self._config = Config.from_file(config)
+        
+        self._importer = Importer()
 
     def run(self):
         """Run the conversion."""
 
-        triangular_meshes = Importer.import_from(self._netcdf, self._config)
+        triangular_meshes = self._importer.import_from(self._netcdf, self._config)
 
         builder = GLTFBuilder()
         for triangular_grid in triangular_meshes:

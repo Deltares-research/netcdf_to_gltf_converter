@@ -9,8 +9,13 @@ from netcdf_to_gltf_converter.netcdf.parser import Parser
 
 
 class Importer:
-    @staticmethod
-    def import_from(file_path: Path, config: Config) -> List[TriangularMesh]:
+    """Class to import TriangularMeshes from a source file."""
+    
+    def __init__(self) -> None:
+        """Initialize an Importer."""
+        self._parser = Parser()
+
+    def import_from(self, file_path: Path, config: Config) -> List[TriangularMesh]:
         """Imports triangular meshes from the given NetCDF file.
 
         Args:
@@ -27,6 +32,4 @@ class Importer:
             raise ValueError(f"NetCDF file does not exist: {file_path}")
 
         ds = xr.open_dataset(str(file_path))
-        parser = Parser()
-        triangular_meshes = parser.parse(ds, config)
-        return triangular_meshes
+        return self._parser.parse(ds, config)
