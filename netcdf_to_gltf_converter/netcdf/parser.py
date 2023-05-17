@@ -14,7 +14,6 @@ from netcdf_to_gltf_converter.types import Color
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
 
-
 class Parser:
     """Class to parse a xr.DataArray into a set of TriangularMeshes."""
 
@@ -40,9 +39,7 @@ class Parser:
         triangular_meshes = []
 
         for variable in config.variables:
-            data_mesh = self.parse_variable(
-                variable, triangulated_grid, ugrid_dataset
-            )
+            data_mesh = self.parse_variable(variable, triangulated_grid, ugrid_dataset)
             triangular_meshes.append(data_mesh)
 
             if variable.use_threshold:
@@ -75,7 +72,7 @@ class Parser:
             triangles=triangles,
             transformations=transformations,
         )
-        
+
     def _interpolate(
         self, data_coords: np.ndarray, data_values: np.ndarray, grid: Ugrid2d
     ):
@@ -104,5 +101,3 @@ class Parser:
             yield MeshAttributes(
                 vertex_positions=vertex_displacements, mesh_color=color
             )
-
-

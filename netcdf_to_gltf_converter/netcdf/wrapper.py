@@ -1,8 +1,9 @@
 from enum import Enum
 from typing import Tuple
-import xugrid as xu
+
 import numpy as np
 import xarray as xr
+import xugrid as xu
 
 from netcdf_to_gltf_converter.config import Config
 from netcdf_to_gltf_converter.netcdf.conventions import (
@@ -46,7 +47,7 @@ class UgridDataset:
             xu.Ugrid2d: A xu.Ugrid2d created from the data set.
         """
         return xu.Ugrid2d.from_dataset(self._dataset, self.topology_2d)
-    
+
     @property
     def node_coord_vars(self) -> Tuple[xr.DataArray, xr.DataArray]:
         """Get the two node coordinate variables, one for the x-coordinates and one for the y-coordinates.
