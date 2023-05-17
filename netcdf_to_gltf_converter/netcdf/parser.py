@@ -13,7 +13,6 @@ from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 from netcdf_to_gltf_converter.types import Color
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
-xr.set_options(keep_attrs=True)
 
 
 class Parser:
