@@ -14,7 +14,7 @@ class TestImporter:
 
         variable = Variable(standard_name="sea_floor_depth_below_sea_surface")
         variable.threshold = Threshold(height=0.01, color=[1.0, 1.0, 1.0, 1.0])
-        config = Config(shift_coordinates=False, scale=1.0, variables=[variable])
+        config = Config(shift_coordinates=True, scale=1.0, variables=[variable])
 
         triangular_meshes = Importer.import_from(file_path, config)
         data_mesh = triangular_meshes[0]
