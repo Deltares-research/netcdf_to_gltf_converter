@@ -6,9 +6,7 @@ import xarray as xr
 import xugrid as xu
 
 from netcdf_to_gltf_converter.config import Config
-from netcdf_to_gltf_converter.netcdf.conventions import (
-    AttrKey,
-    CfRoleAttrValue)
+from netcdf_to_gltf_converter.netcdf.conventions import AttrKey, CfRoleAttrValue
 
 
 class Topology(str, Enum):
@@ -23,6 +21,7 @@ class UgridVariable:
     """Class that serves as a wrapper object for an xarray.DataArray with UGrid conventions.
     The wrapper allows for easier retrieval of relevant data.
     """
+
     def __init__(self, data: xr.DataArray) -> None:
         """Initialize a UgridVariable with the specified data.
 
