@@ -67,7 +67,9 @@ class Parser:
 
         for time_index in Parser._get_time_indices(data.time_index_max, config):
             interpolated_data = self._interpolate(data, time_index, grid)
-            vertex_displacements = Parser.calculate_displacements(interpolated_data, base)
+            vertex_displacements = Parser.calculate_displacements(
+                interpolated_data, base
+            )
             transformation = MeshAttributes(vertex_displacements, variable.color)
             transformations.append(transformation)
 
@@ -78,10 +80,10 @@ class Parser:
         start = config.time_index_start + config.times_per_frame
 
         if config.time_index_end is not None:
-            end = config.time_index_end    
+            end = config.time_index_end
         else:
-            end = time_index_max  
-             
+            end = time_index_max
+
         return inclusive_range(start, end, config.times_per_frame)
 
     @staticmethod
@@ -92,12 +94,9 @@ class Parser:
 
     def _interpolate(self, data: UgridVariable, time_index: int, grid: Ugrid2d):
         return self._interpolator.interpolate_nearest(
-            data.coordinates, 
-            data.get_data_at_time(time_index), 
-            grid, 
-            Location.nodes
+            data.coordinates, data.get_data_at_time(time_index), grid, Location.nodes
         )
-        
+
     def calculate_displacements(data: np.ndarray, base: MeshAttributes):
         return np.subtract(
             data,
