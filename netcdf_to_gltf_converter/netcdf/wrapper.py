@@ -22,19 +22,45 @@ class Topology(str, Enum):
 
 
 class UgridVariable:
+    """Class that serves as a wrapper object for an xarray.DataArray with UGrid conventions.
+    The wrapper allows for easier retrieval of relevant data.
+    """
     def __init__(self, data: xr.DataArray) -> None:
+        """Initialize a UgridVariable with the specified data.
+
+        Args:
+            data (xr.DataArray): The variable data.
+        """
         self._data = data
         self._coordinates = self._get_coordinates()
 
     @property
-    def coordinates(self):
+    def coordinates(self) -> np.ndarray:
+        """Get the coordinates for this data variable.
+
+        Returns:
+            np.ndarray: A 2D np.ndarray of floats with shape (n, 2) where each row contains a x and y coordinate.
+        """
         return self._coordinates
 
     @property
-    def time_index_max(self):
+    def time_index_max(self) -> int:
+        """Get the maximum time step index for this data variable.
+
+        Returns:
+            int: An integer specifying the maximum time step index.
+        """
         return self._data.sizes["time"] - 1
 
     def get_data_at_time(self, time_index: int) -> np.ndarray:
+        """Get the variable values at the specified time index.
+
+        Args:
+            time_index (int): The time index.
+
+        Returns:
+            np.ndarray: A 1D np.ndarray of floats.
+        """
         return self._data.isel(time=time_index).to_numpy()
 
     def _get_coordinates(self) -> np.ndarray:
@@ -42,7 +68,7 @@ class UgridVariable:
         y_coords = self._get_coordinates_by_standard_name("projection_y_coordinate")
         return np.column_stack([x_coords, y_coords])
 
-    def _get_coordinates_by_standard_name(self, standard_name) -> np.ndarray:
+    def _get_coordinates_by_standard_name(self, standard_name: str) -> np.ndarray:
         for var_name in self._data.coords:
             coord = self._data.coords[var_name]
 
@@ -52,7 +78,7 @@ class UgridVariable:
 
 
 class UgridDataset:
-    """Class that serves as a wrapper object for an xarray.DataArray with UGrid conventions.
+    """Class that serves as a wrapper object for an xarray.Dataset with UGrid conventions.
     The wrapper allows for easier retrieval of relevant data.
     """
 
