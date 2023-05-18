@@ -12,7 +12,7 @@ class TestExporter:
         gltf = GLTF2()
         file_path = Path("file.invalid")
         exporter = Exporter()
-        
+
         with pytest.raises(ValueError) as error:
             exporter.export(gltf, file_path)
 

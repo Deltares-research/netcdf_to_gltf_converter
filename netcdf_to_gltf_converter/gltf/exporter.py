@@ -4,7 +4,6 @@ from pygltflib import GLTF2
 
 
 class Exporter:
-
     def export(self, gltf: GLTF2, file_path: Path):
         """Export the GLTF object to file.
 
