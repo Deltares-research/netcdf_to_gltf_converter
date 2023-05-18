@@ -25,18 +25,19 @@ class UgridVariable:
     def __init__(self, data: xr.DataArray, coordinates: np.ndarray) -> None:
         self._data = data
         self._coordinates = coordinates
-        
+
     @property
     def coordinates(self):
         return self._coordinates
-    
+
     @property
     def time_index_max(self):
-        return self._data.sizes["time"] -1
-    
+        return self._data.sizes["time"] - 1
+
     def get_data_at_time(self, time_index: int) -> np.ndarray:
         return self._data.isel(time=time_index).to_numpy()
-    
+
+
 class UgridDataset:
     """Class that serves as a wrapper object for an xarray.DataArray with UGrid conventions.
     The wrapper allows for easier retrieval of relevant data.
@@ -136,10 +137,9 @@ class UgridDataset:
         """
         data = self.get_variable(variable_name)
         data_coords = self.get_data_coordinates(data)
-        
+
         return UgridVariable(data, data_coords)
-        
-    
+
     def get_variable(self, variable_name: str) -> xr.DataArray:
         """Get the variable with the specified name from the data set.
 

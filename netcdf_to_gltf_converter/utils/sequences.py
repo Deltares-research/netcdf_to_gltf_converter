@@ -23,6 +23,5 @@ def inclusive_range(start: int, stop: int, step: int) -> List[int]:
     range_list = list(range(start, stop, step))
     if range_list[-1] != stop:
         range_list.append(stop)
-    
+
     return range_list
-    
