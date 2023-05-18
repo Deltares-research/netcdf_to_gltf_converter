@@ -36,7 +36,7 @@ class UgridVariable:
 
     def get_data_at_time(self, time_index: int) -> np.ndarray:
         return self._data.isel(time=time_index).to_numpy()
-    
+
     def _get_coordinates(self) -> np.ndarray:
         x_coords = self._get_coordinates_by_standard_name("projection_x_coordinate")
         y_coords = self._get_coordinates_by_standard_name("projection_y_coordinate")
@@ -45,11 +45,12 @@ class UgridVariable:
     def _get_coordinates_by_standard_name(self, standard_name) -> np.ndarray:
         for var_name in self._data.coords:
             coord = self._data.coords[var_name]
-            
+
             coord_standard_name = coord.attrs.get("standard_name")
             if coord_standard_name == standard_name:
                 return coord.values
-    
+
+
 class UgridDataset:
     """Class that serves as a wrapper object for an xarray.DataArray with UGrid conventions.
     The wrapper allows for easier retrieval of relevant data.
@@ -147,10 +148,9 @@ class UgridDataset:
         Raises:
             ValueError: When the dataset does not contain a variable with the name.
         """
-        data = self.get_variable(variable_name)        
+        data = self.get_variable(variable_name)
         return UgridVariable(data)
-        
-    
+
     def get_variable(self, variable_name: str) -> xr.DataArray:
         """Get the variable with the specified name from the data set.
 
