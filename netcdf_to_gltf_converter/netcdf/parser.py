@@ -6,7 +6,7 @@ from xugrid import Ugrid2d
 
 from netcdf_to_gltf_converter.config import Config, Variable
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
-from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset
+from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset, UgridVariable
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.transformation import Transformer
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
@@ -54,18 +54,15 @@ class Parser:
     def parse_variable(
         self, variable: Variable, grid: Ugrid2d, ugrid_dataset: UgridDataset, config: Config
     ):
-        data = ugrid_dataset.get_variable(variable.name)
-        data_coords = ugrid_dataset.get_data_coordinates(data)
-        data_values = data.isel(time=config.time_index_start).to_numpy()
-
-        interpolated_data = self._interpolate(data_coords, data_values, grid)
+        data = ugrid_dataset.get_ugrid_variable(variable.name)
+        interpolated_data = self._interpolate(data.coordinates, data.get_data_at_time(config.time_index_start), grid)
 
         base = MeshAttributes(
             vertex_positions=interpolated_data, mesh_color=variable.color
         )
         triangles = uint32_array(grid.face_node_connectivity)
         transformations = list(
-            self._get_transformations(data, data_coords, grid, base, variable.color, config)
+            self._get_transformations(data, grid, base, variable.color, config)
         )
 
         return TriangularMesh(
@@ -83,8 +80,7 @@ class Parser:
 
     def _get_transformations(
         self,
-        data: xr.DataArray,
-        data_coords: np.ndarray,
+        data: UgridVariable,
         grid: Ugrid2d,
         base: MeshAttributes,
         color: Color,
@@ -95,11 +91,10 @@ class Parser:
         if config.time_index_end is not None:
             time_index_end = config.time_index_end
         else:
-            time_index_end = data.sizes["time"] -1          
+            time_index_end = data.time_index_max          
             
         for time_index in inclusive_range(time_index_start, time_index_end, config.times_per_frame):
-            data_values = data.isel(time=time_index).to_numpy()
-            interpolated_data = self._interpolate(data_coords, data_values, grid)
+            interpolated_data = self._interpolate(data.coordinates, data.get_data_at_time(time_index), grid)
             vertex_displacements = np.subtract(
                 interpolated_data,
                 base.vertex_positions,

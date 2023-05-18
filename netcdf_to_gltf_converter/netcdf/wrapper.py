@@ -30,6 +30,10 @@ class UgridVariable:
     def coordinates(self):
         return self._coordinates
     
+    @property
+    def time_index_max(self):
+        return self._data.sizes["time"] -1
+    
     def get_data_at_time(self, time_index: int) -> np.ndarray:
         return self._data.isel(time=time_index).to_numpy()
     
