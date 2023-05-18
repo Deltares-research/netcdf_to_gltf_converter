@@ -59,9 +59,7 @@ class Parser:
         config: Config,
     ):
         data = ugrid_dataset.get_ugrid_variable(variable.name)
-        interpolated_data = self._interpolate(
-            data.coordinates, data.get_data_at_time(config.time_index_start), grid
-        )
+        interpolated_data = self._interpolate(data, config.time_index_start, grid)
 
         base = MeshAttributes(
             vertex_positions=interpolated_data, mesh_color=variable.color
@@ -91,9 +89,7 @@ class Parser:
         start, end, step = self._get_time_start_stop_step(data.time_index_max, config)
 
         for time_index in inclusive_range(start, end, step):
-            interpolated_data = self._interpolate(
-                data.coordinates, data.get_data_at_time(time_index), grid
-            )
+            interpolated_data = self._interpolate(data, time_index, grid)
             vertex_displacements = np.subtract(
                 interpolated_data,
                 base.vertex_positions,
@@ -119,8 +115,8 @@ class Parser:
         tranformer.scale()
         
     def _interpolate(
-        self, data_coords: np.ndarray, data_values: np.ndarray, grid: Ugrid2d
+        self, data: UgridVariable, time_index: int, grid: Ugrid2d
     ):
         return self._interpolator.interpolate_nearest(
-            data_coords, data_values, grid, Location.nodes
+            data.coordinates, data.get_data_at_time(time_index), grid, Location.nodes
         )
