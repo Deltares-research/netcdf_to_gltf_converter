@@ -61,19 +61,13 @@ class Parser:
         data = ugrid_dataset.get_ugrid_variable(variable.name)
         interpolated_data = self._interpolate(data, config.time_index_start, grid)
 
-        base = MeshAttributes(
-            vertex_positions=interpolated_data, mesh_color=variable.color
-        )
+        base = MeshAttributes(interpolated_data, variable.color)
         triangles = uint32_array(grid.face_node_connectivity)
         transformations = list(
             self._get_transformations(data, grid, base, variable.color, config)
         )
 
-        return TriangularMesh(
-            base=base,
-            triangles=triangles,
-            transformations=transformations,
-        )
+        return TriangularMesh(base, triangles, transformations)
 
 
 
@@ -96,9 +90,7 @@ class Parser:
                 dtype=np.float32,
             )
 
-            yield MeshAttributes(
-                vertex_positions=vertex_displacements, mesh_color=color
-            )
+            yield MeshAttributes(vertex_displacements, color)
             
     def _get_time_start_stop_step(self, time_index_max: int, config: Config):
         start = config.time_index_start + config.times_per_frame
