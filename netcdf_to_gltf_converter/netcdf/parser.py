@@ -32,7 +32,7 @@ class Parser:
             config (Config): The converter configuration.
         """
         ugrid_dataset = UgridDataset(dataset, config)
-        Parser.transform_grid(config, ugrid_dataset)
+        Parser._transform_grid(config, ugrid_dataset)
         triangulated_grid = self._triangulator.triangulate(ugrid_dataset.ugrid2d)
 
         triangular_meshes = []
@@ -63,47 +63,44 @@ class Parser:
 
         base = MeshAttributes(interpolated_data, variable.color)
         triangles = uint32_array(grid.face_node_connectivity)
-        transformations = list(
-            self._get_transformations(data, grid, base, variable.color, config)
-        )
+        transformations = []
+
+        for time_index in Parser._get_time_indices(data.time_index_max, config):
+            interpolated_data = self._interpolate(data, time_index, grid)
+            vertex_displacements = Parser.calculate_displacements(interpolated_data, base)
+            transformation = MeshAttributes(vertex_displacements, variable.color)
+            transformations.append(transformation)
 
         return TriangularMesh(base, triangles, transformations)
 
-    def _get_transformations(
-        self,
-        data: UgridVariable,
-        grid: Ugrid2d,
-        base: MeshAttributes,
-        color: Color,
-        config: Config,
-    ) -> Generator[MeshAttributes, None, None]:
-        start, end, step = self._get_time_start_stop_step(data.time_index_max, config)
-
-        for time_index in inclusive_range(start, end, step):
-            interpolated_data = self._interpolate(data, time_index, grid)
-            vertex_displacements = np.subtract(
-                interpolated_data,
-                base.vertex_positions,
-                dtype=np.float32,
-            )
-
-            yield MeshAttributes(vertex_displacements, color)
-
-    def _get_time_start_stop_step(self, time_index_max: int, config: Config):
+    @staticmethod
+    def _get_time_indices(time_index_max: int, config: Config):
         start = config.time_index_start + config.times_per_frame
 
         if config.time_index_end is not None:
-            return start, config.time_index_end, config.times_per_frame
-
-        return start, time_index_max, config.times_per_frame
+            end = config.time_index_end    
+        else:
+            end = time_index_max  
+             
+        return inclusive_range(start, end, config.times_per_frame)
 
     @staticmethod
-    def transform_grid(config, ugrid_dataset):
+    def _transform_grid(config, ugrid_dataset):
         tranformer = Transformer(ugrid_dataset, config)
         tranformer.shift()
         tranformer.scale()
 
     def _interpolate(self, data: UgridVariable, time_index: int, grid: Ugrid2d):
         return self._interpolator.interpolate_nearest(
-            data.coordinates, data.get_data_at_time(time_index), grid, Location.nodes
+            data.coordinates, 
+            data.get_data_at_time(time_index), 
+            grid, 
+            Location.nodes
+        )
+        
+    def calculate_displacements(data: np.ndarray, base: MeshAttributes):
+        return np.subtract(
+            data,
+            base.vertex_positions,
+            dtype=np.float32,
         )
