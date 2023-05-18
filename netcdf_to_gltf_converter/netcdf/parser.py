@@ -94,15 +94,10 @@ class Parser:
         color: Color,
         config: Config,
     ) -> Generator[MeshAttributes, None, None]:
-        time_index_start = config.time_index_start + config.times_per_frame
-        if config.time_index_end is not None:
-            time_index_end = config.time_index_end
-        else:
-            time_index_end = data.time_index_max
+        
+        start, end, step = self._get_time_start_stop_step(data.time_index_max, config)
 
-        for time_index in inclusive_range(
-            time_index_start, time_index_end, config.times_per_frame
-        ):
+        for time_index in inclusive_range(start, end, step):
             interpolated_data = self._interpolate(
                 data.coordinates, data.get_data_at_time(time_index), grid
             )
@@ -115,3 +110,11 @@ class Parser:
             yield MeshAttributes(
                 vertex_positions=vertex_displacements, mesh_color=color
             )
+            
+    def _get_time_start_stop_step(self, time_index_max: int, config: Config):
+        start = config.time_index_start + config.times_per_frame
+        
+        if config.time_index_end is not None:
+            return start, config.time_index_end, config.times_per_frame
+
+        return start, time_index_max, config.times_per_frame
