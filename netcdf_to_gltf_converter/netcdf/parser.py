@@ -32,9 +32,7 @@ class Parser:
             config (Config): The converter configuration.
         """
         ugrid_dataset = UgridDataset(dataset, config)
-        tranformer = Transformer(ugrid_dataset, config)
-        tranformer.shift()
-        tranformer.scale()
+        Parser.transform_grid(config, ugrid_dataset)
         triangulated_grid = self._triangulator.triangulate(ugrid_dataset.ugrid2d)
 
         triangular_meshes = []
@@ -79,12 +77,7 @@ class Parser:
             transformations=transformations,
         )
 
-    def _interpolate(
-        self, data_coords: np.ndarray, data_values: np.ndarray, grid: Ugrid2d
-    ):
-        return self._interpolator.interpolate_nearest(
-            data_coords, data_values, grid, Location.nodes
-        )
+
 
     def _get_transformations(
         self,
@@ -118,3 +111,16 @@ class Parser:
             return start, config.time_index_end, config.times_per_frame
 
         return start, time_index_max, config.times_per_frame
+
+    @staticmethod
+    def transform_grid(config, ugrid_dataset):
+        tranformer = Transformer(ugrid_dataset, config)
+        tranformer.shift()
+        tranformer.scale()
+        
+    def _interpolate(
+        self, data_coords: np.ndarray, data_values: np.ndarray, grid: Ugrid2d
+    ):
+        return self._interpolator.interpolate_nearest(
+            data_coords, data_values, grid, Location.nodes
+        )
