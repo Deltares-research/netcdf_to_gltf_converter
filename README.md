@@ -99,27 +99,27 @@ These steps will ensure that the converter is installed within a virtual environ
  **Example**
 ```json
 {
-	"file_version":"0.1.0",
-  "time_index_start":50,
-  "time_index_end":100,
-	"times_per_frame":3,
-	"shift_coordinates":true,
-	"scale":0.5,
-	"variables":[
-	   {
-		  "name":"Mesh2d_waterdepth",
-		  "color":[0.372, 0.635, 0.8, 1.0],
-		  "use_threshold":false,
-		  "threshold_height":0.01,
-		  "threshold_color":[1.0, 1.0, 1.0, 1.0]
-	   },
-	   {
-		  "name":"Mesh2d_s1",
-		  "color":[0.686, 0.831, 0.937, 1.0],
-		  "use_threshold":false
-	   }
-	]
- }
+   "file_version":"0.1.0",
+   "time_index_start":50,
+   "time_index_end":100,
+   "times_per_frame":3,
+   "shift_coordinates":true,
+   "scale":0.5,
+   "variables":[
+      {
+         "name":"Mesh2d_waterdepth",
+         "color":[0.372, 0.635, 0.8, 1.0],
+         "use_threshold":false,
+         "threshold_height":0.01,
+         "threshold_color":[1.0, 1.0, 1.0, 1.0]
+      },
+      {
+         "name":"Mesh2d_s1",
+         "color":[0.686, 0.831, 0.937, 1.0],
+         "use_threshold":false
+      }
+   ]
+}
 ```
 
 In the above example, we render two variables from the netCDF file: `Mesh2d_waterdepth` and `Mesh2d_s1`. For the animation we take a subset of the time steps. The animation will start at time step with index 50 and will end at time step with index 100. The animation will have a resolution of 3 time steps. Additionally, we apply a coordinate shift to ensure that the meshes have an origin at (0,0). Furthermore, we set the scale to 0.5, resulting in a reduction of size in all directions by a factor of two. For the `Mesh2d_waterdepth` variable, an additional threshold mesh is rendered at a height of 0.01. Each mesh is assigned its own color, specified by the normalized red, green, blue and alpha (RGBA) values.
