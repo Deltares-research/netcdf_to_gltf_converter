@@ -69,8 +69,6 @@ class Parser:
 
         return TriangularMesh(base, triangles, transformations)
 
-
-
     def _get_transformations(
         self,
         data: UgridVariable,
@@ -79,7 +77,6 @@ class Parser:
         color: Color,
         config: Config,
     ) -> Generator[MeshAttributes, None, None]:
-        
         start, end, step = self._get_time_start_stop_step(data.time_index_max, config)
 
         for time_index in inclusive_range(start, end, step):
@@ -91,10 +88,10 @@ class Parser:
             )
 
             yield MeshAttributes(vertex_displacements, color)
-            
+
     def _get_time_start_stop_step(self, time_index_max: int, config: Config):
         start = config.time_index_start + config.times_per_frame
-        
+
         if config.time_index_end is not None:
             return start, config.time_index_end, config.times_per_frame
 
@@ -105,10 +102,8 @@ class Parser:
         tranformer = Transformer(ugrid_dataset, config)
         tranformer.shift()
         tranformer.scale()
-        
-    def _interpolate(
-        self, data: UgridVariable, time_index: int, grid: Ugrid2d
-    ):
+
+    def _interpolate(self, data: UgridVariable, time_index: int, grid: Ugrid2d):
         return self._interpolator.interpolate_nearest(
             data.coordinates, data.get_data_at_time(time_index), grid, Location.nodes
         )
