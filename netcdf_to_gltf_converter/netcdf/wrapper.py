@@ -118,6 +118,24 @@ class UgridDataset:
 
         self._dataset[variable.name] = variable
 
+    def get_ugrid_variable(self, variable_name: str) -> UgridVariable:
+        """Get the variable with the specified name from the data set.
+
+        Args:
+            variable_name (str): The variable name.
+
+        Returns:
+            xr.DataArray: An xr.DataArray containing the variable data.
+
+        Raises:
+            ValueError: When the dataset does not contain a variable with the name.
+        """
+        data = self.get_variable(variable_name)
+        data_coords = self.get_data_coordinates(data)
+        
+        return UgridVariable(data, data_coords)
+        
+    
     def get_variable(self, variable_name: str) -> xr.DataArray:
         """Get the variable with the specified name from the data set.
 
