@@ -30,10 +30,13 @@ class Converter:
         self._gltf = gltf
         self._config = Config.from_file(config)
 
+        self._importer = Importer()
+        self._exporter = Exporter()
+
     def run(self):
         """Run the conversion."""
 
-        triangular_meshes = Importer.import_from(self._netcdf, self._config)
+        triangular_meshes = self._importer.import_from(self._netcdf, self._config)
 
         builder = GLTFBuilder()
         for triangular_grid in triangular_meshes:
@@ -41,4 +44,4 @@ class Converter:
 
         gltf = builder.finish()
 
-        Exporter.export(gltf, self._gltf)
+        self._exporter.export(gltf, self._gltf)

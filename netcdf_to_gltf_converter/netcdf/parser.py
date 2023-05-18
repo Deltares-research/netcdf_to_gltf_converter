@@ -1,87 +1,105 @@
-from typing import Generator
+from typing import List
 
 import numpy as np
 import xarray as xr
 from xugrid import Ugrid2d
 
-from netcdf_to_gltf_converter.config import Config
+from netcdf_to_gltf_converter.config import Config, Variable
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
-from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset
+from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset, UgridVariable
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.transformation import Transformer
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
-from netcdf_to_gltf_converter.types import Color
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
-
-xr.set_options(keep_attrs=True)
+from netcdf_to_gltf_converter.utils.sequences import inclusive_range
 
 
 class Parser:
-    def __init__(self, dataset: xr.Dataset, config: Config) -> None:
-        """Initialize a Parser with the specified arguments.
+    """Class to parse a xr.DataArray into a set of TriangularMeshes."""
+
+    def __init__(self) -> None:
+        """Initialize a Parser."""
+
+        self._interpolator = Interpolator()
+        self._triangulator = Triangulator()
+
+    def parse(self, dataset: xr.Dataset, config: Config) -> List[TriangularMesh]:
+        """Parse the provided data set to a list of TriangularMeshes.
 
         Args:
             dataset (xr.Dataset): The NetCDF dataset.
             config (Config): The converter configuration.
         """
+        ugrid_dataset = UgridDataset(dataset, config)
+        Parser._transform_grid(config, ugrid_dataset)
+        triangulated_grid = self._triangulator.triangulate(ugrid_dataset.ugrid2d)
 
-        self._interpolator = Interpolator()
-        self._triangulator = Triangulator()
-        self._ugrid_dataset = UgridDataset(dataset, config)
-        self._tranformer = Transformer(self._ugrid_dataset, config)
-        self._tranformer.shift()
-        self._tranformer.scale()
-        self._grid = Ugrid2d.from_dataset(dataset, self._ugrid_dataset.topology_2d)
-        self._dataset = dataset
-        self._config = config
+        triangular_meshes = []
 
-    def _interpolate(
-        self, data_coords: np.ndarray, data_values: np.ndarray, grid: Ugrid2d
-    ):
-        return self._interpolator.interpolate_nearest(
-            data_coords, data_values, grid, Location.nodes
-        )
+        for variable in config.variables:
+            data_mesh = self._parse_variable(
+                variable, triangulated_grid, ugrid_dataset, config
+            )
+            triangular_meshes.append(data_mesh)
 
-    def _get_transformations(
+            if variable.use_threshold:
+                threshold_mesh = data_mesh.get_threshold_mesh(
+                    variable.threshold_height * config.scale, variable.threshold_color
+                )
+                triangular_meshes.append(threshold_mesh)
+
+        return triangular_meshes
+
+    def _parse_variable(
         self,
-        data: xr.DataArray,
-        data_coords: np.ndarray,
+        variable: Variable,
         grid: Ugrid2d,
-        base: MeshAttributes,
-        color: Color,
-    ) -> Generator[MeshAttributes, None, None]:
-        n_times = data.sizes["time"]
-        for time_index in range(1, n_times):
-            data_values = data.isel(time=time_index).to_numpy()
-            interpolated_data = self._interpolate(data_coords, data_values, grid)
-            vertex_displacements = np.subtract(
-                interpolated_data,
-                base.vertex_positions,
-                dtype=np.float32,
+        ugrid_dataset: UgridDataset,
+        config: Config,
+    ):
+        data = ugrid_dataset.get_ugrid_variable(variable.name)
+        interpolated_data = self._interpolate(data, config.time_index_start, grid)
+
+        base = MeshAttributes(interpolated_data, variable.color)
+        triangles = uint32_array(grid.face_node_connectivity)
+        transformations = []
+
+        for time_index in Parser._get_time_indices(data.time_index_max, config):
+            interpolated_data = self._interpolate(data, time_index, grid)
+            vertex_displacements = Parser.calculate_displacements(
+                interpolated_data, base
             )
+            transformation = MeshAttributes(vertex_displacements, variable.color)
+            transformations.append(transformation)
 
-            yield MeshAttributes(
-                vertex_positions=vertex_displacements, mesh_color=color
-            )
+        return TriangularMesh(base, triangles, transformations)
 
-    def to_triangular_mesh(self, variable_name: str, color: Color):
-        data = self._ugrid_dataset.get_variable(variable_name)
-        data_coords = self._ugrid_dataset.get_data_coordinates(data)
-        data_values = data.isel(time=0).to_numpy()
+    @staticmethod
+    def _get_time_indices(time_index_max: int, config: Config):
+        start = config.time_index_start + config.times_per_frame
 
-        triangulated_grid = self._triangulator.triangulate(self._grid)
-        interpolated_data = self._interpolate(
-            data_coords, data_values, triangulated_grid
+        if config.time_index_end is not None:
+            end = config.time_index_end
+        else:
+            end = time_index_max
+
+        return inclusive_range(start, end, config.times_per_frame)
+
+    @staticmethod
+    def _transform_grid(config, ugrid_dataset):
+        tranformer = Transformer(ugrid_dataset, config)
+        tranformer.shift()
+        tranformer.scale()
+
+    def _interpolate(self, data: UgridVariable, time_index: int, grid: Ugrid2d):
+        return self._interpolator.interpolate_nearest(
+            data.coordinates, data.get_data_at_time(time_index), grid, Location.nodes
         )
 
-        base = MeshAttributes(vertex_positions=interpolated_data, mesh_color=color)
-        triangles = uint32_array(triangulated_grid.face_node_connectivity)
-        transformations = list(
-            self._get_transformations(data, data_coords, triangulated_grid, base, color)
-        )
-
-        return TriangularMesh(
-            base=base,
-            triangles=triangles,
-            transformations=transformations,
+    @staticmethod
+    def calculate_displacements(data: np.ndarray, base: MeshAttributes):
+        return np.subtract(
+            data,
+            base.vertex_positions,
+            dtype=np.float32,
         )

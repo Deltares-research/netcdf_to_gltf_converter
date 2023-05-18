@@ -140,6 +140,12 @@ class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
 
     _expected_file_version = Version("0.1.0")
 
+    time_index_start: int = Field(alias="time_index_start")
+    """int: The time index the animation should start with."""
+    time_index_end: Optional[int] = Field(alias="time_index_end")
+    """Optional[int]: The time index the animation should end with."""
+    times_per_frame: int = Field(alias="time_per_frame")
+    """int: The number of time steps per animation frame."""
     shift_coordinates: bool = Field(alias="shift_coordinates")
     """bool: Whether or not to shift the x- and y-coordinates, such that the smallest x and y become the origin (0,0)."""
     scale: float = Field(alias="scale")

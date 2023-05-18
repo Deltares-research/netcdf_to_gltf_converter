@@ -3,13 +3,10 @@ from typing import Tuple
 
 import numpy as np
 import xarray as xr
+import xugrid as xu
 
 from netcdf_to_gltf_converter.config import Config
-from netcdf_to_gltf_converter.netcdf.conventions import (
-    AttrKey,
-    CfRoleAttrValue,
-    LocationAttrValue,
-)
+from netcdf_to_gltf_converter.netcdf.conventions import AttrKey, CfRoleAttrValue
 
 
 class Topology(str, Enum):
@@ -20,8 +17,65 @@ class Topology(str, Enum):
     faces = "face_coordinates"
 
 
-class UgridDataset:
+class UgridVariable:
     """Class that serves as a wrapper object for an xarray.DataArray with UGrid conventions.
+    The wrapper allows for easier retrieval of relevant data.
+    """
+
+    def __init__(self, data: xr.DataArray) -> None:
+        """Initialize a UgridVariable with the specified data.
+
+        Args:
+            data (xr.DataArray): The variable data.
+        """
+        self._data = data
+        self._coordinates = self._get_coordinates()
+
+    @property
+    def coordinates(self) -> np.ndarray:
+        """Get the coordinates for this data variable.
+
+        Returns:
+            np.ndarray: A 2D np.ndarray of floats with shape (n, 2) where each row contains a x and y coordinate.
+        """
+        return self._coordinates
+
+    @property
+    def time_index_max(self) -> int:
+        """Get the maximum time step index for this data variable.
+
+        Returns:
+            int: An integer specifying the maximum time step index.
+        """
+        return self._data.sizes["time"] - 1
+
+    def get_data_at_time(self, time_index: int) -> np.ndarray:
+        """Get the variable values at the specified time index.
+
+        Args:
+            time_index (int): The time index.
+
+        Returns:
+            np.ndarray: A 1D np.ndarray of floats.
+        """
+        return self._data.isel(time=time_index).to_numpy()
+
+    def _get_coordinates(self) -> np.ndarray:
+        x_coords = self._get_coordinates_by_standard_name("projection_x_coordinate")
+        y_coords = self._get_coordinates_by_standard_name("projection_y_coordinate")
+        return np.column_stack([x_coords, y_coords])
+
+    def _get_coordinates_by_standard_name(self, standard_name: str) -> np.ndarray:
+        for var_name in self._data.coords:
+            coord = self._data.coords[var_name]
+
+            coord_standard_name = coord.attrs.get("standard_name")
+            if coord_standard_name == standard_name:
+                return coord.values
+
+
+class UgridDataset:
+    """Class that serves as a wrapper object for an xarray.Dataset with UGrid conventions.
     The wrapper allows for easier retrieval of relevant data.
     """
 
@@ -37,6 +91,15 @@ class UgridDataset:
 
         self.topology_2d = self._get_topology_2d()
         self._topologies = dataset.ugrid_roles.coordinates[self.topology_2d]
+
+    @property
+    def ugrid2d(self) -> xu.Ugrid2d:
+        """Get the xu.Ugrid2d from the data set.
+
+        Returns:
+            xu.Ugrid2d: A xu.Ugrid2d created from the data set.
+        """
+        return xu.Ugrid2d.from_dataset(self._dataset, self.topology_2d)
 
     @property
     def node_coord_vars(self) -> Tuple[xr.DataArray, xr.DataArray]:
@@ -68,18 +131,6 @@ class UgridDataset:
         """
         return self._get_coord_vars_for_topology(Topology.faces)
 
-    def get_data_coordinates(self, data: xr.DataArray) -> np.ndarray:
-        """Get the coordinates for the provided data.
-
-        Args:
-            data (xr.DataArray): The data to get the coordinates for.
-
-        Returns:
-            np.ndarray: A 2D np.ndarray of floats with shape (n, 2) where each row contains a x and y coordinate.
-        """
-        location = data.attrs.get(AttrKey.location)
-        return self._get_coordinates_for_location(location)
-
     def set_variable(self, variable: xr.DataArray):
         """Update the variable in the data set.
 
@@ -95,6 +146,21 @@ class UgridDataset:
             )
 
         self._dataset[variable.name] = variable
+
+    def get_ugrid_variable(self, variable_name: str) -> UgridVariable:
+        """Get the variable with the specified name from the data set.
+
+        Args:
+            variable_name (str): The variable name.
+
+        Returns:
+            UgridVariable: A UgridVariable.
+
+        Raises:
+            ValueError: When the dataset does not contain a variable with the name.
+        """
+        data = self.get_variable(variable_name)
+        return UgridVariable(data)
 
     def get_variable(self, variable_name: str) -> xr.DataArray:
         """Get the variable with the specified name from the data set.
@@ -114,23 +180,6 @@ class UgridDataset:
             )
 
         return self._dataset[variable_name]
-
-    def _get_coordinates_for_location(self, location: LocationAttrValue) -> np.ndarray:
-        x_coord_var, y_coord_var = self._get_coord_vars_for_location(location)
-        x_coords = x_coord_var.values
-        y_coords = y_coord_var.values
-        coords = np.column_stack([x_coords, y_coords])
-
-        return coords
-
-    def _get_coord_vars_for_location(self, location: LocationAttrValue) -> np.ndarray:
-        if location == LocationAttrValue.node:
-            return self.node_coord_vars
-        if location == LocationAttrValue.edge:
-            return self.edge_coord_vars
-        if location == LocationAttrValue.face:
-            return self.face_coord_vars
-        raise ValueError(f"Location {location} not supported.")
 
     def _get_coord_vars_for_topology(self, location: Topology) -> Tuple:
         var_names = self._topologies[location]

@@ -20,9 +20,16 @@ class TestImporter:
             threshold_color=[1.0, 1.0, 1.0, 1.0],
         )
 
-        config = Config(shift_coordinates=True, scale=1.0, variables=[variable])
+        config = Config(
+            time_index_start=0,
+            times_per_frame=1,
+            shift_coordinates=True,
+            scale=1.0,
+            variables=[variable],
+        )
 
-        triangular_meshes = Importer.import_from(file_path, config)
+        importer = Importer()
+        triangular_meshes = importer.import_from(file_path, config)
         data_mesh = triangular_meshes[0]
 
         exp_triangles = np.array(
@@ -79,9 +86,17 @@ class TestImporter:
 
     def test_import_from_netcdf_does_not_exist_raises_error(self):
         netcdf = Path("path/to/file.netcdf")
-        config = Config(shift_coordinates=False, scale=1.0, variables=[])
+        config = Config(
+            time_index_start=0,
+            times_per_frame=1,
+            shift_coordinates=True,
+            scale=1.0,
+            variables=[],
+        )
+
+        importer = Importer()
 
         with pytest.raises(ValueError) as error:
-            _ = Importer.import_from(netcdf, config)
+            _ = importer.import_from(netcdf, config)
 
         assert str(error.value) == rf"NetCDF file does not exist: {netcdf}"

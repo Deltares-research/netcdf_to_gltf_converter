@@ -72,40 +72,57 @@ These steps will ensure that the converter is installed within a virtual environ
 ## Configuration file
  The configuration JSON file allows you to customize various settings and parameters for the conversion process. It provides flexibility in defining how the netCDF data is transformed into the glTF format. 
  
- - `file_version`: Specifies the version of the configuration file format.
+- `file_version`: Specifies the version of the configuration file format.
+
+- `time_index_start`: An integer value specifying the starting index of the time steps to be converted. This allows you to specify a subset of time steps from the netCDF file. 
+
+- `time_index_end` (optional): An integer value specifying the end index of the time steps to be converted. When this option is not specified, the converter will include all time steps from the time step with index `time_index_start` to the last time step in the original dataset.
+
+- `times_per_frame`: An integer value specifying the number of time steps to be included in each frame of the glTF animation. This option is useful if you want to adjust the time resolution of the animation.
+
 - `shift_coordinates`: A boolean value indicating whether to shift the coordinates of the data during conversion. When set to `true`, the converter will shift the coordinates such that the smallest x and y become the origin (0,0).
+
 - `scale`: A floating value indicating the scale factor for the data. It determines the scaling of the converted geometry. A smaller scale value will result in a smaller representation of the data in the 3D renderer.
+
 - `variables`: An array containing the configurations for each variable to be converted. Each variable configuration consists of the following options:
+  
   - `name`: The name of the variable as it appears in the netCDF file.
+  
   - `color`: An array representing the color of the rendered variable in the glTF model. The color values should be in the range of 0.0 to 1.0 for each channel (red, green, blue, alpha).
+  
   - `use_threshold`: A boolean value indicating whether to apply a threshold to the variable data. When set to `true`, the converter will add a threshold mesh to on the specified threshold height to distinguish between variable values above and below this height. When a scaling factor is applied to the conversion, this height will also be multiplied by this factor. 
-  - `threshold_height`: The threshold height value used to distinguish between variable values above and below this value. This option is only required when `use_threshold` is `true`.
-  - `threshold_color`: An array containg four floating values representing the color of the threshold mesh. The color values should be in the range of 0.0 to 1.0 for each channel (red, green, blue, alpha). This option is only required when `use_threshold` is `true`.
+  
+  - `threshold_height` (optional): The threshold height value used to distinguish between variable values above and below this value. This option is only required when `use_threshold` is `true`.
+  
+  - `threshold_color` (optional): An array containg four floating values representing the color of the threshold mesh. The color values should be in the range of 0.0 to 1.0 for each channel (red, green, blue, alpha). This option is only required when `use_threshold` is `true`.
  
  **Example**
 ```json
 {
-	"file_version":"0.1.0",
-	"shift_coordinates":true,
-	"scale":0.5,
-	"variables":[
-	   {
-		  "name":"Mesh2d_waterdepth",
-		  "color":[0.372, 0.635, 0.8, 1.0],
-		  "use_threshold":false,
-		  "threshold_height":0.01,
-		  "threshold_color":[1.0, 1.0, 1.0, 1.0]
-	   },
-	   {
-		  "name":"Mesh2d_s1",
-		  "color":[0.686, 0.831, 0.937, 1.0],
-		  "use_threshold":false
-	   }
-	]
- }
+   "file_version":"0.1.0",
+   "time_index_start":50,
+   "time_index_end":100,
+   "times_per_frame":3,
+   "shift_coordinates":true,
+   "scale":0.5,
+   "variables":[
+      {
+         "name":"Mesh2d_waterdepth",
+         "color":[0.372, 0.635, 0.8, 1.0],
+         "use_threshold":false,
+         "threshold_height":0.01,
+         "threshold_color":[1.0, 1.0, 1.0, 1.0]
+      },
+      {
+         "name":"Mesh2d_s1",
+         "color":[0.686, 0.831, 0.937, 1.0],
+         "use_threshold":false
+      }
+   ]
+}
 ```
 
-In the above example, we render two variables from the netCDF file: `Mesh2d_waterdepth` and `Mesh2d_s1`. Additionally, we apply a coordinate shift to ensure that the meshes have an origin at (0,0). Furthermore, we set the scale to 0.5, resulting in a reduction of size in all directions by a factor of two. For the `Mesh2d_waterdepth` variable, an additional threshold mesh is rendered at a height of 0.01. Each mesh is assigned its own color, specified by the normalized red, green, blue and alpha (RGBA) values.
+In the above example, we render two variables from the netCDF file: `Mesh2d_waterdepth` and `Mesh2d_s1`. For the animation we take a subset of the time steps. The animation will start at time step with index 50 and will end at time step with index 100. The animation will have a resolution of 3 time steps. Additionally, we apply a coordinate shift to ensure that the meshes have an origin at (0,0). Furthermore, we set the scale to 0.5, resulting in a reduction of size in all directions by a factor of two. For the `Mesh2d_waterdepth` variable, an additional threshold mesh is rendered at a height of 0.01. Each mesh is assigned its own color, specified by the normalized red, green, blue and alpha (RGBA) values.
 
 ## View results
  Several glTF viewers exist that can be used to view the produced glTF file. Simply drag and drop the file, and the glTF file will be rendered.
