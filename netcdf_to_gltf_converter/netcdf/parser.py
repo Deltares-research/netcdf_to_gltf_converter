@@ -10,7 +10,7 @@ from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.transformation import Transformer
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
-from netcdf_to_gltf_converter.types import Color
+from netcdf_to_gltf_converter.custom_types import Color
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
 
