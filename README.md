@@ -66,7 +66,7 @@ These steps will ensure that the converter is installed within a virtual environ
 
 **Example**
  ```
- poetry run python input_map.nc output.gltf config.json
+ poetry run python netcdf_to_gltf_converter\converter_cli.py input_map.nc output.gltf config.json
  ```
  
 ## Configuration file
