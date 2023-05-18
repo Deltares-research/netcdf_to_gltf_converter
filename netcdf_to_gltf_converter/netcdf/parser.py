@@ -97,6 +97,7 @@ class Parser:
             data.coordinates, data.get_data_at_time(time_index), grid, Location.nodes
         )
 
+    @staticmethod
     def calculate_displacements(data: np.ndarray, base: MeshAttributes):
         return np.subtract(
             data,
