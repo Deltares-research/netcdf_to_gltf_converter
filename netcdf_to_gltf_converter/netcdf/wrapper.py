@@ -21,6 +21,18 @@ class Topology(str, Enum):
     faces = "face_coordinates"
 
 
+class UgridVariable:
+    def __init__(self, data: xr.DataArray, coordinates: np.ndarray) -> None:
+        self._data = data
+        self._coordinates = coordinates
+        
+    @property
+    def coordinates(self):
+        return self._coordinates
+    
+    def get_data_at_time(self, time_index: int) -> np.ndarray:
+        return self._data.isel(time=time_index).to_numpy()
+    
 class UgridDataset:
     """Class that serves as a wrapper object for an xarray.DataArray with UGrid conventions.
     The wrapper allows for easier retrieval of relevant data.
