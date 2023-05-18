@@ -22,10 +22,10 @@ class Topology(str, Enum):
 
 
 class UgridVariable:
-    def __init__(self, data: xr.DataArray, coordinates: np.ndarray) -> None:
+    def __init__(self, data: xr.DataArray) -> None:
         self._data = data
-        self._coordinates = coordinates
-        
+        self._coordinates = self._get_coordinates()
+
     @property
     def coordinates(self):
         return self._coordinates
@@ -36,6 +36,19 @@ class UgridVariable:
     
     def get_data_at_time(self, time_index: int) -> np.ndarray:
         return self._data.isel(time=time_index).to_numpy()
+    
+    def _get_coordinates(self) -> np.ndarray:
+        x_coords = self._get_coordinates_by_standard_name("projection_x_coordinate")
+        y_coords = self._get_coordinates_by_standard_name("projection_y_coordinate")
+        return np.column_stack([x_coords, y_coords])
+
+    def _get_coordinates_by_standard_name(self, standard_name) -> np.ndarray:
+        for var_name in self._data.coords:
+            coord = self._data.coords[var_name]
+            
+            coord_standard_name = coord.attrs.get("standard_name")
+            if coord_standard_name == standard_name:
+                return coord.values
     
 class UgridDataset:
     """Class that serves as a wrapper object for an xarray.DataArray with UGrid conventions.
@@ -134,10 +147,8 @@ class UgridDataset:
         Raises:
             ValueError: When the dataset does not contain a variable with the name.
         """
-        data = self.get_variable(variable_name)
-        data_coords = self.get_data_coordinates(data)
-        
-        return UgridVariable(data, data_coords)
+        data = self.get_variable(variable_name)        
+        return UgridVariable(data)
         
     
     def get_variable(self, variable_name: str) -> xr.DataArray:
