@@ -1,11 +1,10 @@
-from typing import Generator, List
+from typing import List
 
 import numpy as np
 import xarray as xr
 from xugrid import Ugrid2d
 
 from netcdf_to_gltf_converter.config import Config, Variable
-from netcdf_to_gltf_converter.custom_types import Color
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset, UgridVariable
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
@@ -38,7 +37,7 @@ class Parser:
         triangular_meshes = []
 
         for variable in config.variables:
-            data_mesh = self.parse_variable(
+            data_mesh = self._parse_variable(
                 variable, triangulated_grid, ugrid_dataset, config
             )
             triangular_meshes.append(data_mesh)
@@ -51,7 +50,7 @@ class Parser:
 
         return triangular_meshes
 
-    def parse_variable(
+    def _parse_variable(
         self,
         variable: Variable,
         grid: Ugrid2d,
