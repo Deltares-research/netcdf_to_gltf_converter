@@ -23,7 +23,7 @@
 This is a tool that converts D-HYDRO map output results that are stored in the netCDF file format to the glTF file format. The goal is to allow users who work with D-HYDRO results to view their data in 3D renderers using the glTF format.
 
 <p align="center">
-  <img src="docs/readme/img/result.gif" alt="animated" />
+  <img src="docs/readme/img/example.gif" alt="animated" />
 </p>
 
 ## Why use glTF
@@ -90,6 +90,10 @@ These steps will ensure that the converter is installed within a virtual environ
   
   - `color`: An array representing the color of the rendered variable in the glTF model. The color values should be in the range of 0.0 to 1.0 for each channel (red, green, blue, alpha).
   
+  - `metallic_factor`: A floating-point value between 0.0 and 1.0 defining the degree of metallicity or non-metallicity of the mesh material. A value of 0.0 represents a non-metallic surface, while a value of 1.0 indicates a fully metallic surface.
+  
+  - `roughness_factor`: A floating-point value between 0.0 and 1.0 defining the smoothness or roughness of the mesh material. A roughness value of 0.0 represents a perfectly smooth surface with sharp reflections, while a value of 1.0 indicates a completely rough surface with scattered reflections.
+  
   - `use_threshold`: A boolean value indicating whether to apply a threshold to the variable data. When set to `true`, the converter will add a threshold mesh to on the specified threshold height to distinguish between variable values above and below this height. When a scaling factor is applied to the conversion, this height will also be multiplied by this factor. 
   
   - `threshold_height` (optional): The threshold height value used to distinguish between variable values above and below this value. This option is only required when `use_threshold` is `true`.
@@ -109,6 +113,8 @@ These steps will ensure that the converter is installed within a virtual environ
       {
          "name":"Mesh2d_waterdepth",
          "color":[0.372, 0.635, 0.8, 1.0],
+         "metallicFactor":0.0,
+         "roughnessFactor":0.15,
          "use_threshold":false,
          "threshold_height":0.01,
          "threshold_color":[1.0, 1.0, 1.0, 1.0]
@@ -116,13 +122,17 @@ These steps will ensure that the converter is installed within a virtual environ
       {
          "name":"Mesh2d_s1",
          "color":[0.686, 0.831, 0.937, 1.0],
+         "metallicFactor":0.0,
+         "roughnessFactor":0.15,
          "use_threshold":false
       }
    ]
 }
 ```
 
-In the above example, we render two variables from the netCDF file: `Mesh2d_waterdepth` and `Mesh2d_s1`. For the animation we take a subset of the time steps. The animation will start at time step with index 50 and will end at time step with index 100. The animation will have a resolution of 3 time steps. Additionally, we apply a coordinate shift to ensure that the meshes have an origin at (0,0). Furthermore, we set the scale to 0.5, resulting in a reduction of size in all directions by a factor of two. For the `Mesh2d_waterdepth` variable, an additional threshold mesh is rendered at a height of 0.01. Each mesh is assigned its own color, specified by the normalized red, green, blue and alpha (RGBA) values.
+In the above example, we render two variables from the netCDF file: `Mesh2d_waterdepth` and `Mesh2d_s1`. For the animation we take a subset of the time steps. The animation will start at time step with index 50 and will end at time step with index 100. The animation will have a resolution of 3 time steps. Additionally, we apply a coordinate shift to ensure that the meshes have an origin at (0,0). Furthermore, we set the scale to 0.5, resulting in a reduction of size in all directions by a factor of two. 
+
+For the `Mesh2d_waterdepth` variable, an additional threshold mesh is rendered at a height of 0.01. Each mesh is assigned its own color, specified by the normalized red, green, blue and alpha (RGBA) values.
 
 ## View results
  Several glTF viewers exist that can be used to view the produced glTF file. Simply drag and drop the file, and the glTF file will be rendered.
@@ -143,10 +153,10 @@ The converter operates through the following steps:
       1. The data points are interpolated onto the nodes of the grid.
       2. With the interpolated variable data, the value displacements are calculated with respect to the base mesh geometry, allowing it to be animated.
    4. For each created mesh geometry, the specified color for this variable in the configuration file is applied.
-   5. If specified in the configuration file, an addtional static threshold mesh with the desired color is creayed. The mesh geometry will consist of the same x- and y- coordinates as the first mesh, but with the desired fixed height. 
+   5. If specified in the configuration file, an addtional static threshold mesh with the desired color is created. The mesh geometry will consist of the same x- and y- coordinates as the first mesh, but with the desired fixed height. 
 
 <p align="center">
-  <img src="docs/readme/img/dry-wet-cells.png" width="50%" height="50%" />
+  <img src="docs/readme/img/threshold.gif" alt="animated" />
 </p>
 
 8. The glTF data is exported to the user-defined glTF file.

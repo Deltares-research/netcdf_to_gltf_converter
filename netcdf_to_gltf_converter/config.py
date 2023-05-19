@@ -5,7 +5,9 @@ from typing import Any, Dict, List, Optional, Type, TypeVar
 
 from packaging.version import Version
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import Extra, Field, root_validator, validator
+from pydantic import Extra, root_validator, validator
+
+from netcdf_to_gltf_converter.utils.validation import in_range
 
 Color = List[float]
 
@@ -92,15 +94,25 @@ class AbstractJsonConfigFile(BaseModel, ABC):
 class Variable(BaseModel):
     """Configuration properties of a variable."""
 
-    name: str = Field("name")
+    name: str
     """str: The name of the NetCDF variable"""
-    color: Color = Field(alias="color")
+
+    color: Color
     """Color: The vertex color in the mesh defined by the normalized red, green, blue and alpha (RGBA) values."""
-    use_threshold: bool = Field(None, alias="threshold")
+
+    metallic_factor: float
+    """float: The metallic factor determines the degree of metallicity or non-metallicity of the mesh material. A value of 0.0 represents a non-metallic surface, while a value of 1.0 indicates a fully metallic surface."""
+
+    roughness_factor: float
+    """float: The roughness factor defines the smoothness or roughness of the mesh material. A roughness value of 0.0 represents a perfectly smooth surface with sharp reflections, while a value of 1.0 indicates a completely rough surface with scattered reflections."""
+
+    use_threshold: bool
     """bool: Whether or not to add a threshold mesh to filter values below the threshold height."""
-    threshold_color: Optional[Color] = Field(None, alias="threshold_color")
+
+    threshold_color: Optional[Color]
     """Optional[Color]: The vertex color in the threshold mesh defined by the normalized red, green, blue and alpha (RGBA) values."""
-    threshold_height: Optional[float] = Field(None, alias="threshold_height")
+
+    threshold_height: Optional[float]
     """Optional[float]: The height (vertex z-values) of the threshold mesh."""
 
     @root_validator
@@ -128,11 +140,19 @@ class Variable(BaseModel):
             raise ValueError(msg)
 
         for channel in color:
-            if not 0 <= channel <= 1:
+            if not in_range(channel, 0.0, 1.0):
                 msg = f"The color channel {channel} is outside of range 0.0-1.0. A color should be defined by the normalized red, green, blue and alpha (RGBA) values."
                 raise ValueError(msg)
 
         return color
+
+    @validator("metallic_factor", "roughness_factor")
+    def validate_in_range(cls, value: float) -> float:
+        if not in_range(value, 0.0, 1.0):
+            msg = f"Value must be between 0.0 and 1.0"
+            raise ValueError(msg)
+
+        return value
 
 
 class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
@@ -140,15 +160,20 @@ class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
 
     _expected_file_version = Version("0.1.0")
 
-    time_index_start: int = Field(alias="time_index_start")
+    time_index_start: int
     """int: The time index the animation should start with."""
-    time_index_end: Optional[int] = Field(alias="time_index_end")
+
+    time_index_end: Optional[int]
     """Optional[int]: The time index the animation should end with."""
-    times_per_frame: int = Field(alias="time_per_frame")
+
+    times_per_frame: int
     """int: The number of time steps per animation frame."""
-    shift_coordinates: bool = Field(alias="shift_coordinates")
+
+    shift_coordinates: bool
     """bool: Whether or not to shift the x- and y-coordinates, such that the smallest x and y become the origin (0,0)."""
-    scale: float = Field(alias="scale")
+
+    scale: float
     """float: The scale of the mesh coordinates compared to the coordinates from file."""
-    variables: List[Variable] = Field(alias="variables")
+
+    variables: List[Variable]
     """List[Variable]: List of configuration of the variables that should be converted to glTF."""

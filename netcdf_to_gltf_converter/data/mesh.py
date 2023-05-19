@@ -33,6 +33,8 @@ class TriangularMesh:
         base: MeshAttributes,
         triangles: np.ndarray,
         transformations: List[MeshAttributes],
+        metallic_factor: float,
+        roughness_factor: float,
     ) -> None:
         """Initialize a TriangularMesh with the specified arguments.
 
@@ -40,6 +42,8 @@ class TriangularMesh:
             base (MeshAttributes): The base attributes of the mesh.
             triangles (np.ndarray): The vertex indices per triangle, an ndarray of integers with shape (m, 3). Each row represents one triangle and contains the three vertex indices of this triangle.
             transformations (List[MeshAttributes]): The mesh transformations containing the vertex displacements.
+            metallic_factor (float): The metallic factor defining the degree of metallicity or non-metallicity of the mesh material.
+            roughness_factor (float):  The roughness factor defining the smoothness or roughness of the mesh material.
 
         Raises:
             AssertionError: When the shape or dtype of the `triangles` does not match the described requirements.
@@ -49,6 +53,8 @@ class TriangularMesh:
         self.base = base
         self.triangles = triangles
         self.transformations = transformations
+        self.metallic_factor = metallic_factor
+        self.roughness_factor = roughness_factor
 
         self._validate()
 
@@ -70,7 +76,11 @@ class TriangularMesh:
         )
 
         return TriangularMesh(
-            base=mesh_attributes, triangles=self.triangles, transformations=[]
+            base=mesh_attributes,
+            triangles=self.triangles,
+            transformations=[],
+            metallic_factor=0.0,
+            roughness_factor=1.0,
         )
 
     def _validate(self):

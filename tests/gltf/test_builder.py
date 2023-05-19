@@ -55,6 +55,8 @@ def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
             )
             for p in transformations_vertex_positions
         ],
+        metallic_factor=0.0,
+        roughness_factor=0.1,
     )
 
 
@@ -295,7 +297,29 @@ class TestGLTFBuilder:
             "extensionsUsed": [],
             "extensionsRequired": [],
             "images": [],
-            "materials": [],
+            "materials": [
+                {
+                    "extensions": {},
+                    "extras": {},
+                    "pbrMetallicRoughness": {
+                        "extensions": {},
+                        "extras": {},
+                        "baseColorFactor": [1.0, 1.0, 1.0, 1.0],
+                        "metallicFactor": 0.0,
+                        "roughnessFactor": 0.1,
+                        "baseColorTexture": None,
+                        "metallicRoughnessTexture": None,
+                    },
+                    "normalTexture": None,
+                    "occlusionTexture": None,
+                    "emissiveFactor": [0.0, 0.0, 0.0],
+                    "emissiveTexture": None,
+                    "alphaMode": "OPAQUE",
+                    "alphaCutoff": 0.5,
+                    "doubleSided": False,
+                    "name": None,
+                }
+            ],
             "meshes": [
                 {
                     "extensions": {},
@@ -316,7 +340,7 @@ class TestGLTFBuilder:
                             },
                             "indices": 0,
                             "mode": 4,
-                            "material": None,
+                            "material": 0,
                             "targets": [
                                 {
                                     "POSITION": 3,
