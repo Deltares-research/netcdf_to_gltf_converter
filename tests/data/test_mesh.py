@@ -36,11 +36,17 @@ class TestTriangularMesh:
             ),
             mesh_color=[0.38, 0.73, 0.78, 1.0],
         )
-        
+
         metallic_factor = 0.5
         roughness_factor = 0.75
 
-        triangular_mesh = TriangularMesh(base_geometry, triangles, [transformation], metallic_factor, roughness_factor)
+        triangular_mesh = TriangularMesh(
+            base_geometry,
+            triangles,
+            [transformation],
+            metallic_factor,
+            roughness_factor,
+        )
 
         assert triangular_mesh.base == base_geometry
         assert np.array_equal(triangular_mesh.triangles, triangles)
@@ -84,7 +90,13 @@ class TestTriangularMesh:
         metallic_factor = 0.5
         roughness_factor = 0.75
 
-        triangular_mesh = TriangularMesh(base_geometry, triangles, [transformation], metallic_factor, roughness_factor)
+        triangular_mesh = TriangularMesh(
+            base_geometry,
+            triangles,
+            [transformation],
+            metallic_factor,
+            roughness_factor,
+        )
 
         exp_vertex_positions = float32_array(
             [

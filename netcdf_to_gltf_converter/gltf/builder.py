@@ -59,7 +59,10 @@ class GLTFBuilder:
             triangular_mesh (TriangularMesh): The triangular mesh.
         """
 
-        material_model = PbrMetallicRoughness(metallicFactor=triangular_mesh.metallic_factor, roughnessFactor=triangular_mesh.roughness_factor)
+        material_model = PbrMetallicRoughness(
+            metallicFactor=triangular_mesh.metallic_factor,
+            roughnessFactor=triangular_mesh.roughness_factor,
+        )
         material = Material(pbrMetallicRoughness=material_model)
         material_index = add(self._gltf.materials, material)
         mesh_index = add(self._gltf.meshes, Mesh())
@@ -128,7 +131,7 @@ class GLTFBuilder:
                 POSITION=positions_accessor_index, COLOR_0=colors_accessor_index
             ),
             indices=indices_accessor_index,
-            material=material_index
+            material=material_index,
         )
         self._gltf.meshes[mesh_index].primitives.append(primitive)
 

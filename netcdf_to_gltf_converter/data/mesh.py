@@ -34,7 +34,7 @@ class TriangularMesh:
         triangles: np.ndarray,
         transformations: List[MeshAttributes],
         metallic_factor: float,
-        roughness_factor: float
+        roughness_factor: float,
     ) -> None:
         """Initialize a TriangularMesh with the specified arguments.
 
@@ -76,7 +76,11 @@ class TriangularMesh:
         )
 
         return TriangularMesh(
-            base=mesh_attributes, triangles=self.triangles, transformations=[], metallic_factor=0.0, roughness_factor=1.0
+            base=mesh_attributes,
+            triangles=self.triangles,
+            transformations=[],
+            metallic_factor=0.0,
+            roughness_factor=1.0,
         )
 
     def _validate(self):

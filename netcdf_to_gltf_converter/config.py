@@ -96,22 +96,22 @@ class Variable(BaseModel):
 
     name: str
     """str: The name of the NetCDF variable"""
-    
+
     color: Color
     """Color: The vertex color in the mesh defined by the normalized red, green, blue and alpha (RGBA) values."""
-    
+
     metallic_factor: float
     """float: The metallic factor determines the degree of metallicity or non-metallicity of the mesh material. A value of 0.0 represents a non-metallic surface, while a value of 1.0 indicates a fully metallic surface."""
-    
+
     roughness_factor: float
     """float: The roughness factor defines the smoothness or roughness of the mesh material. A roughness value of 0.0 represents a perfectly smooth surface with sharp reflections, while a value of 1.0 indicates a completely rough surface with scattered reflections."""
-    
+
     use_threshold: bool
     """bool: Whether or not to add a threshold mesh to filter values below the threshold height."""
-    
+
     threshold_color: Optional[Color]
     """Optional[Color]: The vertex color in the threshold mesh defined by the normalized red, green, blue and alpha (RGBA) values."""
-    
+
     threshold_height: Optional[float]
     """Optional[float]: The height (vertex z-values) of the threshold mesh."""
 
@@ -145,15 +145,15 @@ class Variable(BaseModel):
                 raise ValueError(msg)
 
         return color
-    
+
     @validator("metallic_factor", "roughness_factor")
     def validate_in_range(cls, value: float) -> float:
         if not in_range(value, 0.0, 1.0):
             msg = f"Value must be between 0.0 and 1.0"
             raise ValueError(msg)
-        
+
         return value
-        
+
 
 class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
     """The configuration settings described in the configuration JSON file."""
@@ -162,18 +162,18 @@ class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
 
     time_index_start: int
     """int: The time index the animation should start with."""
-    
+
     time_index_end: Optional[int]
     """Optional[int]: The time index the animation should end with."""
-    
+
     times_per_frame: int
     """int: The number of time steps per animation frame."""
-    
+
     shift_coordinates: bool
     """bool: Whether or not to shift the x- and y-coordinates, such that the smallest x and y become the origin (0,0)."""
-    
+
     scale: float
     """float: The scale of the mesh coordinates compared to the coordinates from file."""
-    
+
     variables: List[Variable]
     """List[Variable]: List of configuration of the variables that should be converted to glTF."""
