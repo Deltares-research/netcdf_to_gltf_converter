@@ -9,7 +9,7 @@ from netcdf_to_gltf_converter.custom_types import Color
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset, UgridVariable
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
-from netcdf_to_gltf_converter.preprocessing.transformation import Transformer, shift
+from netcdf_to_gltf_converter.preprocessing.transformation import Transformer, shift, scale
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 from netcdf_to_gltf_converter.utils.sequences import inclusive_range
@@ -128,8 +128,10 @@ class Parser:
     def _transform_grid(config: Config, ugrid_dataset: UgridDataset):
         if config.shift_coordinates:  
             shift(ugrid_dataset)
-            
-        Transformer.scale(ugrid_dataset, config)
+        
+        if config.scale != 1.0:
+            variables = [var.name for var in config.variables]  
+            scale(ugrid_dataset, variables, config.scale)
 
     def _interpolate(self, data: UgridVariable, time_index: int, grid: Ugrid2d):
         return self._interpolator.interpolate_nearest(
