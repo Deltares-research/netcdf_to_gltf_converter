@@ -16,7 +16,7 @@ class TestNearestPointInterpolator:
             [[0.75, 0.25], [1.75, 0.75], [0.25, 1.25], [1.25, 1.75]]
         )
         data_values = float32_array([1, 2, 3, 4])
-        grid = Factory.create_rectilinear_ugrid2d()
+        grid = Factory.create_rectilinear_grid()
         location = Location.nodes
 
         interpolated_values = interpolator.interpolate(
@@ -45,7 +45,7 @@ class TestLinearInterpolator:
         interpolator = LinearInterpolator()
         data_coords = float32_array([[1.0, 0.5], [2.0, 1.0], [1.0, 2.0], [0.5, 1.0]])
         data_values = float32_array([1, 2, 3, 4])
-        grid = Factory.create_rectilinear_ugrid2d()
+        grid = Factory.create_rectilinear_grid()
         location = Location.nodes
 
         interpolated_values = interpolator.interpolate(
