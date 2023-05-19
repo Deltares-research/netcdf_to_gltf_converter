@@ -59,31 +59,6 @@ class TriangularMesh:
 
         self._validate()
 
-    def get_threshold_mesh(self, height: float, color: Color) -> "TriangularMesh":
-        """Gets a triangular mesh with the same x- and y-geometry, but with the z-coordinates set at a fixed height.
-
-        Args:
-            height (float): The desired height of the threshold mesh.
-            color (Color): The vertex color in the threshold mesh defined by the normalized red, green, blue and alpha (RGBA) values.
-
-        Returns:
-            TriangularMesh: The triangular mesh with the fixed height.
-        """
-        vertex_positions = self.base.vertex_positions.copy()
-        vertex_positions[:, -1] = height
-
-        mesh_attributes = MeshAttributes(
-            vertex_positions=vertex_positions, mesh_color=color
-        )
-
-        return TriangularMesh(
-            base=mesh_attributes,
-            triangles=self.triangles,
-            transformations=[],
-            metallic_factor=0.0,
-            roughness_factor=1.0,
-        )
-
     def swap_yz(self):
         Transformer.swap_yz(self.base.vertex_positions)
         Transformer.swap_yz(self.triangles)
