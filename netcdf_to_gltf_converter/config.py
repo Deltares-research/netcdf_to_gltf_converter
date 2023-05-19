@@ -149,7 +149,7 @@ class Variable(BaseModel):
     @validator("metallic_factor", "roughness_factor")
     def validate_in_range(cls, value: float) -> float:
         if not in_range(value, 0.0, 1.0):
-            msg = f"Value must be between 0.0 and 1.0"
+            msg = "Value must be between 0.0 and 1.0"
             raise ValueError(msg)
 
         return value

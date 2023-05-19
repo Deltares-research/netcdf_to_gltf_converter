@@ -1,79 +1,63 @@
+from typing import List
+
+import numpy as np
 import xarray as xr
 
-from netcdf_to_gltf_converter.config import Config
-from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset
+from netcdf_to_gltf_converter.netcdf.wrapper import DatasetWrapper
 
 xr.set_options(keep_attrs=True)
 """Attributes need to be preserved when creating a new DataArray with a transformation."""
 
 
-class Transformer:
-    """A class for transforming the geometry in a dataset."""
+def shift(dataset: DatasetWrapper):
+    """
+    Shift the x- and y-coordinates in the data set, such that the smallest x and y become the origin (0,0).
+    The original data set is updated with the new coordinates.
 
-    def __init__(self, dataset: UgridDataset, config: Config) -> None:
-        """Initialize a Transformer with the specified arguments.
+    Args:
+        dataset (DatasetWrapper): The dataset to transform the coordinates for.
+        config (Config): The converter configuration.
+    """
 
-        Args:
-            dataset (xr.UgridDataset): The Ugrid dataset to transform the coordinates for.
-            config (Config): The converter configuration.
-        """
-        self._dataset = dataset
-        self._config = config
+    shift_x = dataset.min_x
+    shift_y = dataset.min_y
 
-    def shift(self):
-        """
-        If shifting is required, shift the x- and y-coordinates in the data set, such that the smallest x and y become the origin (0,0).
-        The original data set is updated with the new coordinates.
-        """
+    for x_coord_var in dataset.x_coord_vars:
+        _shift(x_coord_var, shift_x, dataset)
 
-        if not self._config.shift_coordinates:
-            return
+    for y_coord_var in dataset.y_coord_vars:
+        _shift(y_coord_var, shift_y, dataset)
 
-        node_x_var, node_y_var = self._dataset.node_coord_vars
-        edge_x_var, edge_y_var = self._dataset.edge_coord_vars
-        face_x_var, face_y_var = self._dataset.face_coord_vars
 
-        shift_x = node_x_var.values.min()
-        shift_y = node_y_var.values.min()
+def _shift(variable: xr.DataArray, shift: float, dataset: DatasetWrapper):
+    shifted_coords_var = variable - shift
+    dataset.set_array(shifted_coords_var)
 
-        self._shift(node_x_var, shift_x)
-        self._shift(node_y_var, shift_y)
-        self._shift(edge_x_var, shift_x)
-        self._shift(edge_y_var, shift_y)
-        self._shift(face_x_var, shift_x)
-        self._shift(face_y_var, shift_y)
 
-    def _shift(self, variable: xr.DataArray, shift: float):
-        shifted_coords_var = variable - shift
-        self._dataset.set_variable(shifted_coords_var)
+def scale(dataset: DatasetWrapper, variables: List[str], scale: float):
+    """
+    If scaling is required, scale the x- and y-coordinates and the data values, with the scaling factor that is specified in the Config.
+    The original data set is updated with the new coordinates.
 
-    def scale(self):
-        """
-        If scaling is required, scale the x- and y-coordinates and the data values, with the scaling factor that is specified in the Config.
-        The original data set is updated with the new coordinates.
-        """
+    Args:
+        dataset (DatasetWrapper): The dataset to transform the coordinates for.
+        variables (List[str]): The names of the variables to scale.
+    """
 
-        if self._config.scale == 1.0:
-            return
+    for x_coord_var in dataset.x_coord_vars:
+        _scale(x_coord_var, dataset, scale)
 
-        node_x_var, node_y_var = self._dataset.node_coord_vars
-        edge_x_var, edge_y_var = self._dataset.edge_coord_vars
-        face_x_var, face_y_var = self._dataset.face_coord_vars
+    for y_coord_var in dataset.y_coord_vars:
+        _scale(y_coord_var, dataset, scale)
 
-        self._scale(node_x_var)
-        self._scale(node_y_var)
-        self._scale(edge_x_var)
-        self._scale(edge_y_var)
-        self._scale(face_x_var)
-        self._scale(face_y_var)
+    _scale_data(dataset, variables, scale)
 
-        self._scale_data()
 
-    def _scale(self, variable: xr.DataArray):
-        scaled_coords_var = variable * self._config.scale
-        self._dataset.set_variable(scaled_coords_var)
+def _scale(variable: xr.DataArray, dataset: DatasetWrapper, scale: float):
+    scaled_coords_var = variable * scale
+    dataset.set_array(scaled_coords_var)
 
-    def _scale_data(self):
-        for variable in self._config.variables:
-            variable = self._dataset.get_variable(variable.name)
-            self._scale(variable)
+
+def _scale_data(dataset: DatasetWrapper, variables: List[str], scale: float):
+    for variable in variables:
+        _scale(dataset.get_array(variable), dataset, scale)

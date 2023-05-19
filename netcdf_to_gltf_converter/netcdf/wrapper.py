@@ -1,29 +1,29 @@
-from enum import Enum
-from typing import Tuple
+from abc import ABC, abstractmethod
+from typing import List
 
 import numpy as np
 import xarray as xr
-import xugrid as xu
-
-from netcdf_to_gltf_converter.config import Config
-from netcdf_to_gltf_converter.netcdf.conventions import AttrKey, CfRoleAttrValue
 
 
-class Topology(str, Enum):
-    """The topology as described by the ugrid_roles."""
+def get_coordinate_variables(data, standard_name: str) -> List[xr.DataArray]:
+    coord_vars = []
+    for coord_var_name in data.coords:
+        coord_var = data.coords[coord_var_name]
 
-    nodes = "node_coordinates"
-    edges = "edge_coordinates"
-    faces = "face_coordinates"
+        coord_standard_name = coord_var.attrs.get("standard_name")
+        if coord_standard_name == standard_name:
+            coord_vars.append(coord_var)
+
+    return coord_vars
 
 
-class UgridVariable:
-    """Class that serves as a wrapper object for an xarray.DataArray with UGrid conventions.
+class VariableWrapper(ABC):
+    """Class that serves as a wrapper object for an xarray.DataArray.
     The wrapper allows for easier retrieval of relevant data.
     """
 
     def __init__(self, data: xr.DataArray) -> None:
-        """Initialize a UgridVariable with the specified data.
+        """Initialize a VariableWrapper with the specified data.
 
         Args:
             data (xr.DataArray): The variable data.
@@ -41,14 +41,16 @@ class UgridVariable:
         return self._coordinates
 
     @property
+    @abstractmethod
     def time_index_max(self) -> int:
         """Get the maximum time step index for this data variable.
 
         Returns:
             int: An integer specifying the maximum time step index.
         """
-        return self._data.sizes["time"] - 1
+        pass
 
+    @abstractmethod
     def get_data_at_time(self, time_index: int) -> np.ndarray:
         """Get the variable values at the specified time index.
 
@@ -58,112 +60,97 @@ class UgridVariable:
         Returns:
             np.ndarray: A 1D np.ndarray of floats.
         """
-        return self._data.isel(time=time_index).to_numpy()
+        pass
 
     def _get_coordinates(self) -> np.ndarray:
-        x_coords = self._get_coordinates_by_standard_name("projection_x_coordinate")
-        y_coords = self._get_coordinates_by_standard_name("projection_y_coordinate")
+        x_coords = get_coordinate_variables(self._data, "projection_x_coordinate")[
+            0
+        ].values
+        y_coords = get_coordinate_variables(self._data, "projection_y_coordinate")[
+            0
+        ].values
         return np.column_stack([x_coords, y_coords])
 
-    def _get_coordinates_by_standard_name(self, standard_name: str) -> np.ndarray:
-        for var_name in self._data.coords:
-            coord = self._data.coords[var_name]
 
-            coord_standard_name = coord.attrs.get("standard_name")
-            if coord_standard_name == standard_name:
-                return coord.values
-
-
-class UgridDataset:
-    """Class that serves as a wrapper object for an xarray.Dataset with UGrid conventions.
+class DatasetWrapper(ABC):
+    """Class that serves as a wrapper object for an xarray.Dataset.
     The wrapper allows for easier retrieval of relevant data.
     """
 
-    def __init__(self, dataset: xr.Dataset, config: Config) -> None:
-        """Initialize a UgridDataset with the specified arguments.
+    def __init__(self, dataset: xr.Dataset) -> None:
+        """Initialize a DatasetWrapper with the specified arguments.
 
         Args:
             dataset (xr.Dataset): The xarray Dataset.
-            config (Config): The converter configuration.
         """
         self._dataset = dataset
-        self._config = config
-
-        self.topology_2d = self._get_topology_2d()
-        self._topologies = dataset.ugrid_roles.coordinates[self.topology_2d]
 
     @property
-    def ugrid2d(self) -> xu.Ugrid2d:
-        """Get the xu.Ugrid2d from the data set.
+    @abstractmethod
+    def grid(self):
+        """Get the grid definition from the data set.
 
         Returns:
             xu.Ugrid2d: A xu.Ugrid2d created from the data set.
         """
-        return xu.Ugrid2d.from_dataset(self._dataset, self.topology_2d)
+        pass
 
     @property
-    def node_coord_vars(self) -> Tuple[xr.DataArray, xr.DataArray]:
-        """Get the two node coordinate variables, one for the x-coordinates and one for the y-coordinates.
+    @abstractmethod
+    def min_x(self) -> float:
+        """Get the smallest x-coordinate of the grid.
 
         Returns:
-            Tuple[xr.DataArray, xr.DataArray]: A tuple where the first item is the DataArray containing the node x-coordinates
-            and the second item is the DataArray containing the node y-coordinates.
+            float: A floating value with the smallest x-coordinate.
         """
-        return self._get_coord_vars_for_topology(Topology.nodes)
+        pass
 
     @property
-    def edge_coord_vars(self) -> Tuple[xr.DataArray, xr.DataArray]:
-        """Get the two edge coordinate variables, one for the x-coordinates and one for the y-coordinates.
+    @abstractmethod
+    def min_y(self) -> float:
+        """Get the smallest y-coordinate of the grid.
 
         Returns:
-            Tuple[xr.DataArray, xr.DataArray]: A tuple where the first item is the DataArray containing the edge x-coordinates
-            and the second item is the DataArray containing the edge y-coordinates.
+            float: A floating value with the smallest y-coordinate.
         """
-        return self._get_coord_vars_for_topology(Topology.edges)
+        pass
 
     @property
-    def face_coord_vars(self) -> Tuple[xr.DataArray, xr.DataArray]:
-        """Get the two face coordinate variables, one for the x-coordinates and one for the y-coordinates.
+    def x_coord_vars(self) -> List[xr.DataArray]:
+        """Get the x-coordinate variables.
 
         Returns:
-            Tuple[xr.DataArray, xr.DataArray]: A tuple where the first item is the DataArray containing the face x-coordinates
-            and the second item is the DataArray containing the face y-coordinates.
+            List[xr.DataArray]: A list containing the x-coordinate variables.
         """
-        return self._get_coord_vars_for_topology(Topology.faces)
+        return get_coordinate_variables(self._dataset, "projection_x_coordinate")
 
-    def set_variable(self, variable: xr.DataArray):
+    @property
+    def y_coord_vars(self) -> List[xr.DataArray]:
+        """Get the y-coordinate variables.
+
+        Returns:
+            List[xr.DataArray]: A list containing the y-coordinate variables.
+        """
+        return get_coordinate_variables(self._dataset, "projection_y_coordinate")
+
+    def set_array(self, array: xr.DataArray):
         """Update the variable in the data set.
 
         Args:
-            variable (xr.DataArray): The variable to update.
+            variable (xr.DataArray): The variable array to update.
 
         Raises:
             ValueError: When the dataset does not contain a variable with the same name.
         """
-        if variable.name not in self._dataset:
+        if array.name not in self._dataset:
             raise ValueError(
-                f"Cannot update variable '{variable.name}' in dataset: variable does not exist"
+                f"Cannot update variable '{array.name}' in dataset: variable does not exist"
             )
 
-        self._dataset[variable.name] = variable
+        self._dataset[array.name] = array
 
-    def get_ugrid_variable(self, variable_name: str) -> UgridVariable:
-        """Get the variable with the specified name from the data set.
-
-        Args:
-            variable_name (str): The variable name.
-
-        Returns:
-            UgridVariable: A UgridVariable.
-
-        Raises:
-            ValueError: When the dataset does not contain a variable with the name.
-        """
-        data = self.get_variable(variable_name)
-        return UgridVariable(data)
-
-    def get_variable(self, variable_name: str) -> xr.DataArray:
-        """Get the variable with the specified name from the data set.
+    def get_array(self, variable_name: str) -> xr.DataArray:
+        """Get the variable array with the specified name from the data set.
 
         Args:
             variable_name (str): The variable name.
@@ -181,22 +168,17 @@ class UgridDataset:
 
         return self._dataset[variable_name]
 
-    def _get_coord_vars_for_topology(self, location: Topology) -> Tuple:
-        var_names = self._topologies[location]
-        x_coord_var = self.get_variable(var_names[0][0])
-        y_coord_var = self.get_variable(var_names[1][0])
+    @abstractmethod
+    def get_variable(self, variable_name: str) -> VariableWrapper:
+        """Get the variable with the specified name from the data set.
 
-        return x_coord_var, y_coord_var
+        Args:
+            variable_name (str): The variable name.
 
-    def _get_topology_2d(self) -> str:
-        attr_filter = {
-            AttrKey.cf_role: CfRoleAttrValue.mesh_topology,
-            AttrKey.topology_dimension: 2,
-        }
-        variable = next(self._get_variables_by_attr_filter(**attr_filter))
-        return variable.name
+        Returns:
+            VariableWrapper: The wrapper object for the variable.
 
-    def _get_variables_by_attr_filter(self, **filter):
-        dataset = self._dataset.filter_by_attrs(**filter)
-        for variable in dataset.values():
-            yield variable
+        Raises:
+            ValueError: When the dataset does not contain a variable with the name.
+        """
+        pass

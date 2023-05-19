@@ -6,10 +6,14 @@ from xugrid import Ugrid2d
 
 from netcdf_to_gltf_converter.config import Config, Variable
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
-from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset, UgridVariable
-from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
-from netcdf_to_gltf_converter.preprocessing.transformation import Transformer
-from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
+from netcdf_to_gltf_converter.netcdf.dflowfm.wrapper import UgridDataset
+from netcdf_to_gltf_converter.netcdf.wrapper import DatasetWrapper, VariableWrapper
+from netcdf_to_gltf_converter.preprocessing.interpolation import (
+    Location,
+    NearestPointInterpolator,
+)
+from netcdf_to_gltf_converter.preprocessing.transformation import scale, shift
+from netcdf_to_gltf_converter.preprocessing.triangulation import triangulate
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 from netcdf_to_gltf_converter.utils.sequences import inclusive_range
 
@@ -20,8 +24,7 @@ class Parser:
     def __init__(self) -> None:
         """Initialize a Parser."""
 
-        self._interpolator = Interpolator()
-        self._triangulator = Triangulator()
+        self._interpolator = NearestPointInterpolator()
 
     def parse(self, dataset: xr.Dataset, config: Config) -> List[TriangularMesh]:
         """Parse the provided data set to a list of TriangularMeshes.
@@ -30,9 +33,9 @@ class Parser:
             dataset (xr.Dataset): The NetCDF dataset.
             config (Config): The converter configuration.
         """
-        ugrid_dataset = UgridDataset(dataset, config)
+        ugrid_dataset = UgridDataset(dataset)
         Parser._transform_grid(config, ugrid_dataset)
-        triangulated_grid = self._triangulator.triangulate(ugrid_dataset.ugrid2d)
+        triangulated_grid = triangulate(ugrid_dataset.grid)
 
         triangular_meshes = []
 
@@ -54,10 +57,10 @@ class Parser:
         self,
         variable: Variable,
         grid: Ugrid2d,
-        ugrid_dataset: UgridDataset,
+        ugrid_dataset: DatasetWrapper,
         config: Config,
     ):
-        data = ugrid_dataset.get_ugrid_variable(variable.name)
+        data = ugrid_dataset.get_variable(variable.name)
         interpolated_data = self._interpolate(data, config.time_index_start, grid)
 
         base = MeshAttributes(interpolated_data, variable.color)
@@ -92,13 +95,16 @@ class Parser:
         return inclusive_range(start, end, config.times_per_frame)
 
     @staticmethod
-    def _transform_grid(config, ugrid_dataset):
-        tranformer = Transformer(ugrid_dataset, config)
-        tranformer.shift()
-        tranformer.scale()
+    def _transform_grid(config: Config, ugrid_dataset):
+        if config.shift_coordinates:
+            shift(ugrid_dataset)
 
-    def _interpolate(self, data: UgridVariable, time_index: int, grid: Ugrid2d):
-        return self._interpolator.interpolate_nearest(
+        if config.scale != 1.0:
+            variables = [var.name for var in config.variables]
+            scale(ugrid_dataset, variables, config.scale)
+
+    def _interpolate(self, data: VariableWrapper, time_index: int, grid: Ugrid2d):
+        return self._interpolator.interpolate(
             data.coordinates, data.get_data_at_time(time_index), grid, Location.nodes
         )
 
