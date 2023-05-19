@@ -126,9 +126,8 @@ class Parser:
 
     @staticmethod
     def _transform_grid(config, ugrid_dataset):
-        tranformer = Transformer(ugrid_dataset, config)
-        tranformer.shift()
-        tranformer.scale()
+        Transformer.shift(ugrid_dataset, config)
+        Transformer.scale(ugrid_dataset, config)
 
     def _interpolate(self, data: UgridVariable, time_index: int, grid: Ugrid2d):
         return self._interpolator.interpolate_nearest(

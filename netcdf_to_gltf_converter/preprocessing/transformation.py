@@ -9,75 +9,78 @@ xr.set_options(keep_attrs=True)
 
 
 class Transformer:
-    """A class for transforming the geometry in a dataset."""
+    """A class for transforming the geometry datasets and arrays."""
 
-    def __init__(self, dataset: UgridDataset, config: Config) -> None:
-        """Initialize a Transformer with the specified arguments.
-
-        Args:
-            dataset (xr.UgridDataset): The Ugrid dataset to transform the coordinates for.
-            config (Config): The converter configuration.
-        """
-        self._dataset = dataset
-        self._config = config
-
-    def shift(self):
+    @staticmethod
+    def shift(dataset: UgridDataset, config: Config):
         """
         If shifting is required, shift the x- and y-coordinates in the data set, such that the smallest x and y become the origin (0,0).
         The original data set is updated with the new coordinates.
+        
+                Args:
+            dataset (xr.UgridDataset): The Ugrid dataset to transform the coordinates for.
+            config (Config): The converter configuration.
         """
 
-        if not self._config.shift_coordinates:
+        if not config.shift_coordinates:
             return
 
-        node_x_var, node_y_var = self._dataset.node_coord_vars
-        edge_x_var, edge_y_var = self._dataset.edge_coord_vars
-        face_x_var, face_y_var = self._dataset.face_coord_vars
+        node_x_var, node_y_var = dataset.node_coord_vars
+        edge_x_var, edge_y_var = dataset.edge_coord_vars
+        face_x_var, face_y_var = dataset.face_coord_vars
 
         shift_x = node_x_var.values.min()
         shift_y = node_y_var.values.min()
 
-        self._shift(node_x_var, shift_x)
-        self._shift(node_y_var, shift_y)
-        self._shift(edge_x_var, shift_x)
-        self._shift(edge_y_var, shift_y)
-        self._shift(face_x_var, shift_x)
-        self._shift(face_y_var, shift_y)
+        Transformer._shift(node_x_var, shift_x, dataset)
+        Transformer._shift(node_y_var, shift_y, dataset)
+        Transformer._shift(edge_x_var, shift_x, dataset)
+        Transformer._shift(edge_y_var, shift_y, dataset)
+        Transformer._shift(face_x_var, shift_x, dataset)
+        Transformer._shift(face_y_var, shift_y, dataset)
 
-    def _shift(self, variable: xr.DataArray, shift: float):
+    @staticmethod
+    def _shift(variable: xr.DataArray, shift: float, dataset: UgridDataset):
         shifted_coords_var = variable - shift
-        self._dataset.set_variable(shifted_coords_var)
+        dataset.set_variable(shifted_coords_var)
 
-    def scale(self):
+    @staticmethod
+    def scale(dataset: UgridDataset, config: Config):
         """
         If scaling is required, scale the x- and y-coordinates and the data values, with the scaling factor that is specified in the Config.
         The original data set is updated with the new coordinates.
+        
+                Args:
+            dataset (xr.UgridDataset): The Ugrid dataset to transform the coordinates for.
+            config (Config): The converter configuration.
         """
 
-        if self._config.scale == 1.0:
+        if config.scale == 1.0:
             return
 
-        node_x_var, node_y_var = self._dataset.node_coord_vars
-        edge_x_var, edge_y_var = self._dataset.edge_coord_vars
-        face_x_var, face_y_var = self._dataset.face_coord_vars
+        node_x_var, node_y_var = dataset.node_coord_vars
+        edge_x_var, edge_y_var = dataset.edge_coord_vars
+        face_x_var, face_y_var = dataset.face_coord_vars
 
-        self._scale(node_x_var)
-        self._scale(node_y_var)
-        self._scale(edge_x_var)
-        self._scale(edge_y_var)
-        self._scale(face_x_var)
-        self._scale(face_y_var)
+        Transformer._scale(node_x_var, dataset, config)
+        Transformer._scale(node_y_var, dataset, config)
+        Transformer._scale(edge_x_var, dataset, config)
+        Transformer._scale(edge_y_var, dataset, config)
+        Transformer._scale(face_x_var, dataset, config)
+        Transformer._scale(face_y_var, dataset, config)
 
-        self._scale_data()
+        Transformer._scale_data(dataset, config)
 
-    def _scale(self, variable: xr.DataArray):
-        scaled_coords_var = variable * self._config.scale
-        self._dataset.set_variable(scaled_coords_var)
+    @staticmethod
+    def _scale(variable: xr.DataArray, dataset: UgridDataset, config: Config):
+        scaled_coords_var = variable * config.scale
+        dataset.set_variable(scaled_coords_var)
 
-    def _scale_data(self):
-        for variable in self._config.variables:
-            variable = self._dataset.get_variable(variable.name)
-            self._scale(variable)
+    @staticmethod
+    def _scale_data(dataset: UgridDataset, config: Config):
+        for variable in config.variables:
+            variable = dataset.get_variable(variable.name)
+            Transformer._scale(variable, dataset, config)
 
     @staticmethod
     def swap_yz(data: np.ndarray, config: Config):
