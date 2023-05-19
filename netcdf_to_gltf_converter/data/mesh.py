@@ -3,6 +3,7 @@ from typing import List
 import numpy as np
 
 from netcdf_to_gltf_converter.custom_types import Color
+from netcdf_to_gltf_converter.preprocessing.transformation import Transformer
 from netcdf_to_gltf_converter.utils.arrays import float32_array, validate_2d_array
 
 
@@ -83,6 +84,13 @@ class TriangularMesh:
             roughness_factor=1.0,
         )
 
+    def swap_yz(self):
+        Transformer.swap_yz(self.base.vertex_positions)
+        Transformer.swap_yz(self.triangles)
+        
+        for transformation in self.transformations:
+            Transformer.swap_yz(transformation.vertex_positions)
+        
     def _validate(self):
         validate_2d_array(self.triangles, np.uint32, n_col=3)
 
