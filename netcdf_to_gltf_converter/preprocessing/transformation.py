@@ -8,41 +8,39 @@ xr.set_options(keep_attrs=True)
 """Attributes need to be preserved when creating a new DataArray with a transformation."""
 
 
+def shift(dataset: UgridDataset):
+    """
+    Shift the x- and y-coordinates in the data set, such that the smallest x and y become the origin (0,0).
+    The original data set is updated with the new coordinates.
+    
+    Args:
+        dataset (xr.UgridDataset): The Ugrid dataset to transform the coordinates for.
+        config (Config): The converter configuration.
+    """
+    
+    node_x_var, node_y_var = dataset.node_coord_vars
+    edge_x_var, edge_y_var = dataset.edge_coord_vars
+    face_x_var, face_y_var = dataset.face_coord_vars
+    
+    shift_x = node_x_var.values.min()
+    shift_y = node_y_var.values.min()
+    
+    _shift(node_x_var, shift_x, dataset)
+    _shift(node_y_var, shift_y, dataset)
+    _shift(edge_x_var, shift_x, dataset)
+    _shift(edge_y_var, shift_y, dataset)
+    _shift(face_x_var, shift_x, dataset)
+    _shift(face_y_var, shift_y, dataset)
+    
+def _shift(variable: xr.DataArray, shift: float, dataset: UgridDataset):
+    shifted_coords_var = variable - shift
+    dataset.set_variable(shifted_coords_var)
+    
+
 class Transformer:
     """A class for transforming the geometry datasets and arrays."""
 
-    @staticmethod
-    def shift(dataset: UgridDataset, config: Config):
-        """
-        If shifting is required, shift the x- and y-coordinates in the data set, such that the smallest x and y become the origin (0,0).
-        The original data set is updated with the new coordinates.
-        
-                Args:
-            dataset (xr.UgridDataset): The Ugrid dataset to transform the coordinates for.
-            config (Config): The converter configuration.
-        """
 
-        if not config.shift_coordinates:
-            return
-
-        node_x_var, node_y_var = dataset.node_coord_vars
-        edge_x_var, edge_y_var = dataset.edge_coord_vars
-        face_x_var, face_y_var = dataset.face_coord_vars
-
-        shift_x = node_x_var.values.min()
-        shift_y = node_y_var.values.min()
-
-        Transformer._shift(node_x_var, shift_x, dataset)
-        Transformer._shift(node_y_var, shift_y, dataset)
-        Transformer._shift(edge_x_var, shift_x, dataset)
-        Transformer._shift(edge_y_var, shift_y, dataset)
-        Transformer._shift(face_x_var, shift_x, dataset)
-        Transformer._shift(face_y_var, shift_y, dataset)
-
-    @staticmethod
-    def _shift(variable: xr.DataArray, shift: float, dataset: UgridDataset):
-        shifted_coords_var = variable - shift
-        dataset.set_variable(shifted_coords_var)
 
     @staticmethod
     def scale(dataset: UgridDataset, config: Config):
