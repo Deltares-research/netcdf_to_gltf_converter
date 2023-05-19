@@ -7,10 +7,7 @@ from netcdf_to_gltf_converter.config import Config, Variable
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.netcdf.dflowfm.wrapper import Ugrid, UgridDataset
 from netcdf_to_gltf_converter.netcdf.wrapper import DatasetWrapper, VariableWrapper
-from netcdf_to_gltf_converter.preprocessing.interpolation import (
-    Location,
-    NearestPointInterpolator,
-)
+from netcdf_to_gltf_converter.preprocessing.interpolation import NearestPointInterpolator
 from netcdf_to_gltf_converter.preprocessing.transformation import scale, shift
 from netcdf_to_gltf_converter.preprocessing.triangulation import triangulate
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
@@ -105,9 +102,7 @@ class Parser:
             scale(ugrid_dataset, variables, config.scale)
 
     def _interpolate(self, data: VariableWrapper, time_index: int, grid: Ugrid):
-        return self._interpolator.interpolate(
-            data.coordinates, data.get_data_at_time(time_index), grid, Location.nodes
-        )
+        return self._interpolator.interpolate(data.coordinates, data.get_data_at_time(time_index), grid)
 
     @staticmethod
     def calculate_displacements(data: np.ndarray, base: MeshAttributes):

@@ -2,7 +2,6 @@ import numpy as np
 
 from netcdf_to_gltf_converter.preprocessing.interpolation import (
     LinearInterpolator,
-    Location,
     NearestPointInterpolator,
 )
 from netcdf_to_gltf_converter.utils.arrays import float32_array
@@ -17,11 +16,9 @@ class TestNearestPointInterpolator:
         )
         data_values = float32_array([1, 2, 3, 4])
         grid = Factory.create_rectilinear_grid()
-        location = Location.nodes
 
         interpolated_values = interpolator.interpolate(
-            data_coords, data_values, grid, location
-        )
+            data_coords, data_values, grid)
 
         exp_interpolated_values = float32_array(
             [
@@ -46,11 +43,9 @@ class TestLinearInterpolator:
         data_coords = float32_array([[1.0, 0.5], [2.0, 1.0], [1.0, 2.0], [0.5, 1.0]])
         data_values = float32_array([1, 2, 3, 4])
         grid = Factory.create_rectilinear_grid()
-        location = Location.nodes
 
         interpolated_values = interpolator.interpolate(
-            data_coords, data_values, grid, location
-        )
+            data_coords, data_values, grid)
 
         exp_interpolated_values = float32_array(
             [

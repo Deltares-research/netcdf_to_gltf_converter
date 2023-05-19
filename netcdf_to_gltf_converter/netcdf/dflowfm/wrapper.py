@@ -1,11 +1,10 @@
 from enum import Enum
-from typing import List, Tuple
+from typing import List
 
 import numpy as np
 import xarray as xr
 import xugrid as xu
 
-from netcdf_to_gltf_converter.config import Config
 from netcdf_to_gltf_converter.netcdf.conventions import AttrKey, CfRoleAttrValue
 from netcdf_to_gltf_converter.netcdf.wrapper import DatasetWrapper, VariableWrapper
 
@@ -67,14 +66,6 @@ class Ugrid():
             np.ndarray: An ndarray of floats with shape (n, 2). Each row represents one node and contains the x- and y-coordinate.
         """
         return self._ugrid2d.node_coordinates
-    
-    @property
-    def edge_coordinates(self):
-        return self._ugrid2d.edge_coordinates
-    
-    @property
-    def face_coordinates(self):
-        return self._ugrid2d.face_coordinates
     
     @property
     def fill_value(self) -> int:
