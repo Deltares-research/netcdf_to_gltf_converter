@@ -49,6 +49,8 @@ class TriangularMesh:
         self.base = base
         self.triangles = triangles
         self.transformations = transformations
+        self.metallic_factor = 0.0
+        self.roughness_factor = 0.1
 
         self._validate()
 
