@@ -9,7 +9,7 @@ from netcdf_to_gltf_converter.custom_types import Color
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset, UgridVariable
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
-from netcdf_to_gltf_converter.preprocessing.transformation import Transformer, shift, scale
+from netcdf_to_gltf_converter.preprocessing.transformation import shift, scale
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 from netcdf_to_gltf_converter.utils.sequences import inclusive_range
@@ -51,15 +51,6 @@ class Parser:
 
     @staticmethod
     def _get_threshold_mesh(triangular_mesh: TriangularMesh, height: float, color: Color, config: Config) -> TriangularMesh:
-        """Gets a triangular mesh with the same x- and y-geometry, but with the z-coordinates set at a fixed height.
-
-        Args:
-            height (float): The desired height of the threshold mesh.
-            color (Color): The vertex color in the threshold mesh defined by the normalized red, green, blue and alpha (RGBA) values.
-
-        Returns:
-            TriangularMesh: The triangular mesh with the fixed height.
-        """
         vertex_positions = triangular_mesh.base.vertex_positions.copy()
         height *= config.scale
         

@@ -69,21 +69,15 @@ def _scale_data(dataset: UgridDataset, variables: List[str], scale: float):
     for variable in variables:
         _scale(dataset.get_variable(variable), dataset, scale)
 
-class Transformer:
-    """A class for transforming the geometry datasets and arrays."""
 
-    @staticmethod
-    def swap_yz(data: np.ndarray, config: Config):
-        """If required, swap the y and z axes.
+def swap_yz(data: np.ndarray):
+    """If required, swap the y and z axes.
 
-        The original data is updated.
-        
-        Args:
-            data (np.ndarray): The data to swap the y and z axes for.
-            config (Config): The converter configuration.
-        """
-        if config.swap_yz == False:
-            return
-        
-        copy = data.copy()
-        data[:, 1], data[:, 2] = copy[:, 2], copy[:, 1]
+    The original data is updated.
+    
+    Args:
+        data (np.ndarray): The data to swap the y and z axes for.
+        config (Config): The converter configuration.
+    """   
+    copy = data.copy()
+    data[:, 1], data[:, 2] = copy[:, 2], copy[:, 1]
