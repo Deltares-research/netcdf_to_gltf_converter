@@ -23,7 +23,7 @@
 This is a tool that converts D-HYDRO map output results that are stored in the netCDF file format to the glTF file format. The goal is to allow users who work with D-HYDRO results to view their data in 3D renderers using the glTF format.
 
 <p align="center">
-  <img src="docs/readme/img/result.gif" alt="animated" />
+  <img src="docs/readme/img/example.gif" alt="animated" />
 </p>
 
 ## Why use glTF
