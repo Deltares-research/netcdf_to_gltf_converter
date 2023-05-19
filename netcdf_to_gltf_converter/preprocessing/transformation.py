@@ -1,3 +1,4 @@
+import numpy as np
 import xarray as xr
 
 from netcdf_to_gltf_converter.config import Config
@@ -77,3 +78,19 @@ class Transformer:
         for variable in self._config.variables:
             variable = self._dataset.get_variable(variable.name)
             self._scale(variable)
+
+    @staticmethod
+    def swap_yz(data: np.ndarray, config: Config):
+        """If required, swap the y and z axes.
+
+        The original data is updated.
+        
+        Args:
+            data (np.ndarray): The data to swap the y and z axes for.
+            config (Config): The converter configuration.
+        """
+        if config.swap_yz == False:
+            return
+        
+        copy = data.copy()
+        data[:, 1], data[:, 2] = copy[:, 2], copy[:, 1]
