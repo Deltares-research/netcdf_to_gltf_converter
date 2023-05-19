@@ -55,6 +55,8 @@ def create_triangular_mesh(n_vertix_cols: int, n_frames: int, seed: int = 10):
             )
             for p in transformations_vertex_positions
         ],
+        metallic_factor=0.0,
+        roughness_factor=0.1
     )
 
 
