@@ -62,10 +62,10 @@ class TriangularMesh:
     def swap_yz(self):
         swap_yz(self.base.vertex_positions)
         swap_yz(self.triangles)
-        
+
         for transformation in self.transformations:
             swap_yz(transformation.vertex_positions)
-        
+
     def _validate(self):
         validate_2d_array(self.triangles, np.uint32, n_col=3)
 

@@ -9,7 +9,7 @@ from netcdf_to_gltf_converter.custom_types import Color
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset, UgridVariable
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
-from netcdf_to_gltf_converter.preprocessing.transformation import shift, scale
+from netcdf_to_gltf_converter.preprocessing.transformation import scale, shift
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 from netcdf_to_gltf_converter.utils.sequences import inclusive_range
@@ -44,21 +44,28 @@ class Parser:
             triangular_meshes.append(data_mesh)
 
             if variable.use_threshold:
-                threshold_mesh = Parser._get_threshold_mesh(data_mesh, variable.threshold_height, variable.threshold_color, config)
+                threshold_mesh = Parser._get_threshold_mesh(
+                    data_mesh,
+                    variable.threshold_height,
+                    variable.threshold_color,
+                    config,
+                )
                 triangular_meshes.append(threshold_mesh)
 
         return triangular_meshes
 
     @staticmethod
-    def _get_threshold_mesh(triangular_mesh: TriangularMesh, height: float, color: Color, config: Config) -> TriangularMesh:
+    def _get_threshold_mesh(
+        triangular_mesh: TriangularMesh, height: float, color: Color, config: Config
+    ) -> TriangularMesh:
         vertex_positions = triangular_mesh.base.vertex_positions.copy()
         height *= config.scale
-        
+
         if config.swap_yz:
             vertex_positions[:, 1] = height
         else:
             vertex_positions[:, -1] = height
-            
+
         mesh_attributes = MeshAttributes(
             vertex_positions=vertex_positions, mesh_color=color
         )
@@ -70,7 +77,7 @@ class Parser:
             metallic_factor=0.0,
             roughness_factor=1.0,
         )
-        
+
     def _parse_variable(
         self,
         variable: Variable,
@@ -98,10 +105,10 @@ class Parser:
             variable.metallic_factor,
             variable.roughness_factor,
         )
-        
+
         if config.swap_yz:
             mesh.swap_yz()
-            
+
         return mesh
 
     @staticmethod
@@ -117,11 +124,11 @@ class Parser:
 
     @staticmethod
     def _transform_grid(config: Config, ugrid_dataset: UgridDataset):
-        if config.shift_coordinates:  
+        if config.shift_coordinates:
             shift(ugrid_dataset)
-        
+
         if config.scale != 1.0:
-            variables = [var.name for var in config.variables]  
+            variables = [var.name for var in config.variables]
             scale(ugrid_dataset, variables, config.scale)
 
     def _interpolate(self, data: UgridVariable, time_index: int, grid: Ugrid2d):

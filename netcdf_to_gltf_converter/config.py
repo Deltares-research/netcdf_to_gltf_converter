@@ -177,6 +177,6 @@ class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
 
     swap_yz: bool
     """boolean: "Whether or not to swap the y and z axes such that y is up."""
-    
+
     variables: List[Variable]
     """List[Variable]: List of configuration of the variables that should be converted to glTF."""
