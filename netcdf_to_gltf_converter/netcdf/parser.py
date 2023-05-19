@@ -54,30 +54,6 @@ class Parser:
 
         return triangular_meshes
 
-    @staticmethod
-    def _get_threshold_mesh(
-        triangular_mesh: TriangularMesh, height: float, color: Color, config: Config
-    ) -> TriangularMesh:
-        vertex_positions = triangular_mesh.base.vertex_positions.copy()
-        height *= config.scale
-
-        if config.swap_yz:
-            vertex_positions[:, 1] = height
-        else:
-            vertex_positions[:, -1] = height
-
-        mesh_attributes = MeshAttributes(
-            vertex_positions=vertex_positions, mesh_color=color
-        )
-
-        return TriangularMesh(
-            base=mesh_attributes,
-            triangles=triangular_mesh.triangles,
-            transformations=[],
-            metallic_factor=0.0,
-            roughness_factor=1.0,
-        )
-
     def _parse_variable(
         self,
         variable: Variable,
@@ -111,6 +87,30 @@ class Parser:
 
         return mesh
 
+    @staticmethod
+    def _get_threshold_mesh(
+        triangular_mesh: TriangularMesh, height: float, color: Color, config: Config
+    ) -> TriangularMesh:
+        vertex_positions = triangular_mesh.base.vertex_positions.copy()
+        height *= config.scale
+
+        if config.swap_yz:
+            vertex_positions[:, 1] = height
+        else:
+            vertex_positions[:, -1] = height
+
+        mesh_attributes = MeshAttributes(
+            vertex_positions=vertex_positions, mesh_color=color
+        )
+
+        return TriangularMesh(
+            base=mesh_attributes,
+            triangles=triangular_mesh.triangles,
+            transformations=[],
+            metallic_factor=0.0,
+            roughness_factor=1.0,
+        )
+        
     @staticmethod
     def _get_time_indices(time_index_max: int, config: Config):
         start = config.time_index_start + config.times_per_frame
