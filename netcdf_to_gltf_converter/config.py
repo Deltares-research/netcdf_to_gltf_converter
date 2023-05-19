@@ -5,7 +5,9 @@ from typing import Any, Dict, List, Optional, Type, TypeVar
 
 from packaging.version import Version
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import Extra, Field, root_validator, validator
+from pydantic import Extra, root_validator, validator
+
+from netcdf_to_gltf_converter.utils.validation import in_range
 
 Color = List[float]
 
@@ -98,6 +100,12 @@ class Variable(BaseModel):
     color: Color
     """Color: The vertex color in the mesh defined by the normalized red, green, blue and alpha (RGBA) values."""
     
+    metallic_factor: float
+    """float: The metallic factor determines the degree of metallicity or non-metallicity of the mesh material. A value of 1.0 indicates a fully metallic surface, while a value of 0.0 represents a non-metallic surface."""
+    
+    roughness_factor: float
+    """float: The roughness factor defines the smoothness or roughness of a mesh surface. A roughness value of 0.0 represents a perfectly smooth surface with sharp reflections, while a value of 1.0 indicates a completely rough surface with scattered reflections."""
+    
     use_threshold: bool
     """bool: Whether or not to add a threshold mesh to filter values below the threshold height."""
     
@@ -132,12 +140,20 @@ class Variable(BaseModel):
             raise ValueError(msg)
 
         for channel in color:
-            if not 0 <= channel <= 1:
+            if not in_range(channel, 0.0, 1.0):
                 msg = f"The color channel {channel} is outside of range 0.0-1.0. A color should be defined by the normalized red, green, blue and alpha (RGBA) values."
                 raise ValueError(msg)
 
         return color
-
+    
+    @validator("metallic_factor", "roughness_factor")
+    def validate_in_range(cls, value: float) -> float:
+        if not in_range(value, 0.0, 1.0):
+            msg = f"Value must be between 0.0 and 1.0"
+            raise ValueError(msg)
+        
+        return value
+        
 
 class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
     """The configuration settings described in the configuration JSON file."""
