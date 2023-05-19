@@ -156,7 +156,7 @@ The converter operates through the following steps:
    5. If specified in the configuration file, an addtional static threshold mesh with the desired color is creayed. The mesh geometry will consist of the same x- and y- coordinates as the first mesh, but with the desired fixed height. 
 
 <p align="center">
-  <img src="docs/readme/img/dry-wet-cells.png" width="50%" height="50%" />
+  <img src="docs/readme/img/threshold.gif" alt="animated" />
 </p>
 
 8. The glTF data is exported to the user-defined glTF file.
