@@ -299,6 +299,48 @@
       "byteLength": 144
     }
   ],
+  "materials": [
+    {
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.11
+      },
+      "emissiveFactor": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "doubleSided": false
+    },
+    {
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 1.0
+      },
+      "emissiveFactor": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "alphaMode": "OPAQUE",
+      "alphaCutoff": 0.5,
+      "doubleSided": false
+    }
+  ],
   "meshes": [
     {
       "primitives": [
@@ -309,6 +351,7 @@
           },
           "indices": 0,
           "mode": 4,
+          "material": 0,
           "targets": [
             {
               "POSITION": 3
@@ -340,7 +383,8 @@
             "COLOR_0": 11
           },
           "indices": 9,
-          "mode": 4
+          "mode": 4,
+          "material": 1
         }
       ]
     }
