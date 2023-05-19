@@ -110,7 +110,7 @@ class Parser:
             metallic_factor=0.0,
             roughness_factor=1.0,
         )
-        
+
     @staticmethod
     def _get_time_indices(time_index_max: int, config: Config):
         start = config.time_index_start + config.times_per_frame
