@@ -92,15 +92,19 @@ class AbstractJsonConfigFile(BaseModel, ABC):
 class Variable(BaseModel):
     """Configuration properties of a variable."""
 
-    name: str = Field("name")
+    name: str
     """str: The name of the NetCDF variable"""
-    color: Color = Field(alias="color")
+    
+    color: Color
     """Color: The vertex color in the mesh defined by the normalized red, green, blue and alpha (RGBA) values."""
-    use_threshold: bool = Field(None, alias="threshold")
+    
+    use_threshold: bool
     """bool: Whether or not to add a threshold mesh to filter values below the threshold height."""
-    threshold_color: Optional[Color] = Field(None, alias="threshold_color")
+    
+    threshold_color: Optional[Color]
     """Optional[Color]: The vertex color in the threshold mesh defined by the normalized red, green, blue and alpha (RGBA) values."""
-    threshold_height: Optional[float] = Field(None, alias="threshold_height")
+    
+    threshold_height: Optional[float]
     """Optional[float]: The height (vertex z-values) of the threshold mesh."""
 
     @root_validator
@@ -140,15 +144,20 @@ class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
 
     _expected_file_version = Version("0.1.0")
 
-    time_index_start: int = Field(alias="time_index_start")
+    time_index_start: int
     """int: The time index the animation should start with."""
-    time_index_end: Optional[int] = Field(alias="time_index_end")
+    
+    time_index_end: Optional[int]
     """Optional[int]: The time index the animation should end with."""
-    times_per_frame: int = Field(alias="time_per_frame")
+    
+    times_per_frame: int
     """int: The number of time steps per animation frame."""
-    shift_coordinates: bool = Field(alias="shift_coordinates")
+    
+    shift_coordinates: bool
     """bool: Whether or not to shift the x- and y-coordinates, such that the smallest x and y become the origin (0,0)."""
-    scale: float = Field(alias="scale")
+    
+    scale: float
     """float: The scale of the mesh coordinates compared to the coordinates from file."""
-    variables: List[Variable] = Field(alias="variables")
+    
+    variables: List[Variable]
     """List[Variable]: List of configuration of the variables that should be converted to glTF."""
