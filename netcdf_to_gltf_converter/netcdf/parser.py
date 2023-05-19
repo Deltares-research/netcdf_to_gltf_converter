@@ -5,6 +5,7 @@ import xarray as xr
 from xugrid import Ugrid2d
 
 from netcdf_to_gltf_converter.config import Config, Variable
+from netcdf_to_gltf_converter.custom_types import Color
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset, UgridVariable
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
@@ -59,17 +60,19 @@ class Parser:
     ):
         data = ugrid_dataset.get_ugrid_variable(variable.name)
         interpolated_data = self._interpolate(data, config.time_index_start, grid)
-
-        base = MeshAttributes(interpolated_data, float32_array(len(interpolated_data) * [variable.color]))
+        colors = Parser._get_colors(interpolated_data, variable.color)
+        
+        base = MeshAttributes(interpolated_data, colors)
         triangles = uint32_array(grid.face_node_connectivity)
         transformations = []
 
         for time_index in Parser._get_time_indices(data.time_index_max, config):
             interpolated_data = self._interpolate(data, time_index, grid)
+            colors = Parser._get_colors(interpolated_data, variable.color)
             vertex_displacements = Parser.calculate_displacements(
                 interpolated_data, base
             )
-            transformation = MeshAttributes(vertex_displacements, float32_array(len(vertex_displacements) * [variable.color]))
+            transformation = MeshAttributes(vertex_displacements, colors)
             transformations.append(transformation)
 
         return TriangularMesh(
@@ -79,6 +82,18 @@ class Parser:
             variable.metallic_factor,
             variable.roughness_factor,
         )
+
+    def _get_colors(data: np.ndarray, color: Color) -> np.ndarray:
+        colors = []
+        for data_point in data:
+            copy = color.copy()
+            if data_point[-1] < 0.01:
+                copy[-1] = 0.0
+                
+            colors.append(copy)
+            
+        return float32_array(colors)
+
 
     @staticmethod
     def _get_time_indices(time_index_max: int, config: Config):
