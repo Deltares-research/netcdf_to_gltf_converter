@@ -7,18 +7,19 @@ from netcdf_to_gltf_converter.utils.arrays import float32_array, validate_2d_arr
 
 
 class MeshAttributes:
-    def __init__(self, vertex_positions: np.ndarray, mesh_color: Color) -> None:
+    def __init__(self, vertex_positions: np.ndarray, vertex_colors: np.ndarray) -> None:
         """Initialize a MeshAttributes with the specified arguments.
 
         Args:
             vertex_positions (np.ndarray): The vertex positions, an ndarray of floats with shape (n, 3). Each row represents one vertex and contains the x, y and z coordinate of this vertex.
-            mesh_color (Color): The mesh color, a list of floats with shape (, 4). The four values represent a color defined by its normalized red, green, blue and alpha (RGBA) values.
+            vertex_colors (np.ndarray): The vertex positions, an ndarray of floats with shape (n, 4). Each row represents the color of one vertex and consists of the four values representing the normalized red, green, blue and alpha (RGBA) values.
+        
         Raises:
             AssertionError: When the shape or dtype of the arrays do not match the requirements.
             AssertionError: When the number of vertex colors does not correspond with the number of vertex positions (number of vertices).
         """
         self.vertex_positions = vertex_positions
-        self.vertex_colors = float32_array(len(vertex_positions) * [mesh_color])
+        self.vertex_colors = vertex_colors
         self._validate()
 
     def _validate(self):
@@ -72,7 +73,7 @@ class TriangularMesh:
         vertex_positions[:, -1] = height
 
         mesh_attributes = MeshAttributes(
-            vertex_positions=vertex_positions, mesh_color=color
+            vertex_positions=vertex_positions, vertex_colors=float32_array(len(vertex_positions) * [color])
         )
 
         return TriangularMesh(

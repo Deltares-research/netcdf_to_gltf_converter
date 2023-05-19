@@ -10,7 +10,7 @@ from netcdf_to_gltf_converter.netcdf.wrapper import UgridDataset, UgridVariable
 from netcdf_to_gltf_converter.preprocessing.interpolation import Interpolator, Location
 from netcdf_to_gltf_converter.preprocessing.transformation import Transformer
 from netcdf_to_gltf_converter.preprocessing.triangulation import Triangulator
-from netcdf_to_gltf_converter.utils.arrays import uint32_array
+from netcdf_to_gltf_converter.utils.arrays import float32_array, uint32_array
 from netcdf_to_gltf_converter.utils.sequences import inclusive_range
 
 
@@ -60,7 +60,7 @@ class Parser:
         data = ugrid_dataset.get_ugrid_variable(variable.name)
         interpolated_data = self._interpolate(data, config.time_index_start, grid)
 
-        base = MeshAttributes(interpolated_data, variable.color)
+        base = MeshAttributes(interpolated_data, float32_array(len(interpolated_data) * [variable.color]))
         triangles = uint32_array(grid.face_node_connectivity)
         transformations = []
 
@@ -69,7 +69,7 @@ class Parser:
             vertex_displacements = Parser.calculate_displacements(
                 interpolated_data, base
             )
-            transformation = MeshAttributes(vertex_displacements, variable.color)
+            transformation = MeshAttributes(vertex_displacements, float32_array(len(vertex_displacements) * [variable.color]))
             transformations.append(transformation)
 
         return TriangularMesh(

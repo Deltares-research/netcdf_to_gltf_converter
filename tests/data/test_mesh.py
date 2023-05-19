@@ -14,9 +14,8 @@ class TestTriangularMesh:
                 [0, 1, 4],
             ]
         )
-        base_geometry = MeshAttributes(
-            vertex_positions=vertex_positions, mesh_color=[0.38, 0.73, 0.78, 1.0]
-        )
+        vertex_colors = float32_array(len(vertex_positions) * [[0.38, 0.73, 0.78, 1.0]])
+        base_geometry = MeshAttributes(vertex_positions, vertex_colors)
 
         triangles = uint32_array(
             [
@@ -25,17 +24,16 @@ class TestTriangularMesh:
             ]
         )
 
-        transformation = MeshAttributes(
-            vertex_positions=float32_array(
+        vertex_positions=float32_array(
                 [
                     [0, 0, 0.5],
                     [0, 0, -0.5],
                     [0, 0, 0.5],
                     [0, 0, -1.0],
                 ]
-            ),
-            mesh_color=[0.38, 0.73, 0.78, 1.0],
-        )
+            )
+        vertex_colors = float32_array(len(vertex_positions) * [[0.38, 0.73, 0.78, 1.0]])
+        transformation = MeshAttributes(vertex_positions, vertex_colors)
 
         metallic_factor = 0.5
         roughness_factor = 0.75
@@ -64,9 +62,8 @@ class TestTriangularMesh:
                 [0, 1, 4],
             ]
         )
-        base_geometry = MeshAttributes(
-            vertex_positions=vertex_positions, mesh_color=[0.38, 0.73, 0.78, 1.0]
-        )
+        vertex_colors = float32_array(len(vertex_positions) * [[0.38, 0.73, 0.78, 1.0]])
+        base_geometry = MeshAttributes(vertex_positions, vertex_colors)
 
         triangles = uint32_array(
             [
@@ -75,17 +72,16 @@ class TestTriangularMesh:
             ]
         )
 
-        transformation = MeshAttributes(
-            vertex_positions=float32_array(
-                [
-                    [0, 0, 0.5],
-                    [0, 0, -0.5],
-                    [0, 0, 0.5],
-                    [0, 0, -1.0],
-                ]
-            ),
-            mesh_color=[0.38, 0.73, 0.78, 1.0],
+        vertex_displacements=float32_array(
+            [
+                [0, 0, 0.5],
+                [0, 0, -0.5],
+                [0, 0, 0.5],
+                [0, 0, -1.0],
+            ]
         )
+        vertex_colors = float32_array(len(vertex_displacements) * [[0.38, 0.73, 0.78, 1.0]])
+        transformation = MeshAttributes(vertex_displacements, vertex_colors)
 
         metallic_factor = 0.5
         roughness_factor = 0.75
