@@ -101,7 +101,7 @@ class Variable(BaseModel):
     """Color: The vertex color in the mesh defined by the normalized red, green, blue and alpha (RGBA) values."""
     
     metallic_factor: float
-    """float: The metallic factor determines the degree of metallicity or non-metallicity of the mesh material. A value of 1.0 indicates a fully metallic surface, while a value of 0.0 represents a non-metallic surface."""
+    """float: The metallic factor determines the degree of metallicity or non-metallicity of the mesh material. A value of 0.0 represents a non-metallic surface, while a value of 1.0 indicates a fully metallic surface."""
     
     roughness_factor: float
     """float: The roughness factor defines the smoothness or roughness of the mesh material. A roughness value of 0.0 represents a perfectly smooth surface with sharp reflections, while a value of 1.0 indicates a completely rough surface with scattered reflections."""

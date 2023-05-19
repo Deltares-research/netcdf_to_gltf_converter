@@ -90,6 +90,10 @@ These steps will ensure that the converter is installed within a virtual environ
   
   - `color`: An array representing the color of the rendered variable in the glTF model. The color values should be in the range of 0.0 to 1.0 for each channel (red, green, blue, alpha).
   
+  - `metallic_factor`: A floating-point value between 0.0 and 1.0 defining the degree of metallicity or non-metallicity of the mesh material. A value of 0.0 represents a non-metallic surface, while a value of 1.0 indicates a fully metallic surface.
+  
+  - `roughness_factor`: A floating-point value between 0.0 and 1.0 defining the smoothness or roughness of the mesh material. A roughness value of 0.0 represents a perfectly smooth surface with sharp reflections, while a value of 1.0 indicates a completely rough surface with scattered reflections.
+  
   - `use_threshold`: A boolean value indicating whether to apply a threshold to the variable data. When set to `true`, the converter will add a threshold mesh to on the specified threshold height to distinguish between variable values above and below this height. When a scaling factor is applied to the conversion, this height will also be multiplied by this factor. 
   
   - `threshold_height` (optional): The threshold height value used to distinguish between variable values above and below this value. This option is only required when `use_threshold` is `true`.
@@ -109,6 +113,8 @@ These steps will ensure that the converter is installed within a virtual environ
       {
          "name":"Mesh2d_waterdepth",
          "color":[0.372, 0.635, 0.8, 1.0],
+         "metallicFactor":0.0,
+         "roughnessFactor":0.15,
          "use_threshold":false,
          "threshold_height":0.01,
          "threshold_color":[1.0, 1.0, 1.0, 1.0]
@@ -116,13 +122,17 @@ These steps will ensure that the converter is installed within a virtual environ
       {
          "name":"Mesh2d_s1",
          "color":[0.686, 0.831, 0.937, 1.0],
+         "metallicFactor":0.0,
+         "roughnessFactor":0.15,
          "use_threshold":false
       }
    ]
 }
 ```
 
-In the above example, we render two variables from the netCDF file: `Mesh2d_waterdepth` and `Mesh2d_s1`. For the animation we take a subset of the time steps. The animation will start at time step with index 50 and will end at time step with index 100. The animation will have a resolution of 3 time steps. Additionally, we apply a coordinate shift to ensure that the meshes have an origin at (0,0). Furthermore, we set the scale to 0.5, resulting in a reduction of size in all directions by a factor of two. For the `Mesh2d_waterdepth` variable, an additional threshold mesh is rendered at a height of 0.01. Each mesh is assigned its own color, specified by the normalized red, green, blue and alpha (RGBA) values.
+In the above example, we render two variables from the netCDF file: `Mesh2d_waterdepth` and `Mesh2d_s1`. For the animation we take a subset of the time steps. The animation will start at time step with index 50 and will end at time step with index 100. The animation will have a resolution of 3 time steps. Additionally, we apply a coordinate shift to ensure that the meshes have an origin at (0,0). Furthermore, we set the scale to 0.5, resulting in a reduction of size in all directions by a factor of two. 
+
+For the `Mesh2d_waterdepth` variable, an additional threshold mesh is rendered at a height of 0.01. Each mesh is assigned its own color, specified by the normalized red, green, blue and alpha (RGBA) values.
 
 ## View results
  Several glTF viewers exist that can be used to view the produced glTF file. Simply drag and drop the file, and the glTF file will be rendered.
