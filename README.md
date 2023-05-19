@@ -153,7 +153,7 @@ The converter operates through the following steps:
       1. The data points are interpolated onto the nodes of the grid.
       2. With the interpolated variable data, the value displacements are calculated with respect to the base mesh geometry, allowing it to be animated.
    4. For each created mesh geometry, the specified color for this variable in the configuration file is applied.
-   5. If specified in the configuration file, an addtional static threshold mesh with the desired color is creayed. The mesh geometry will consist of the same x- and y- coordinates as the first mesh, but with the desired fixed height. 
+   5. If specified in the configuration file, an addtional static threshold mesh with the desired color is created. The mesh geometry will consist of the same x- and y- coordinates as the first mesh, but with the desired fixed height. 
 
 <p align="center">
   <img src="docs/readme/img/threshold.gif" alt="animated" />
