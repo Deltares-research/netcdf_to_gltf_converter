@@ -72,7 +72,13 @@ class Parser:
             transformation = MeshAttributes(vertex_displacements, variable.color)
             transformations.append(transformation)
 
-        return TriangularMesh(base, triangles, transformations, variable.metallic_factor, variable.roughness_factor)
+        return TriangularMesh(
+            base,
+            triangles,
+            transformations,
+            variable.metallic_factor,
+            variable.roughness_factor,
+        )
 
     @staticmethod
     def _get_time_indices(time_index_max: int, config: Config):
