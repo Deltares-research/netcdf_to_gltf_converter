@@ -80,9 +80,7 @@ class NearestPointInterpolator(InterpolatorBase):
             np.ndarray: The interpolated data values, an ndarray of floats with shape (m, 3). Each row contains the x and y coordinate with the interpolated value.
         """
 
-        return self._interpolate(
-            data_coords, data_values, grid, Method.nearest
-        )
+        return self._interpolate(data_coords, data_values, grid, Method.nearest)
 
 
 class LinearInterpolator(InterpolatorBase):
@@ -106,6 +104,4 @@ class LinearInterpolator(InterpolatorBase):
             np.ndarray: The interpolated data values, an ndarray of floats with shape (m, 3). Each row contains the x and y coordinate with the interpolated value.
         """
 
-        return self._interpolate(
-            data_coords, data_values, grid, Method.linear
-        )
+        return self._interpolate(data_coords, data_values, grid, Method.linear)
