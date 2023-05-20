@@ -97,7 +97,7 @@ class Parser:
         return inclusive_range(start, end, config.times_per_frame)
 
     @staticmethod
-    def _transform_grid(config: Config, ugrid_dataset):
+    def _transform_grid(config: Config, ugrid_dataset: DatasetWrapper):
         if config.shift_coordinates:
             shift(ugrid_dataset)
 
