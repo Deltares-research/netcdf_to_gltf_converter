@@ -108,12 +108,11 @@ class VariableWrapper(ABC):
         pass
 
     def _get_coordinates(self) -> np.ndarray:
-        x_coords = get_coordinate_variables(self._data, "projection_x_coordinate")[
-            0
-        ].values
-        y_coords = get_coordinate_variables(self._data, "projection_y_coordinate")[
-            0
-        ].values
+        def get_coordinates(standard_name: str):
+            return get_coordinate_variables(self._data, standard_name)[0].values
+        
+        x_coords = get_coordinates("projection_x_coordinate")
+        y_coords = get_coordinates("projection_y_coordinate")
         return np.column_stack([x_coords, y_coords])
 
 
@@ -187,13 +186,9 @@ class DatasetWrapper(ABC):
         Raises:
             ValueError: When the dataset does not contain a variable with the same name.
         """
-        if array.name not in self._dataset:
-            raise ValueError(
-                f"Cannot update variable '{array.name}' in dataset: variable does not exist"
-            )
-
+        self._raise_if_not_in_dataset(array.name)
         self._dataset[array.name] = array
-
+        
     def get_array(self, variable_name: str) -> xr.DataArray:
         """Get the variable array with the specified name from the data set.
 
@@ -206,11 +201,7 @@ class DatasetWrapper(ABC):
         Raises:
             ValueError: When the dataset does not contain a variable with the name.
         """
-        if variable_name not in self._dataset:
-            raise ValueError(
-                f"Cannot get variable '{variable_name}' in dataset: variable does not exist"
-            )
-
+        self._raise_if_not_in_dataset(variable_name)
         return self._dataset[variable_name]
 
     @abstractmethod
@@ -227,3 +218,7 @@ class DatasetWrapper(ABC):
             ValueError: When the dataset does not contain a variable with the name.
         """
         pass
+    
+    def _raise_if_not_in_dataset(self, name: str):
+        if name not in self._dataset:
+            raise ValueError(f"Variable with name {name} does not exist in dataset.")
