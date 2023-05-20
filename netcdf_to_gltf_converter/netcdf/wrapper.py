@@ -16,6 +16,50 @@ def get_coordinate_variables(data, standard_name: str) -> List[xr.DataArray]:
 
     return coord_vars
 
+class GridWrapper(ABC):
+    """Class that serves as a wrapper object for a grid object.
+    The wrapper allows for easier retrieval of relevant data.
+    """
+        
+    @property  
+    @abstractmethod  
+    def face_node_connectivity(self) -> np.ndarray:
+        """Get the face node connectivity of the grid.
+
+        Returns:
+            np.ndarray: An ndarray of floats with shape (n, 3). Each row represents one face and contains the three node indices that define the face.
+        """
+        pass
+    
+    @abstractmethod
+    def set_face_node_connectivity(self, face_node_connectivity: np.ndarray):
+        """Set the face node connectivity of the grid.
+
+        Args:
+            face_node_connectivity (np.ndarray): An ndarray of floats with shape (n, 3). Each row represents one face and contains the three node indices that define the face.
+        """
+        pass
+    
+    @property
+    @abstractmethod
+    def node_coordinates(self) -> np.ndarray:
+        """Get the node coordinates of the grid.
+
+        Returns:
+            np.ndarray: An ndarray of floats with shape (n, 2). Each row represents one node and contains the x- and y-coordinate.
+        """
+        pass
+    
+    @property
+    @abstractmethod
+    def fill_value(self) -> int:
+        """Get the fill value.
+
+        Returns:
+            int: Integer with the fill value.
+        """
+        pass
+
 
 class VariableWrapper(ABC):
     """Class that serves as a wrapper object for an xarray.DataArray.

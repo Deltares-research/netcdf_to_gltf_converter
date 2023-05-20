@@ -6,7 +6,7 @@ import xarray as xr
 import xugrid as xu
 
 from netcdf_to_gltf_converter.netcdf.conventions import AttrKey, CfRoleAttrValue
-from netcdf_to_gltf_converter.netcdf.wrapper import DatasetWrapper, VariableWrapper
+from netcdf_to_gltf_converter.netcdf.wrapper import DatasetWrapper, GridWrapper, VariableWrapper
 
 
 def get_coordinate_variables(data, standard_name: str) -> List[xr.DataArray]:
@@ -28,7 +28,7 @@ class Topology(str, Enum):
     edges = "edge_coordinates"
     faces = "face_coordinates"
 
-class Ugrid():
+class Ugrid(GridWrapper):
     """Class that serves as a wrapper object for a xu.Ugrid2d object.
     The wrapper allows for easier retrieval of relevant data.
     """
