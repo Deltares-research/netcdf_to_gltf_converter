@@ -76,15 +76,13 @@ class XBeachDataset(DatasetWrapper):
     The wrapper allows for easier retrieval of relevant data.
     """
 
-    def __init__(self, dataset: xr.Dataset, config: Config) -> None:
+    def __init__(self, dataset: xr.Dataset) -> None:
         """Initialize a UgridDataset with the specified arguments.
 
         Args:
             dataset (xr.Dataset): The xarray Dataset.
-            config (Config): The converter configuration.
         """
         self._dataset = dataset
-        self._config = config
 
     @property
     def grid(self) -> XBeachGrid:
