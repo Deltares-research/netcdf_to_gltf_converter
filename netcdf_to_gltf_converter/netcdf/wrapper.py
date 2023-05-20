@@ -131,11 +131,11 @@ class DatasetWrapper(ABC):
 
     @property
     @abstractmethod
-    def grid(self):
+    def grid(self) -> GridWrapper:
         """Get the grid definition from the data set.
 
         Returns:
-            xu.Ugrid2d: A xu.Ugrid2d created from the data set.
+            GridWrapper: A GridWrapper object created from the data set.
         """
         pass
 
