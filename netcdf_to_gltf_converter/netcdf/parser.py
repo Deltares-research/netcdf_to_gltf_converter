@@ -2,14 +2,16 @@ from typing import List
 
 import numpy as np
 import xarray as xr
-from xugrid import Ugrid2d
 
 from netcdf_to_gltf_converter.config import Config, Variable
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
-from netcdf_to_gltf_converter.netcdf.dflowfm.wrapper import UgridDataset
-from netcdf_to_gltf_converter.netcdf.wrapper import DatasetWrapper, VariableWrapper
+from netcdf_to_gltf_converter.netcdf.ugrid.wrapper import UgridDataset
+from netcdf_to_gltf_converter.netcdf.wrapper import (
+    DatasetWrapper,
+    GridWrapper,
+    VariableWrapper,
+)
 from netcdf_to_gltf_converter.preprocessing.interpolation import (
-    Location,
     NearestPointInterpolator,
 )
 from netcdf_to_gltf_converter.preprocessing.transformation import scale, shift
@@ -35,14 +37,14 @@ class Parser:
         """
         ugrid_dataset = UgridDataset(dataset)
         Parser._transform_grid(config, ugrid_dataset)
-        triangulated_grid = triangulate(ugrid_dataset.grid)
+
+        grid = ugrid_dataset.grid
+        triangulate(grid)
 
         triangular_meshes = []
 
         for variable in config.variables:
-            data_mesh = self._parse_variable(
-                variable, triangulated_grid, ugrid_dataset, config
-            )
+            data_mesh = self._parse_variable(variable, grid, ugrid_dataset, config)
             triangular_meshes.append(data_mesh)
 
             if variable.use_threshold:
@@ -56,7 +58,7 @@ class Parser:
     def _parse_variable(
         self,
         variable: Variable,
-        grid: Ugrid2d,
+        grid: GridWrapper,
         ugrid_dataset: DatasetWrapper,
         config: Config,
     ):
@@ -103,9 +105,9 @@ class Parser:
             variables = [var.name for var in config.variables]
             scale(ugrid_dataset, variables, config.scale)
 
-    def _interpolate(self, data: VariableWrapper, time_index: int, grid: Ugrid2d):
+    def _interpolate(self, data: VariableWrapper, time_index: int, grid: GridWrapper):
         return self._interpolator.interpolate(
-            data.coordinates, data.get_data_at_time(time_index), grid, Location.nodes
+            data.coordinates, data.get_data_at_time(time_index), grid
         )
 
     @staticmethod

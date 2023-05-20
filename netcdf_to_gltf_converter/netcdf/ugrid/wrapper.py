@@ -1,25 +1,16 @@
 from enum import Enum
-from typing import List, Tuple
+from typing import List
 
 import numpy as np
 import xarray as xr
 import xugrid as xu
 
-from netcdf_to_gltf_converter.config import Config
-from netcdf_to_gltf_converter.netcdf.conventions import AttrKey, CfRoleAttrValue
-from netcdf_to_gltf_converter.netcdf.wrapper import DatasetWrapper, VariableWrapper
-
-
-def get_coordinate_variables(data, standard_name: str) -> List[xr.DataArray]:
-    coord_vars = []
-    for coord_var_name in data.coords:
-        coord_var = data.coords[coord_var_name]
-
-        coord_standard_name = coord_var.attrs.get("standard_name")
-        if coord_standard_name == standard_name:
-            coord_vars.append(coord_var)
-
-    return coord_vars
+from netcdf_to_gltf_converter.netcdf.ugrid.conventions import AttrKey, CfRoleAttrValue
+from netcdf_to_gltf_converter.netcdf.wrapper import (
+    DatasetWrapper,
+    GridWrapper,
+    VariableWrapper,
+)
 
 
 class Topology(str, Enum):
@@ -28,6 +19,55 @@ class Topology(str, Enum):
     nodes = "node_coordinates"
     edges = "edge_coordinates"
     faces = "face_coordinates"
+
+
+class Ugrid(GridWrapper):
+    """Class that serves as a wrapper object for a xu.Ugrid2d object.
+    The wrapper allows for easier retrieval of relevant data.
+    """
+
+    def __init__(self, ugrid2d: xu.Ugrid2d) -> None:
+        """Initialize a Ugrid with the specified arguments.
+
+        Args:
+            ugrid2d (xu.Ugrid2d): The ugrid2d.
+        """
+        self._ugrid2d = ugrid2d
+
+    @property
+    def face_node_connectivity(self) -> np.ndarray:
+        """Get the face node connectivity of the grid.
+
+        Returns:
+            np.ndarray: An ndarray of floats with shape (n, 3). Each row represents one face and contains the three node indices that define the face.
+        """
+        return self._ugrid2d.face_node_connectivity
+
+    def set_face_node_connectivity(self, face_node_connectivity: np.ndarray):
+        """Set the face node connectivity of the grid.
+
+        Args:
+            face_node_connectivity (np.ndarray): An ndarray of floats with shape (n, 3). Each row represents one face and contains the three node indices that define the face.
+        """
+        self._ugrid2d.face_node_connectivity = face_node_connectivity
+
+    @property
+    def node_coordinates(self) -> np.ndarray:
+        """Get the node coordinates of the grid.
+
+        Returns:
+            np.ndarray: An ndarray of floats with shape (n, 2). Each row represents one node and contains the x- and y-coordinate.
+        """
+        return self._ugrid2d.node_coordinates
+
+    @property
+    def fill_value(self) -> int:
+        """Get the fill value.
+
+        Returns:
+            int: Integer with the fill value.
+        """
+        return self._ugrid2d.fill_value
 
 
 class UgridVariable(VariableWrapper):
@@ -74,13 +114,14 @@ class UgridDataset(DatasetWrapper):
         self._topologies = dataset.ugrid_roles.coordinates[self.topology_2d]
 
     @property
-    def grid(self) -> xu.Ugrid2d:
-        """Get the xu.Ugrid2d from the data set.
+    def grid(self) -> Ugrid:
+        """Get the Ugrid from the data set.
 
         Returns:
-            xu.Ugrid2d: A xu.Ugrid2d created from the data set.
+            Ugrid: A Ugrid created from the data set.
         """
-        return xu.Ugrid2d.from_dataset(self._dataset, self.topology_2d)
+        ugrid2d = xu.Ugrid2d.from_dataset(self._dataset, self.topology_2d)
+        return Ugrid(ugrid2d)
 
     @property
     def min_x(self) -> float:

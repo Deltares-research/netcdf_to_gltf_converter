@@ -5,10 +5,12 @@ from tests.preprocessing.utils import Factory
 
 
 def test_triangulate():
-    rectilinear_grid = Factory.create_rectilinear_ugrid2d()
-    triangulated_grid = triangulate(rectilinear_grid)
-    assert np.array_equal(rectilinear_grid.node_x, triangulated_grid.node_x)
-    assert np.array_equal(rectilinear_grid.node_y, triangulated_grid.node_y)
+    grid = Factory.create_rectilinear_grid()
+    exp_node_coords = grid.node_coordinates.copy()
+
+    triangulate(grid)
+
+    assert np.array_equal(grid.node_coordinates, exp_node_coords)
     exp_face_node_connectivity = np.array(
         [
             [0, 1, 4],
@@ -21,6 +23,4 @@ def test_triangulate():
             [4, 8, 7],
         ]
     )
-    assert np.array_equal(
-        triangulated_grid.face_node_connectivity, exp_face_node_connectivity
-    )
+    assert np.array_equal(grid.face_node_connectivity, exp_face_node_connectivity)

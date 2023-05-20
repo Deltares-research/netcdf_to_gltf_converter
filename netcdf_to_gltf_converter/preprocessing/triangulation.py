@@ -1,17 +1,15 @@
-import xugrid as xu
 from xugrid.ugrid.connectivity import triangulate as triangulate_grid
 
+from netcdf_to_gltf_converter.netcdf.wrapper import GridWrapper
 
-def triangulate(grid: xu.Ugrid2d) -> xu.Ugrid2d:
-    """Triangulate the provided UGrid 2D.
+
+def triangulate(grid: GridWrapper):
+    """Triangulate the provided grid.
 
     Args:
-        ugrid2d (xu.Ugrid2d): The UGrid 2D to triangulate.
-
-    Returns:
-        xu.Ugrid2d: The triangulated UGrid 2D.
+        grid (Ugrid): The grid to triangulate.
     """
     face_node_connectivity, _ = triangulate_grid(
         grid.face_node_connectivity, fill_value=grid.fill_value
     )
-    return xu.Ugrid2d(grid.node_x, grid.node_y, grid.fill_value, face_node_connectivity)
+    grid.set_face_node_connectivity(face_node_connectivity)
