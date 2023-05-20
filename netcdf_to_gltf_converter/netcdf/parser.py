@@ -5,7 +5,7 @@ import xarray as xr
 
 from netcdf_to_gltf_converter.config import Config, Variable
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
-from netcdf_to_gltf_converter.netcdf.dflowfm.wrapper import UgridDataset
+from netcdf_to_gltf_converter.netcdf.ugrid.wrapper import UgridDataset
 from netcdf_to_gltf_converter.netcdf.wrapper import DatasetWrapper, GridWrapper, VariableWrapper
 from netcdf_to_gltf_converter.preprocessing.interpolation import NearestPointInterpolator
 from netcdf_to_gltf_converter.preprocessing.transformation import scale, shift

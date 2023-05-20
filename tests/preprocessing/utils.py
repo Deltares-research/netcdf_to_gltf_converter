@@ -1,7 +1,7 @@
 import numpy as np
 import xugrid as xu
 
-from netcdf_to_gltf_converter.netcdf.dflowfm.wrapper import Ugrid
+from netcdf_to_gltf_converter.netcdf.ugrid.wrapper import Ugrid
 
 
 class Factory:

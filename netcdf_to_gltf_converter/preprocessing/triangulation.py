@@ -1,9 +1,9 @@
 from xugrid.ugrid.connectivity import triangulate as triangulate_grid
 
-from netcdf_to_gltf_converter.netcdf.dflowfm.wrapper import Ugrid
+from netcdf_to_gltf_converter.netcdf.wrapper import GridWrapper
 
 
-def triangulate(grid: Ugrid):
+def triangulate(grid: GridWrapper):
     """Triangulate the provided grid.
 
     Args:
