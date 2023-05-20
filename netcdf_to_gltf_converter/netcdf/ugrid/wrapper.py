@@ -106,7 +106,6 @@ class UgridDataset(DatasetWrapper):
 
         Args:
             dataset (xr.Dataset): The xarray Dataset.
-            config (Config): The converter configuration.
         """
         super().__init__(dataset)
 
