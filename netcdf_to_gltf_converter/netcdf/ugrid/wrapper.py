@@ -13,7 +13,6 @@ from netcdf_to_gltf_converter.netcdf.wrapper import (
 )
 
 
-
 class Topology(str, Enum):
     """The topology as described by the ugrid_roles."""
 
