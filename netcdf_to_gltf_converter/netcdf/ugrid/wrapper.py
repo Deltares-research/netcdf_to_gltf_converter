@@ -13,17 +13,6 @@ from netcdf_to_gltf_converter.netcdf.wrapper import (
 )
 
 
-def get_coordinate_variables(data, standard_name: str) -> List[xr.DataArray]:
-    coord_vars = []
-    for coord_var_name in data.coords:
-        coord_var = data.coords[coord_var_name]
-
-        coord_standard_name = coord_var.attrs.get("standard_name")
-        if coord_standard_name == standard_name:
-            coord_vars.append(coord_var)
-
-    return coord_vars
-
 
 class Topology(str, Enum):
     """The topology as described by the ugrid_roles."""
