@@ -6,8 +6,14 @@ import xarray as xr
 from netcdf_to_gltf_converter.config import Config, Variable
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.netcdf.ugrid.wrapper import UgridDataset
-from netcdf_to_gltf_converter.netcdf.wrapper import DatasetWrapper, GridWrapper, VariableWrapper
-from netcdf_to_gltf_converter.preprocessing.interpolation import NearestPointInterpolator
+from netcdf_to_gltf_converter.netcdf.wrapper import (
+    DatasetWrapper,
+    GridWrapper,
+    VariableWrapper,
+)
+from netcdf_to_gltf_converter.preprocessing.interpolation import (
+    NearestPointInterpolator,
+)
 from netcdf_to_gltf_converter.preprocessing.transformation import scale, shift
 from netcdf_to_gltf_converter.preprocessing.triangulation import triangulate
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
@@ -31,16 +37,14 @@ class Parser:
         """
         ugrid_dataset = UgridDataset(dataset)
         Parser._transform_grid(config, ugrid_dataset)
-        
+
         grid = ugrid_dataset.grid
         triangulate(grid)
 
         triangular_meshes = []
 
         for variable in config.variables:
-            data_mesh = self._parse_variable(
-                variable, grid, ugrid_dataset, config
-            )
+            data_mesh = self._parse_variable(variable, grid, ugrid_dataset, config)
             triangular_meshes.append(data_mesh)
 
             if variable.use_threshold:
@@ -102,7 +106,9 @@ class Parser:
             scale(ugrid_dataset, variables, config.scale)
 
     def _interpolate(self, data: VariableWrapper, time_index: int, grid: GridWrapper):
-        return self._interpolator.interpolate(data.coordinates, data.get_data_at_time(time_index), grid)
+        return self._interpolator.interpolate(
+            data.coordinates, data.get_data_at_time(time_index), grid
+        )
 
     @staticmethod
     def calculate_displacements(data: np.ndarray, base: MeshAttributes):

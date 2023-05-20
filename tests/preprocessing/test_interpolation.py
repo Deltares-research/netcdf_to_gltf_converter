@@ -17,8 +17,7 @@ class TestNearestPointInterpolator:
         data_values = float32_array([1, 2, 3, 4])
         grid = Factory.create_rectilinear_grid()
 
-        interpolated_values = interpolator.interpolate(
-            data_coords, data_values, grid)
+        interpolated_values = interpolator.interpolate(data_coords, data_values, grid)
 
         exp_interpolated_values = float32_array(
             [
@@ -44,8 +43,7 @@ class TestLinearInterpolator:
         data_values = float32_array([1, 2, 3, 4])
         grid = Factory.create_rectilinear_grid()
 
-        interpolated_values = interpolator.interpolate(
-            data_coords, data_values, grid)
+        interpolated_values = interpolator.interpolate(data_coords, data_values, grid)
 
         exp_interpolated_values = float32_array(
             [
