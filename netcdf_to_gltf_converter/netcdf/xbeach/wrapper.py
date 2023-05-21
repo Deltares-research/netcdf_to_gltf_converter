@@ -1,17 +1,14 @@
-from enum import Enum
-from typing import List
-
 import numpy as np
 import xarray as xr
 
-from netcdf_to_gltf_converter.config import Config
-from netcdf_to_gltf_converter.netcdf.wrapper import DatasetWrapper, GridWrapper, VariableWrapper
+from netcdf_to_gltf_converter.netcdf.wrapper import DatasetWrapper, GridWrapper, VariableWrapper, get_coordinate_variables
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
 class XBeachGrid(GridWrapper):
     
-    def __init__(self, x_coord_var: xr.DataArray, y_coord_var: xr.DataArray):
-
+    def __init__(self, dataset: xr.Dataset):
+        x_coord_var = get_coordinate_variables(dataset, "projection_x_coordinate")[0]
+        y_coord_var = get_coordinate_variables(dataset, "projection_y_coordinate")[0]
         n_vertex_cols = len(x_coord_var.data[0])
         n_vertex_rows = len(x_coord_var.data)
         
@@ -23,9 +20,10 @@ class XBeachGrid(GridWrapper):
         for _ in range(n_vertex_rows - 1):
             for _ in range(n_vertex_cols - 1):               
                 square = [node_index, 
-                          node_index + n_vertex_cols, 
+                          node_index + 1,
                           node_index + n_vertex_cols + 1, 
-                          node_index + 1]
+                          node_index + n_vertex_cols, 
+                          ]
                 squares.append(square)
                 
                 node_index += 1
@@ -128,7 +126,7 @@ class XBeachDataset(DatasetWrapper):
         Returns:
             XBeachGrid: A XBeachGrid created from the data set.
         """        
-        return XBeachGrid(self.x_coord_vars[0], self.y_coord_vars[0])
+        return XBeachGrid(self._dataset)
         
     @property
     def min_x(self) -> float:
