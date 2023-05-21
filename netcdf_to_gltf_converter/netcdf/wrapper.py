@@ -75,6 +75,7 @@ class VariableWrapper(ABC):
         """
         self._data = data
         self._coordinates = self._get_coordinates()
+        self._time_var_name = get_coordinate_variables(data, "time")[0].name
 
     @property
     def coordinates(self) -> np.ndarray:
@@ -86,16 +87,14 @@ class VariableWrapper(ABC):
         return self._coordinates
 
     @property
-    @abstractmethod
     def time_index_max(self) -> int:
         """Get the maximum time step index for this data variable.
 
         Returns:
             int: An integer specifying the maximum time step index.
         """
-        pass
+        return self._data.sizes[self._time_var_name] - 1
 
-    @abstractmethod
     def get_data_at_time(self, time_index: int) -> np.ndarray:
         """Get the variable values at the specified time index.
 
@@ -105,7 +104,9 @@ class VariableWrapper(ABC):
         Returns:
             np.ndarray: A 1D np.ndarray of floats.
         """
-        pass
+        time_filter = {self._time_var_name : time_index}
+        return self._data.isel(**time_filter).values.flatten()
+
 
     def _get_coordinates(self) -> np.ndarray:
         def get_coordinates(standard_name: str):

@@ -76,34 +76,6 @@ class XBeachVariable(VariableWrapper):
     The wrapper allows for easier retrieval of relevant data.
     """
 
-    def __init__(self, data: xr.DataArray) -> None:
-        """Initialize a UgridVariable with the specified data.
-
-        Args:
-            data (xr.DataArray): The variable data.
-        """
-        self._data = data
-        self._coordinates = self._get_coordinates()
-
-    @property
-    def time_index_max(self) -> int:
-        """Get the maximum time step index for this data variable.
-
-        Returns:
-            int: An integer specifying the maximum time step index.
-        """
-        return self._data.sizes["globaltime"] - 1
-
-    def get_data_at_time(self, time_index: int) -> np.ndarray:
-        """Get the variable values at the specified time index.
-
-        Args:
-            time_index (int): The time index.
-
-        Returns:
-            np.ndarray: A 1D np.ndarray of floats.
-        """
-        return self._data.isel(globaltime=time_index).values.flatten()
 
 class XBeachDataset(DatasetWrapper):
     """Class that serves as a wrapper object for an xarray.Dataset with UGrid conventions.
