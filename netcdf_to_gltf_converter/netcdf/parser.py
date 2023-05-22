@@ -49,7 +49,8 @@ class Parser:
 
             if variable.use_threshold:
                 threshold_mesh = data_mesh.get_threshold_mesh(
-                    variable.threshold_height * config.scale, variable.threshold_color
+                    variable.threshold_height * config.scale_vertical,
+                    variable.threshold_color,
                 )
                 triangular_meshes.append(threshold_mesh)
 
@@ -101,9 +102,8 @@ class Parser:
         if config.shift_coordinates:
             shift(ugrid_dataset)
 
-        if config.scale != 1.0:
-            variables = [var.name for var in config.variables]
-            scale(ugrid_dataset, variables, config.scale)
+        variables = [var.name for var in config.variables]
+        scale(ugrid_dataset, variables, config.scale_horizontal, config.scale_vertical)
 
     def _interpolate(self, data: VariableWrapper, time_index: int, grid: GridWrapper):
         return self._interpolator.interpolate(

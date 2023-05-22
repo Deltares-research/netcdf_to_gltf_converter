@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import List
 
 import numpy as np
 import xarray as xr
