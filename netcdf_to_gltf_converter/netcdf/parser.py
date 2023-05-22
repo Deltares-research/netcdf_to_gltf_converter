@@ -49,7 +49,8 @@ class Parser:
 
             if variable.use_threshold:
                 threshold_mesh = data_mesh.get_threshold_mesh(
-                    variable.threshold_height * config.scale_vertical, variable.threshold_color
+                    variable.threshold_height * config.scale_vertical,
+                    variable.threshold_color,
                 )
                 triangular_meshes.append(threshold_mesh)
 
