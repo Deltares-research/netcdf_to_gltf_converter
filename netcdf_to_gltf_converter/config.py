@@ -172,8 +172,11 @@ class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
     shift_coordinates: bool
     """bool: Whether or not to shift the x- and y-coordinates, such that the smallest x and y become the origin (0,0)."""
 
-    scale: float
-    """float: The scale of the mesh coordinates compared to the coordinates from file."""
+    scale_horizontal: float
+    """float: The horizontal scaling factor of the mesh coordinates compared to the coordinates from file."""
+    
+    scale_vertical: float
+    """float: The vertical scaling factor of the mesh coordinates compared to the coordinates from file."""
 
     variables: List[Variable]
     """List[Variable]: List of configuration of the variables that should be converted to glTF."""

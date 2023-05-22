@@ -26,7 +26,8 @@ class TestImporter:
             time_index_start=0,
             times_per_frame=1,
             shift_coordinates=True,
-            scale=1.0,
+            scale_horizontal=1.0,
+            scale_vertical=1.0,
             variables=[variable],
         )
 
@@ -92,7 +93,8 @@ class TestImporter:
             time_index_start=0,
             times_per_frame=1,
             shift_coordinates=True,
-            scale=1.0,
+            scale_horizontal=1.0,
+            scale_vertical=1.0,
             variables=[],
         )
 
