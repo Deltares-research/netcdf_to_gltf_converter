@@ -34,7 +34,12 @@ def _shift(variable: xr.DataArray, shift: float, dataset: DatasetWrapper):
     dataset.set_array(shifted_coords_var)
 
 
-def scale(dataset: DatasetWrapper, variables: List[str], scale_horizontal: float, scale_vertical: float):
+def scale(
+    dataset: DatasetWrapper,
+    variables: List[str],
+    scale_horizontal: float,
+    scale_vertical: float,
+):
     """
     If scaling is required, scale the x- and y-coordinates and the data values, with the scaling factors that are specified.
     The original data set is updated with the new coordinates.

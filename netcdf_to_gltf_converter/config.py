@@ -174,7 +174,7 @@ class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
 
     scale_horizontal: float
     """float: The horizontal scaling factor of the mesh coordinates compared to the coordinates from file."""
-    
+
     scale_vertical: float
     """float: The vertical scaling factor of the mesh coordinates compared to the coordinates from file."""
 
