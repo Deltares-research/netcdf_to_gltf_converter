@@ -3,7 +3,8 @@
 	"time_index_start":0,
 	"times_per_frame":1,
 	"shift_coordinates": true,
-	"scale": 0.5,
+	"scale_horizontal": 0.5,
+	"scale_vertical": 0.5,
 	"variables": [{
 		"name": "Mesh2d_waterdepth",
 		"color": [0.38, 0.73, 0.78, 1.0],

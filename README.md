@@ -82,7 +82,9 @@ These steps will ensure that the converter is installed within a virtual environ
 
 - `shift_coordinates`: A boolean value indicating whether to shift the coordinates of the data during conversion. When set to `true`, the converter will shift the coordinates such that the smallest x and y become the origin (0,0).
 
-- `scale`: A floating value indicating the scale factor for the data. It determines the scaling of the converted geometry. A smaller scale value will result in a smaller representation of the data in the 3D renderer.
+- `scale_horizontal`: A floating value indicating the scale factor for the x- and y-coordinates. It determines the scaling of the converted geometry. A value of 1.0 results in the original geometry size.
+
+- `scale_vertical`: A floating value indicating the scale factor for the data values. It determines the scaling of the converted geometry. A value of 1.0 results in the original geometry size.
 
 - `variables`: An array containing the configurations for each variable to be converted. Each variable configuration consists of the following options:
   
@@ -108,7 +110,8 @@ These steps will ensure that the converter is installed within a virtual environ
    "time_index_end":100,
    "times_per_frame":3,
    "shift_coordinates":true,
-   "scale":0.5,
+   "scale_horizontal":0.5,
+   "scale_vertical":0.5,
    "variables":[
       {
          "name":"Mesh2d_waterdepth",
@@ -130,7 +133,7 @@ These steps will ensure that the converter is installed within a virtual environ
 }
 ```
 
-In the above example, we render two variables from the netCDF file: `Mesh2d_waterdepth` and `Mesh2d_s1`. For the animation we take a subset of the time steps. The animation will start at time step with index 50 and will end at time step with index 100. The animation will have a resolution of 3 time steps. Additionally, we apply a coordinate shift to ensure that the meshes have an origin at (0,0). Furthermore, we set the scale to 0.5, resulting in a reduction of size in all directions by a factor of two. 
+In the above example, we render two variables from the netCDF file: `Mesh2d_waterdepth` and `Mesh2d_s1`. For the animation we take a subset of the time steps. The animation will start at time step with index 50 and will end at time step with index 100. The animation will have a resolution of 3 time steps. Additionally, we apply a coordinate shift to ensure that the meshes have an origin at (0,0). Furthermore, we set the scale for both the horizontal and vertical directions to 0.5, resulting in a reduction of size in all directions by a factor of two. 
 
 For the `Mesh2d_waterdepth` variable, an additional threshold mesh is rendered at a height of 0.01. Each mesh is assigned its own color, specified by the normalized red, green, blue and alpha (RGBA) values.
 
