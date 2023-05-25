@@ -6,6 +6,7 @@ import xarray as xr
 from netcdf_to_gltf_converter.config import Config, Variable
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.netcdf.ugrid.wrapper import UgridDataset
+from netcdf_to_gltf_converter.netcdf.xbeach.wrapper import XBeachDataset
 from netcdf_to_gltf_converter.netcdf.wrapper import (
     DatasetWrapper,
     GridWrapper,
@@ -35,7 +36,7 @@ class Parser:
             dataset (xr.Dataset): The NetCDF dataset.
             config (Config): The converter configuration.
         """
-        ugrid_dataset = UgridDataset(dataset)
+        ugrid_dataset = XBeachDataset(dataset)
         Parser._transform_grid(config, ugrid_dataset)
 
         grid = ugrid_dataset.grid
