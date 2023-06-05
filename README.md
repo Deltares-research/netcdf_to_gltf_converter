@@ -185,8 +185,6 @@ If you encounter any issues or have good ideas for this project please [create a
 # Acknowledgments
 [Connec2](https://connec2.nl/) is a company specialized in cross reality (XR) technology that guided us to setup this project. 
 
-This tool was developed as part of the fifth [Top consortium for Knowledge and Innovation (TKI) programme](https://tkideltatechnologie.nl/) as part of the [D-HYDRO GUI Visualisatie & Cloud project](https://tkideltatechnologie.invoermodule.nl/project/d-hydro-gui-visualisatie-cloud/).
-
 This tool was developed as part of the [D-HYDRO GUI Visualisatie & Cloud project](https://tkideltatechnologie.invoermodule.nl/project/d-hydro-gui-visualisatie-cloud/), which was funded by the fifth Top consortium for Knowledge and Innovation (TKI) programme.
 
 
