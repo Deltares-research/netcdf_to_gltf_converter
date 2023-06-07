@@ -116,8 +116,8 @@ These steps will ensure that the converter is installed within a virtual environ
       {
          "name":"Mesh2d_waterdepth",
          "color":[0.372, 0.635, 0.8, 1.0],
-         "metallicFactor":0.0,
-         "roughnessFactor":0.15,
+         "metallic_factor":0.0,
+         "roughness_factor":0.15,
          "use_threshold":false,
          "threshold_height":0.01,
          "threshold_color":[1.0, 1.0, 1.0, 1.0]
@@ -125,8 +125,8 @@ These steps will ensure that the converter is installed within a virtual environ
       {
          "name":"Mesh2d_s1",
          "color":[0.686, 0.831, 0.937, 1.0],
-         "metallicFactor":0.0,
-         "roughnessFactor":0.15,
+         "metallic_factor":0.0,
+         "roughness_factor":0.15,
          "use_threshold":false
       }
    ]
