@@ -58,7 +58,17 @@ class Ugrid(GridWrapper):
             np.ndarray: An ndarray of floats with shape (n, 2). Each row represents one node and contains the x- and y-coordinate.
         """
         return self._ugrid2d.node_coordinates
+    
+    def transform_coordinate_system(self, source_crs: int, target_crs: int):
+        """Transform the coordinates to another coordinate system.
 
+        Args:
+            source_crs (int): EPSG from the source coordinate system.
+            target_crs (int): EPSG from the target coordinate system.
+        """
+        self._ugrid2d.set_crs(epsg=source_crs)
+        self._ugrid2d = self._ugrid2d.to_crs(epsg=target_crs)
+        
     @property
     def fill_value(self) -> int:
         """Get the fill value.
