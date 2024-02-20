@@ -3,6 +3,7 @@ from typing import List
 
 import numpy as np
 import xarray as xr
+from xugrid.ugrid.connectivity import triangulate as triangulate_grid
 
 
 def get_coordinate_variables(data, standard_name: str) -> List[xr.DataArray]:
@@ -61,6 +62,12 @@ class GridWrapper(ABC):
         """
         pass
 
+    def triangulate(self):
+        """Triangulate this grid."""
+        face_node_connectivity, _ = triangulate_grid(
+            self.face_node_connectivity, fill_value=self.fill_value
+        )
+        self.set_face_node_connectivity(face_node_connectivity)
 
 class VariableWrapper(ABC):
     """Class that serves as a wrapper object for an xarray.DataArray.
