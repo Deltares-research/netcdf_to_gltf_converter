@@ -1,14 +1,13 @@
 import numpy as np
 
-from netcdf_to_gltf_converter.preprocessing.triangulation import triangulate
 from tests.preprocessing.utils import Factory
 
 
-def test_triangulate():
+def test_triangulate_grid():
     grid = Factory.create_rectilinear_grid()
     exp_node_coords = grid.node_coordinates.copy()
 
-    triangulate(grid)
+    grid.triangulate()
 
     assert np.array_equal(grid.node_coordinates, exp_node_coords)
     exp_face_node_connectivity = np.array(

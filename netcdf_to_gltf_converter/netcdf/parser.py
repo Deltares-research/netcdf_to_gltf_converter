@@ -15,7 +15,6 @@ from netcdf_to_gltf_converter.preprocessing.interpolation import (
     NearestPointInterpolator,
 )
 from netcdf_to_gltf_converter.preprocessing.transformation import scale, shift
-from netcdf_to_gltf_converter.preprocessing.triangulation import triangulate
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 from netcdf_to_gltf_converter.utils.sequences import inclusive_range
 
@@ -39,7 +38,7 @@ class Parser:
         Parser._transform_grid(config, ugrid_dataset)
 
         grid = ugrid_dataset.grid
-        triangulate(grid)
+        grid.triangulate()
 
         triangular_meshes = []
 
