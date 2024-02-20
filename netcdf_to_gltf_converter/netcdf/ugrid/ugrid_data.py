@@ -5,10 +5,10 @@ import xarray as xr
 import xugrid as xu
 
 from netcdf_to_gltf_converter.netcdf.ugrid.conventions import AttrKey, CfRoleAttrValue
-from netcdf_to_gltf_converter.netcdf.wrapper import (
-    DatasetWrapper,
-    GridWrapper,
-    VariableWrapper,
+from netcdf_to_gltf_converter.netcdf.netcdf_data import (
+    DatasetBase,
+    GridBase,
+    VariableBase,
 )
 
 
@@ -20,7 +20,7 @@ class Topology(str, Enum):
     faces = "face_coordinates"
 
 
-class Ugrid(GridWrapper):
+class Ugrid(GridBase):
     """Class that serves as a wrapper object for a xu.Ugrid2d object.
     The wrapper allows for easier retrieval of relevant data.
     """
@@ -69,33 +69,13 @@ class Ugrid(GridWrapper):
         return self._ugrid2d.fill_value
 
 
-class UgridVariable(VariableWrapper):
+class UgridVariable(VariableBase):
     """Class that serves as a wrapper object for an xarray.DataArray with UGrid conventions.
     The wrapper allows for easier retrieval of relevant data.
     """
 
-    @property
-    def time_index_max(self) -> int:
-        """Get the maximum time step index for this data variable.
 
-        Returns:
-            int: An integer specifying the maximum time step index.
-        """
-        return self._data.sizes["time"] - 1
-
-    def get_data_at_time(self, time_index: int) -> np.ndarray:
-        """Get the variable values at the specified time index.
-
-        Args:
-            time_index (int): The time index.
-
-        Returns:
-            np.ndarray: A 1D np.ndarray of floats.
-        """
-        return self._data.isel(time=time_index).to_numpy()
-
-
-class UgridDataset(DatasetWrapper):
+class UgridDataset(DatasetBase):
     """Class that serves as a wrapper object for an xarray.Dataset with UGrid conventions.
     The wrapper allows for easier retrieval of relevant data.
     """
@@ -105,7 +85,6 @@ class UgridDataset(DatasetWrapper):
 
         Args:
             dataset (xr.Dataset): The xarray Dataset.
-            config (Config): The converter configuration.
         """
         super().__init__(dataset)
 

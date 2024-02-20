@@ -17,7 +17,7 @@ def get_coordinate_variables(data, standard_name: str) -> List[xr.DataArray]:
     return coord_vars
 
 
-class GridWrapper(ABC):
+class GridBase(ABC):
     """Class that serves as a wrapper object for a grid object.
     The wrapper allows for easier retrieval of relevant data.
     """
@@ -62,19 +62,20 @@ class GridWrapper(ABC):
         pass
 
 
-class VariableWrapper(ABC):
+class VariableBase(ABC):
     """Class that serves as a wrapper object for an xarray.DataArray.
     The wrapper allows for easier retrieval of relevant data.
     """
 
     def __init__(self, data: xr.DataArray) -> None:
-        """Initialize a VariableWrapper with the specified data.
+        """Initialize a VariableBase with the specified data.
 
         Args:
             data (xr.DataArray): The variable data.
         """
         self._data = data
         self._coordinates = self._get_coordinates()
+        self._time_var_name = get_coordinate_variables(data, "time")[0].name
 
     @property
     def coordinates(self) -> np.ndarray:
@@ -86,16 +87,14 @@ class VariableWrapper(ABC):
         return self._coordinates
 
     @property
-    @abstractmethod
     def time_index_max(self) -> int:
         """Get the maximum time step index for this data variable.
 
         Returns:
             int: An integer specifying the maximum time step index.
         """
-        pass
+        return self._data.sizes[self._time_var_name] - 1
 
-    @abstractmethod
     def get_data_at_time(self, time_index: int) -> np.ndarray:
         """Get the variable values at the specified time index.
 
@@ -105,24 +104,26 @@ class VariableWrapper(ABC):
         Returns:
             np.ndarray: A 1D np.ndarray of floats.
         """
-        pass
+        time_filter = {self._time_var_name : time_index}
+        return self._data.isel(**time_filter).values.flatten()
+
 
     def _get_coordinates(self) -> np.ndarray:
         def get_coordinates(standard_name: str):
-            return get_coordinate_variables(self._data, standard_name)[0].values
+            return get_coordinate_variables(self._data, standard_name)[0].values.flatten()
 
         x_coords = get_coordinates("projection_x_coordinate")
         y_coords = get_coordinates("projection_y_coordinate")
         return np.column_stack([x_coords, y_coords])
 
 
-class DatasetWrapper(ABC):
+class DatasetBase(ABC):
     """Class that serves as a wrapper object for an xarray.Dataset.
     The wrapper allows for easier retrieval of relevant data.
     """
 
     def __init__(self, dataset: xr.Dataset) -> None:
-        """Initialize a DatasetWrapper with the specified arguments.
+        """Initialize a DatasetBase with the specified arguments.
 
         Args:
             dataset (xr.Dataset): The xarray Dataset.
@@ -131,11 +132,11 @@ class DatasetWrapper(ABC):
 
     @property
     @abstractmethod
-    def grid(self) -> GridWrapper:
+    def grid(self) -> GridBase:
         """Get the grid definition from the data set.
 
         Returns:
-            GridWrapper: A GridWrapper object created from the data set.
+            GridBase: A GridBase object created from the data set.
         """
         pass
 
@@ -205,14 +206,14 @@ class DatasetWrapper(ABC):
         return self._dataset[variable_name]
 
     @abstractmethod
-    def get_variable(self, variable_name: str) -> VariableWrapper:
+    def get_variable(self, variable_name: str) -> VariableBase:
         """Get the variable with the specified name from the data set.
 
         Args:
             variable_name (str): The variable name.
 
         Returns:
-            VariableWrapper: The wrapper object for the variable.
+            VariableBase: The wrapper object for the variable.
 
         Raises:
             ValueError: When the dataset does not contain a variable with the name.

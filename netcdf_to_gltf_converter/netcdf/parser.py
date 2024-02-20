@@ -3,13 +3,14 @@ from typing import List
 import numpy as np
 import xarray as xr
 
-from netcdf_to_gltf_converter.config import Config, Variable
+from netcdf_to_gltf_converter.config import Config, ModelType, Variable
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
-from netcdf_to_gltf_converter.netcdf.ugrid.wrapper import UgridDataset
-from netcdf_to_gltf_converter.netcdf.wrapper import (
-    DatasetWrapper,
-    GridWrapper,
-    VariableWrapper,
+from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import UgridDataset
+from netcdf_to_gltf_converter.netcdf.xbeach.xbeach_data import XBeachDataset
+from netcdf_to_gltf_converter.netcdf.netcdf_data import (
+    DatasetBase,
+    GridBase,
+    VariableBase,
 )
 from netcdf_to_gltf_converter.preprocessing.interpolation import (
     NearestPointInterpolator,
@@ -35,16 +36,20 @@ class Parser:
             dataset (xr.Dataset): The NetCDF dataset.
             config (Config): The converter configuration.
         """
-        ugrid_dataset = UgridDataset(dataset)
-        Parser._transform_grid(config, ugrid_dataset)
+        if config.model_type == ModelType.DHYDRO:
+            dataset = UgridDataset(dataset)
+        elif config.model_type == ModelType.XBEACH:
+            dataset = XBeachDataset(dataset)
+        
+        Parser._transform_grid(config, dataset)
 
-        grid = ugrid_dataset.grid
+        grid = dataset.grid
         triangulate(grid)
 
         triangular_meshes = []
 
         for variable in config.variables:
-            data_mesh = self._parse_variable(variable, grid, ugrid_dataset, config)
+            data_mesh = self._parse_variable(variable, grid, dataset, config)
             triangular_meshes.append(data_mesh)
 
             if variable.use_threshold:
@@ -59,8 +64,8 @@ class Parser:
     def _parse_variable(
         self,
         variable: Variable,
-        grid: GridWrapper,
-        ugrid_dataset: DatasetWrapper,
+        grid: GridBase,
+        ugrid_dataset: DatasetBase,
         config: Config,
     ):
         data = ugrid_dataset.get_variable(variable.name)
@@ -98,14 +103,14 @@ class Parser:
         return inclusive_range(start, end, config.times_per_frame)
 
     @staticmethod
-    def _transform_grid(config: Config, ugrid_dataset):
+    def _transform_grid(config: Config, dataset: DatasetBase):
         if config.shift_coordinates:
-            shift(ugrid_dataset)
+            shift(dataset)
 
         variables = [var.name for var in config.variables]
-        scale(ugrid_dataset, variables, config.scale_horizontal, config.scale_vertical)
+        scale(dataset, variables, config.scale_horizontal, config.scale_vertical)
 
-    def _interpolate(self, data: VariableWrapper, time_index: int, grid: GridWrapper):
+    def _interpolate(self, data: VariableBase, time_index: int, grid: GridBase):
         return self._interpolator.interpolate(
             data.coordinates, data.get_data_at_time(time_index), grid
         )

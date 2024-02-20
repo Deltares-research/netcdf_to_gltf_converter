@@ -6,11 +6,11 @@ from typing import Any, Dict, List, Optional, Type, TypeVar
 from packaging.version import Version
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import Extra, root_validator, validator
+from strenum import StrEnum
 
 from netcdf_to_gltf_converter.utils.validation import in_range
 
 Color = List[float]
-
 
 class BaseModel(PydanticBaseModel):
     """BaseModel defines the base for Pydantic model classes."""
@@ -90,6 +90,14 @@ class AbstractJsonConfigFile(BaseModel, ABC):
 
         return cls.parse_file(path)
 
+class ModelType(StrEnum):
+    """The model type of the input data."""
+    
+    DHYDRO = "D-HYDRO"
+    """Output from a D-HYDRO model (UGRID)."""
+    
+    XBEACH = "XBEACH"
+    """Output from an XBEACH model (regular grid)."""
 
 class Variable(BaseModel):
     """Configuration properties of a variable."""
@@ -160,6 +168,9 @@ class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
 
     _expected_file_version = Version("0.1.0")
 
+    model_type: ModelType
+    """ModelType: The model type that is used for the input."""
+    
     time_index_start: int
     """int: The time index the animation should start with."""
 
