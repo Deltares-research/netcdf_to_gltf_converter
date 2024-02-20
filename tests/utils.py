@@ -6,6 +6,7 @@ from typing import Generator
 
 resources = Path("tests") / "resources"
 dhydro_resources = resources / "d-hydro"
+xbeach_resources = resources / "xbeach"
 reference_files = resources / "reference"
 
 

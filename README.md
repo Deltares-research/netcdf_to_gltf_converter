@@ -74,6 +74,8 @@ These steps will ensure that the converter is installed within a virtual environ
  
 - `file_version`: Specifies the version of the configuration file format.
 
+- `model_type`: A string value indicating the model type used for the generation of the netCDF file. Supported options: `D-HYDRO`, `XBEACH`.
+
 - `time_index_start`: An integer value specifying the starting index of the time steps to be converted. This allows you to specify a subset of time steps from the netCDF file. 
 
 - `time_index_end` (optional): An integer value specifying the end index of the time steps to be converted. When this option is not specified, the converter will include all time steps from the time step with index `time_index_start` to the last time step in the original dataset.
@@ -106,6 +108,7 @@ These steps will ensure that the converter is installed within a virtual environ
 ```json
 {
    "file_version":"0.1.0",
+   "model_type": "D-HYDRO",
    "time_index_start":50,
    "time_index_end":100,
    "times_per_frame":3,
@@ -133,7 +136,7 @@ These steps will ensure that the converter is installed within a virtual environ
 }
 ```
 
-In the above example, we render two variables from the netCDF file: `Mesh2d_waterdepth` and `Mesh2d_s1`. For the animation we take a subset of the time steps. The animation will start at time step with index 50 and will end at time step with index 100. The animation will have a resolution of 3 time steps. Additionally, we apply a coordinate shift to ensure that the meshes have an origin at (0,0). Furthermore, we set the scale for both the horizontal and vertical directions to 0.5, resulting in a reduction of size in all directions by a factor of two. 
+In the above example, we render two variables from a D-HYDRO output map netCDF file: `Mesh2d_waterdepth` and `Mesh2d_s1`. For the animation we take a subset of the time steps. The animation will start at time step with index 50 and will end at time step with index 100. The animation will have a resolution of 3 time steps. Additionally, we apply a coordinate shift to ensure that the meshes have an origin at (0,0). Furthermore, we set the scale for both the horizontal and vertical directions to 0.5, resulting in a reduction of size in all directions by a factor of two. 
 
 For the `Mesh2d_waterdepth` variable, an additional threshold mesh is rendered at a height of 0.01. Each mesh is assigned its own color, specified by the normalized red, green, blue and alpha (RGBA) values.
 
