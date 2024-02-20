@@ -154,7 +154,15 @@ class Variable(BaseModel):
 
         return value
 
-
+class CrsTransformation(BaseModel):
+    """The configuration settings for transforming the coordinates."""
+    
+    source_crs: int
+    """int: EPSG code of the course coordinate system."""
+    
+    target_crs: int
+    """int: EPSG code of the target coordinate system."""
+    
 class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
     """The configuration settings described in the configuration JSON file."""
 
@@ -180,3 +188,6 @@ class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
 
     variables: List[Variable]
     """List[Variable]: List of configuration of the variables that should be converted to glTF."""
+    
+    crs_transformation: Optional[CrsTransformation]
+    """Optional[CrsTransformation]: The configuration settings for transforming the coordinates."""
