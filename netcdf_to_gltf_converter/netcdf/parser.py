@@ -8,9 +8,9 @@ from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.netcdf.ugrid.wrapper import UgridDataset
 from netcdf_to_gltf_converter.netcdf.xbeach.wrapper import XBeachDataset
 from netcdf_to_gltf_converter.netcdf.wrapper import (
-    DatasetWrapper,
-    GridWrapper,
-    VariableWrapper,
+    DatasetBase,
+    GridBase,
+    VariableBase,
 )
 from netcdf_to_gltf_converter.preprocessing.interpolation import (
     NearestPointInterpolator,
@@ -64,8 +64,8 @@ class Parser:
     def _parse_variable(
         self,
         variable: Variable,
-        grid: GridWrapper,
-        ugrid_dataset: DatasetWrapper,
+        grid: GridBase,
+        ugrid_dataset: DatasetBase,
         config: Config,
     ):
         data = ugrid_dataset.get_variable(variable.name)
@@ -103,14 +103,14 @@ class Parser:
         return inclusive_range(start, end, config.times_per_frame)
 
     @staticmethod
-    def _transform_grid(config: Config, dataset: DatasetWrapper):
+    def _transform_grid(config: Config, dataset: DatasetBase):
         if config.shift_coordinates:
             shift(dataset)
 
         variables = [var.name for var in config.variables]
         scale(dataset, variables, config.scale_horizontal, config.scale_vertical)
 
-    def _interpolate(self, data: VariableWrapper, time_index: int, grid: GridWrapper):
+    def _interpolate(self, data: VariableBase, time_index: int, grid: GridBase):
         return self._interpolator.interpolate(
             data.coordinates, data.get_data_at_time(time_index), grid
         )

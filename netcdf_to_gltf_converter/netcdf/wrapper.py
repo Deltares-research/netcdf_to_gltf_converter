@@ -17,7 +17,7 @@ def get_coordinate_variables(data, standard_name: str) -> List[xr.DataArray]:
     return coord_vars
 
 
-class GridWrapper(ABC):
+class GridBase(ABC):
     """Class that serves as a wrapper object for a grid object.
     The wrapper allows for easier retrieval of relevant data.
     """
@@ -62,13 +62,13 @@ class GridWrapper(ABC):
         pass
 
 
-class VariableWrapper(ABC):
+class VariableBase(ABC):
     """Class that serves as a wrapper object for an xarray.DataArray.
     The wrapper allows for easier retrieval of relevant data.
     """
 
     def __init__(self, data: xr.DataArray) -> None:
-        """Initialize a VariableWrapper with the specified data.
+        """Initialize a VariableBase with the specified data.
 
         Args:
             data (xr.DataArray): The variable data.
@@ -117,13 +117,13 @@ class VariableWrapper(ABC):
         return np.column_stack([x_coords, y_coords])
 
 
-class DatasetWrapper(ABC):
+class DatasetBase(ABC):
     """Class that serves as a wrapper object for an xarray.Dataset.
     The wrapper allows for easier retrieval of relevant data.
     """
 
     def __init__(self, dataset: xr.Dataset) -> None:
-        """Initialize a DatasetWrapper with the specified arguments.
+        """Initialize a DatasetBase with the specified arguments.
 
         Args:
             dataset (xr.Dataset): The xarray Dataset.
@@ -132,11 +132,11 @@ class DatasetWrapper(ABC):
 
     @property
     @abstractmethod
-    def grid(self) -> GridWrapper:
+    def grid(self) -> GridBase:
         """Get the grid definition from the data set.
 
         Returns:
-            GridWrapper: A GridWrapper object created from the data set.
+            GridBase: A GridBase object created from the data set.
         """
         pass
 
@@ -206,14 +206,14 @@ class DatasetWrapper(ABC):
         return self._dataset[variable_name]
 
     @abstractmethod
-    def get_variable(self, variable_name: str) -> VariableWrapper:
+    def get_variable(self, variable_name: str) -> VariableBase:
         """Get the variable with the specified name from the data set.
 
         Args:
             variable_name (str): The variable name.
 
         Returns:
-            VariableWrapper: The wrapper object for the variable.
+            VariableBase: The wrapper object for the variable.
 
         Raises:
             ValueError: When the dataset does not contain a variable with the name.

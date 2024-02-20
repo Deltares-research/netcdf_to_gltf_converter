@@ -6,9 +6,9 @@ import xugrid as xu
 
 from netcdf_to_gltf_converter.netcdf.ugrid.conventions import AttrKey, CfRoleAttrValue
 from netcdf_to_gltf_converter.netcdf.wrapper import (
-    DatasetWrapper,
-    GridWrapper,
-    VariableWrapper,
+    DatasetBase,
+    GridBase,
+    VariableBase,
 )
 
 
@@ -20,7 +20,7 @@ class Topology(str, Enum):
     faces = "face_coordinates"
 
 
-class Ugrid(GridWrapper):
+class Ugrid(GridBase):
     """Class that serves as a wrapper object for a xu.Ugrid2d object.
     The wrapper allows for easier retrieval of relevant data.
     """
@@ -69,13 +69,13 @@ class Ugrid(GridWrapper):
         return self._ugrid2d.fill_value
 
 
-class UgridVariable(VariableWrapper):
+class UgridVariable(VariableBase):
     """Class that serves as a wrapper object for an xarray.DataArray with UGrid conventions.
     The wrapper allows for easier retrieval of relevant data.
     """
 
 
-class UgridDataset(DatasetWrapper):
+class UgridDataset(DatasetBase):
     """Class that serves as a wrapper object for an xarray.Dataset with UGrid conventions.
     The wrapper allows for easier retrieval of relevant data.
     """

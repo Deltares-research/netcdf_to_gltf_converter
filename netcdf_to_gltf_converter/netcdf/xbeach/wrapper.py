@@ -1,10 +1,10 @@
 import numpy as np
 import xarray as xr
 
-from netcdf_to_gltf_converter.netcdf.wrapper import DatasetWrapper, GridWrapper, VariableWrapper, get_coordinate_variables
+from netcdf_to_gltf_converter.netcdf.wrapper import DatasetBase, GridBase, VariableBase, get_coordinate_variables
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
-class XBeachGrid(GridWrapper):
+class XBeachGrid(GridBase):
     
     def __init__(self, dataset: xr.Dataset):
         x_coord_var = get_coordinate_variables(dataset, "projection_x_coordinate")[0]
@@ -71,13 +71,13 @@ class XBeachGrid(GridWrapper):
         """
         return -1
     
-class XBeachVariable(VariableWrapper):
+class XBeachVariable(VariableBase):
     """Class that serves as a wrapper object for an xarray.DataArray with UGrid conventions.
     The wrapper allows for easier retrieval of relevant data.
     """
 
 
-class XBeachDataset(DatasetWrapper):
+class XBeachDataset(DatasetBase):
     """Class that serves as a wrapper object for an xarray.Dataset with UGrid conventions.
     The wrapper allows for easier retrieval of relevant data.
     """
