@@ -1,6 +1,6 @@
 from xugrid.ugrid.connectivity import triangulate as triangulate_grid
 
-from netcdf_to_gltf_converter.netcdf.wrapper import GridBase
+from netcdf_to_gltf_converter.netcdf.netcdf_data import GridBase
 
 
 def triangulate(grid: GridBase):

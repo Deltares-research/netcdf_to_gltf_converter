@@ -5,7 +5,7 @@ import xarray as xr
 import xugrid as xu
 
 from netcdf_to_gltf_converter.netcdf.ugrid.conventions import AttrKey, CfRoleAttrValue
-from netcdf_to_gltf_converter.netcdf.wrapper import (
+from netcdf_to_gltf_converter.netcdf.netcdf_data import (
     DatasetBase,
     GridBase,
     VariableBase,

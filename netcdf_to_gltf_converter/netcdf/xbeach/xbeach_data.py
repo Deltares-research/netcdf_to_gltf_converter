@@ -1,7 +1,7 @@
 import numpy as np
 import xarray as xr
 
-from netcdf_to_gltf_converter.netcdf.wrapper import DatasetBase, GridBase, VariableBase, get_coordinate_variables
+from netcdf_to_gltf_converter.netcdf.netcdf_data import DatasetBase, GridBase, VariableBase, get_coordinate_variables
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
 class XBeachGrid(GridBase):

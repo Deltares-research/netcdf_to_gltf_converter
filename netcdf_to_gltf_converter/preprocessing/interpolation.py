@@ -4,7 +4,7 @@ from enum import Enum
 import numpy as np
 from scipy import interpolate
 
-from netcdf_to_gltf_converter.netcdf.wrapper import GridBase
+from netcdf_to_gltf_converter.netcdf.netcdf_data import GridBase
 
 
 class Method(str, Enum):

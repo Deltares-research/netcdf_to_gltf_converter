@@ -3,7 +3,7 @@ from typing import List
 import numpy as np
 import xarray as xr
 
-from netcdf_to_gltf_converter.netcdf.wrapper import DatasetBase
+from netcdf_to_gltf_converter.netcdf.netcdf_data import DatasetBase
 
 xr.set_options(keep_attrs=True)
 """Attributes need to be preserved when creating a new DataArray with a transformation."""
