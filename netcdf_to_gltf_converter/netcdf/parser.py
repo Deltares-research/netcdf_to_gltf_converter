@@ -104,6 +104,10 @@ class Parser:
 
     @staticmethod
     def _transform_grid(config: Config, dataset: DatasetBase):
+        if config.crs_transformation:
+            dataset.transform_coordinate_system(config.crs_transformation.source_crs, 
+                                                config.crs_transformation.target_crs)
+        
         if config.shift_coordinates:
             shift(dataset)
 

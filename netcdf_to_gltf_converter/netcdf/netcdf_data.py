@@ -223,3 +223,12 @@ class DatasetBase(ABC):
     def _raise_if_not_in_dataset(self, name: str):
         if name not in self._dataset:
             raise ValueError(f"Variable with name {name} does not exist in dataset.")
+
+    @abstractmethod
+    def transform_coordinate_system(self, source_crs: int, target_crs: int):
+        """Transform the coordinates to another coordinate system.
+        Args:
+            source_crs (int): EPSG from the source coordinate system.
+            target_crs (int): EPSG from the target coordinate system.
+        """
+        pass

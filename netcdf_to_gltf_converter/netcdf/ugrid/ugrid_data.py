@@ -87,10 +87,22 @@ class UgridDataset(DatasetBase):
             dataset (xr.Dataset): The xarray Dataset.
         """
         super().__init__(dataset)
-
+        self._ugrid_data_set = xu.UgridDataset(dataset)
+        self._ugrid_data_set_accesor: xu.UgridDatasetAccessor = self._ugrid_data_set.ugrid
+        
         self.topology_2d = self._get_topology_2d()
         self._topologies = dataset.ugrid_roles.coordinates[self.topology_2d]
 
+    def transform_coordinate_system(self, source_crs: int, target_crs: int):
+        """Transform the coordinates to another coordinate system.
+        Args:
+            source_crs (int): EPSG from the source coordinate system.
+            target_crs (int): EPSG from the target coordinate system.
+
+        """
+        self._ugrid_data_set_accesor.set_crs(epsg=source_crs)
+        self._ugrid_data_set_accesor = self._ugrid_data_set_accesor.to_crs(epsg=target_crs)
+    
     @property
     def grid(self) -> Ugrid:
         """Get the Ugrid from the data set.
@@ -98,8 +110,9 @@ class UgridDataset(DatasetBase):
         Returns:
             Ugrid: A Ugrid created from the data set.
         """
-        ugrid2d = xu.Ugrid2d.from_dataset(self._dataset, self.topology_2d)
-        return Ugrid(ugrid2d)
+        for grid in self._ugrid_data_set_accesor.grids:
+            if isinstance(grid, xu.Ugrid2d):
+                return Ugrid(grid)
 
     @property
     def min_x(self) -> float:
