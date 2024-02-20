@@ -27,7 +27,7 @@ class TestConverter:
 
         assert str(error.value) == rf"Config file does not exist: {config}"
 
-    def test_run(self):
+    def test_run_dhydro(self):
         netcdf = dhydro_resources / "3x3nodes_rectilinear_map.nc"
         reference_gltf = reference_files / "3x3nodes_rectilinear_map.gltf"
         config = dhydro_resources / "config.json"
