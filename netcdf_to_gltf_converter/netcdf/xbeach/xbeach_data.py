@@ -5,8 +5,16 @@ from netcdf_to_gltf_converter.netcdf.wrapper import DatasetBase, GridBase, Varia
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
 class XBeachGrid(GridBase):
+    """Represents a grid from an XBEACH output file. 
+    XBEACH uses regular grids.
+    """
     
     def __init__(self, dataset: xr.Dataset):
+        """Initialize a new instance of the `XBeachGrid` class.
+
+        Args:
+            dataset (xr.Dataset): The dataset retrieved from the netCDF file.
+        """
         x_coord_var = get_coordinate_variables(dataset, "projection_x_coordinate")[0]
         y_coord_var = get_coordinate_variables(dataset, "projection_y_coordinate")[0]
         n_vertex_cols = len(x_coord_var.data[0])
@@ -72,7 +80,7 @@ class XBeachGrid(GridBase):
         return -1
     
 class XBeachVariable(VariableBase):
-    """Class that serves as a wrapper object for an xarray.DataArray with UGrid conventions.
+    """Class that serves as a wrapper object for an xarray.DataArray for XBEACH output.
     The wrapper allows for easier retrieval of relevant data.
     """
 

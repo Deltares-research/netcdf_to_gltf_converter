@@ -12,10 +12,6 @@ from netcdf_to_gltf_converter.utils.validation import in_range
 
 Color = List[float]
 
-class ModelType(StrEnum):
-    DHYDRO = "D-HYDRO"
-    XBEACH = "XBEACH"
-
 class BaseModel(PydanticBaseModel):
     """BaseModel defines the base for Pydantic model classes."""
 
@@ -94,6 +90,14 @@ class AbstractJsonConfigFile(BaseModel, ABC):
 
         return cls.parse_file(path)
 
+class ModelType(StrEnum):
+    """The model type of the input data."""
+    
+    DHYDRO = "D-HYDRO"
+    """Output from a D-HYDRO model (UGRID)."""
+    
+    XBEACH = "XBEACH"
+    """Output from an XBEACH model (regular grid)."""
 
 class Variable(BaseModel):
     """Configuration properties of a variable."""
