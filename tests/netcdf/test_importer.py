@@ -5,12 +5,12 @@ import pytest
 
 from netcdf_to_gltf_converter.config import Config, Variable
 from netcdf_to_gltf_converter.netcdf.importer import Importer
-from tests.utils import resources
+from tests.utils import dhydro_resources
 
 
 class TestImporter:
     def test_import_from(self):
-        file_path = resources / "3x3nodes_rectilinear_map.nc"
+        file_path = dhydro_resources / "3x3nodes_rectilinear_map.nc"
 
         variable = Variable(
             name="Mesh2d_waterdepth",
