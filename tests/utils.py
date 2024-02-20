@@ -5,6 +5,7 @@ from tempfile import TemporaryDirectory
 from typing import Generator
 
 resources = Path("tests") / "resources"
+dhydro_resources = resources / "d-hydro"
 reference_files = resources / "reference"
 
 

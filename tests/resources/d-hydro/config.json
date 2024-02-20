@@ -1,4 +1,5 @@
 {
+	"model_type": "D-HYDRO",
 	"file_version": "0.1.0",
 	"time_index_start":0,
 	"times_per_frame":1,

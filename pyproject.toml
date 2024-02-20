@@ -18,6 +18,7 @@ scipy = "^1.10.1"
 xugrid = "^0.3.0"
 geopandas = "^0.12.2"
 pydantic = "^1.10.7"
+strenum = "^0.4.15"
 
 
 [tool.poetry.group.dev.dependencies]

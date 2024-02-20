@@ -23,6 +23,7 @@ class TestImporter:
         )
 
         config = Config(
+            model_type="D-HYDRO",
             time_index_start=0,
             times_per_frame=1,
             shift_coordinates=True,
@@ -90,6 +91,7 @@ class TestImporter:
     def test_import_from_netcdf_does_not_exist_raises_error(self):
         netcdf = Path("path/to/file.netcdf")
         config = Config(
+            model_type="D-HYDRO",
             time_index_start=0,
             times_per_frame=1,
             shift_coordinates=True,
