@@ -5,7 +5,7 @@ import xarray as xr
 
 from netcdf_to_gltf_converter.config import Config, ModelType, Variable
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
-from netcdf_to_gltf_converter.netcdf.ugrid.wrapper import UgridDataset
+from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import UgridDataset
 from netcdf_to_gltf_converter.netcdf.xbeach.wrapper import XBeachDataset
 from netcdf_to_gltf_converter.netcdf.wrapper import (
     DatasetBase,
