@@ -216,7 +216,7 @@ class TestGLTFBuilder:
             "asset": {
                 "extensions": {},
                 "extras": {},
-                "generator": "pygltflib@v1.15.5",
+                "generator": "pygltflib@v1.16.1",
                 "copyright": None,
                 "version": "2.0",
                 "minVersion": None,
