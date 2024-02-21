@@ -3,6 +3,7 @@ import numpy as np
 import xarray as xr
 
 from netcdf_to_gltf_converter.netcdf.netcdf_data import DatasetBase, VariableBase, get_coordinate_variables
+from netcdf_to_gltf_converter.netcdf.xbeach import connectivity
 from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
 from xugrid.ugrid.conventions import X_STANDARD_NAMES, Y_STANDARD_NAMES
@@ -23,28 +24,9 @@ class XBeachGrid():
         n_vertex_cols = len(x_coord_var.data[0])
         n_vertex_rows = len(x_coord_var.data)
         
-        node_index = 0
-        
-        squares = []
-        
-        # TODO check if this can be improved
-        for _ in range(n_vertex_rows - 1):
-            for _ in range(n_vertex_cols - 1):               
-                square = [node_index, 
-                          node_index + 1,
-                          node_index + n_vertex_cols + 1, 
-                          node_index + n_vertex_cols, 
-                          ]
-                squares.append(square)
-                
-                node_index += 1
-            
-            node_index += 1
-    
-        face_node_connectivity = uint32_array(squares)
         self.node_x = x_coord_var.values.flatten()
         self.node_y = y_coord_var.values.flatten()
-        self.face_node_connectivity = face_node_connectivity
+        self.face_node_connectivity = connectivity.face_node_connectivity_from_regular(n_vertex_rows, n_vertex_cols)
 
     @property
     def node_coordinates(self) -> np.ndarray:
