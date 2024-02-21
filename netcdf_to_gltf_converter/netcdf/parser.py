@@ -9,7 +9,6 @@ from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import UgridDataset
 from netcdf_to_gltf_converter.netcdf.xbeach.xbeach_data import XBeachDataset
 from netcdf_to_gltf_converter.netcdf.netcdf_data import (
     DatasetBase,
-    GridBase,
     VariableBase,
 )
 from netcdf_to_gltf_converter.preprocessing.interpolation import (
@@ -43,13 +42,12 @@ class Parser:
         
         Parser._transform_grid(config, dataset)
 
-        grid = dataset.grid
-        triangulate(grid)
+        dataset.triangulate()
 
         triangular_meshes = []
 
         for variable in config.variables:
-            data_mesh = self._parse_variable(variable, grid, dataset, config)
+            data_mesh = self._parse_variable(variable, dataset, config)
             triangular_meshes.append(data_mesh)
 
             if variable.use_threshold:
@@ -64,19 +62,18 @@ class Parser:
     def _parse_variable(
         self,
         variable: Variable,
-        grid: GridBase,
-        ugrid_dataset: DatasetBase,
+        dataset: DatasetBase,
         config: Config,
     ):
-        data = ugrid_dataset.get_variable(variable.name)
-        interpolated_data = self._interpolate(data, config.time_index_start, grid)
+        data = dataset.get_variable(variable.name)
+        interpolated_data = self._interpolate(data, config.time_index_start, dataset)
 
         base = MeshAttributes(interpolated_data, variable.color)
-        triangles = uint32_array(grid.face_node_connectivity)
+        triangles = uint32_array(dataset.face_node_connectivity)
         transformations = []
 
         for time_index in Parser._get_time_indices(data.time_index_max, config):
-            interpolated_data = self._interpolate(data, time_index, grid)
+            interpolated_data = self._interpolate(data, time_index, dataset)
             vertex_displacements = Parser.calculate_displacements(
                 interpolated_data, base
             )
@@ -109,14 +106,14 @@ class Parser:
                                                 config.crs_transformation.target_crs)
         
         if config.shift_coordinates:
-            shift(dataset)
-
+            dataset.shift_coordinates(dataset.min_x, dataset.min_y)
+  
         variables = [var.name for var in config.variables]
-        scale(dataset, variables, config.scale_horizontal, config.scale_vertical)
+        dataset.scale_coordinates(config.scale_horizontal, config.scale_vertical, variables)
 
-    def _interpolate(self, data: VariableBase, time_index: int, grid: GridBase):
+    def _interpolate(self, data: VariableBase, time_index: int, dataset: DatasetBase):
         return self._interpolator.interpolate(
-            data.coordinates, data.get_data_at_time(time_index), grid
+            data.coordinates, data.get_data_at_time(time_index), dataset
         )
 
     @staticmethod

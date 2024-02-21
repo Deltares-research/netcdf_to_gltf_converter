@@ -1,12 +1,12 @@
 import numpy as np
 import xugrid as xu
 
-from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import Ugrid
+from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import UgridDataset
 
 
 class Factory:
     @staticmethod
-    def create_rectilinear_grid() -> Ugrid:
+    def create_rectilinear_grid() -> UgridDataset:
         """Create a rectilinear grid with 3x3 nodes.
 
         5--6--7
@@ -24,5 +24,6 @@ class Factory:
             [[0, 1, 4, 3], [1, 2, 5, 4], [3, 4, 7, 6], [4, 5, 8, 7]]
         )
 
+
         ugrid2d = xu.Ugrid2d(node_x, node_y, fill_value, face_node_connectivity)
-        return Ugrid(ugrid2d)
+        return UgridDataset(ugrid2d.to_dataset())
