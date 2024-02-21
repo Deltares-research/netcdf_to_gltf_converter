@@ -110,9 +110,8 @@ class UgridDataset(DatasetBase):
         Returns:
             Ugrid: A Ugrid created from the data set.
         """
-        for grid in self._ugrid_data_set_accesor.grids:
-            if isinstance(grid, xu.Ugrid2d):
-                return Ugrid(grid)
+        ugrid2d = xu.Ugrid2d.from_dataset(self._dataset, self.topology_2d)
+        return Ugrid(ugrid2d)
 
     @property
     def min_x(self) -> float:
