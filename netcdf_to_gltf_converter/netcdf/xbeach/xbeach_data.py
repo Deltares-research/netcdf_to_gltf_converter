@@ -140,3 +140,12 @@ class XBeachDataset(DatasetBase):
         """
         data = self.get_array(variable_name)
         return XBeachVariable(data)
+    
+    def transform_coordinate_system(self, source_crs: int, target_crs: int):
+        """Transform the coordinates to another coordinate system.
+        Args:
+            source_crs (int): EPSG from the source coordinate system.
+            target_crs (int): EPSG from the target coordinate system.
+
+        """
+        pass
