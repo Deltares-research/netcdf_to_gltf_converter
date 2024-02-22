@@ -1,4 +1,5 @@
 import numpy as np
+from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import UgridDataset
 
 from netcdf_to_gltf_converter.preprocessing.interpolation import (
     LinearInterpolator,
@@ -16,8 +17,9 @@ class TestNearestPointInterpolator:
         )
         data_values = float32_array([1, 2, 3, 4])
         grid = Factory.create_rectilinear_grid()
+        dataset = UgridDataset(grid.to_dataset())
 
-        interpolated_values = interpolator.interpolate(data_coords, data_values, grid)
+        interpolated_values = interpolator.interpolate(data_coords, data_values, dataset)
 
         exp_interpolated_values = float32_array(
             [
@@ -42,8 +44,9 @@ class TestLinearInterpolator:
         data_coords = float32_array([[1.0, 0.5], [2.0, 1.0], [1.0, 2.0], [0.5, 1.0]])
         data_values = float32_array([1, 2, 3, 4])
         grid = Factory.create_rectilinear_grid()
+        dataset = UgridDataset(grid.to_dataset())
 
-        interpolated_values = interpolator.interpolate(data_coords, data_values, grid)
+        interpolated_values = interpolator.interpolate(data_coords, data_values, dataset)
 
         exp_interpolated_values = float32_array(
             [

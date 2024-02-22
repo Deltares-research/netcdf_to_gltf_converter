@@ -6,7 +6,7 @@ import netcdf_to_gltf_converter.preprocessing.connectivity as connectivity
 
 class Factory:
     @staticmethod
-    def create_rectilinear_grid() -> UgridDataset:
+    def create_rectilinear_grid() -> xu.Ugrid2d:
         """Create a rectilinear grid with 3x3 nodes.
 
         5--6--7
@@ -22,6 +22,4 @@ class Factory:
         fill_value = -1
         face_node_connectivity = connectivity.face_node_connectivity_from_regular(3, 3)
 
-
-        ugrid2d = xu.Ugrid2d(node_x, node_y, fill_value, face_node_connectivity)
-        return UgridDataset(ugrid2d.to_dataset())
+        return xu.Ugrid2d(node_x, node_y, fill_value, face_node_connectivity)

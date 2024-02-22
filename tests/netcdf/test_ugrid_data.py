@@ -1,15 +1,19 @@
 import numpy as np
+import xarray as xr
+from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import UgridDataset
 from tests.preprocessing.utils import Factory
 
 
 class TestUgridDataset:
     def test_triangulate(self):
         grid = Factory.create_rectilinear_grid()
-        exp_node_coords = grid.node_coordinates.copy()
+        dataset = UgridDataset(grid.to_dataset())
+        
+        exp_node_coords = dataset.node_coordinates.copy()
     
-        grid.triangulate()
+        dataset.triangulate()
     
-        assert np.array_equal(grid.node_coordinates, exp_node_coords)
+        assert np.array_equal(dataset.node_coordinates, exp_node_coords)
         exp_face_node_connectivity = np.array(
             [
                 [0, 1, 4],
@@ -22,4 +26,4 @@ class TestUgridDataset:
                 [4, 8, 7],
             ]
         )
-        assert np.array_equal(grid.face_node_connectivity, exp_face_node_connectivity)
+        assert np.array_equal(dataset.face_node_connectivity, exp_face_node_connectivity)
