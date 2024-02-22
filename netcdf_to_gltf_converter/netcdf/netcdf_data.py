@@ -3,9 +3,9 @@ from typing import List
 
 import numpy as np
 import xarray as xr
-
 import xugrid.ugrid.connectivity as connectivity
 from xugrid.ugrid.conventions import X_STANDARD_NAMES, Y_STANDARD_NAMES
+
 
 def get_coordinate_variables(data, standard_names: tuple) -> List[xr.DataArray]:
     coord_vars = []

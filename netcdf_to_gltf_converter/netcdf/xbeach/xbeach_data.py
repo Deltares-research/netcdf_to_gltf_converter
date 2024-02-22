@@ -1,11 +1,15 @@
 from typing import List
+
 import numpy as np
 import xarray as xr
-
-from netcdf_to_gltf_converter.netcdf.netcdf_data import DatasetBase, get_coordinate_variables
-from netcdf_to_gltf_converter.netcdf.xbeach import connectivity
-
 from xugrid.ugrid.conventions import X_STANDARD_NAMES, Y_STANDARD_NAMES
+
+from netcdf_to_gltf_converter.netcdf.netcdf_data import (
+    DatasetBase, get_coordinate_variables)
+from netcdf_to_gltf_converter.preprocessing import connectivity
+
+xr.set_options(keep_attrs=True)
+"""Attributes need to be preserved when creating a new DataArray with a transformation."""
 
 class XBeachGrid():
     """Represents a grid from an XBEACH output file. 

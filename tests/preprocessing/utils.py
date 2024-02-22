@@ -2,7 +2,7 @@ import numpy as np
 import xugrid as xu
 
 from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import UgridDataset
-import netcdf_to_gltf_converter.netcdf.xbeach.connectivity as connectivity
+import netcdf_to_gltf_converter.preprocessing.connectivity as connectivity
 
 class Factory:
     @staticmethod

@@ -6,6 +6,7 @@ import xugrid as xu
 
 from netcdf_to_gltf_converter.netcdf.netcdf_data import DatasetBase
 
+
 class UgridDataset(DatasetBase):
     """Class that serves as a wrapper object for an xarray.Dataset with UGrid conventions.
     The wrapper allows for easier retrieval of relevant data.
