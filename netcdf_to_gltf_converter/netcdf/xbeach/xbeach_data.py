@@ -11,13 +11,13 @@ from netcdf_to_gltf_converter.preprocessing import connectivity
 xr.set_options(keep_attrs=True)
 """Attributes need to be preserved when creating a new DataArray with a transformation."""
 
-class XBeachGrid():
+class RegularGrid():
     """Represents a grid from an XBEACH output file. 
     XBEACH uses regular grids.
     """
     
     def __init__(self, dataset: xr.Dataset):
-        """Initialize a new instance of the `XBeachGrid` class.
+        """Initialize a new instance of the `RegularGrid` class.
 
         Args:
             dataset (xr.Dataset): The dataset retrieved from the netCDF file.
@@ -53,7 +53,7 @@ class XBeachDataset(DatasetBase):
         """
         dataset = dataset.fillna(0) # TODO check what to do with nan values.
         self._dataset = dataset
-        self._grid = XBeachGrid(dataset)
+        self._grid = RegularGrid(dataset)
         
     @property
     def min_x(self) -> float:
@@ -62,7 +62,7 @@ class XBeachDataset(DatasetBase):
         Returns:
             float: A floating value with the smallest x-coordinate.
         """
-        return self._x_coord_vars[0].values.min()
+        return self._grid.node_x.min()
 
     @property
     def min_y(self) -> float:
@@ -71,7 +71,7 @@ class XBeachDataset(DatasetBase):
         Returns:
             float: A floating value with the smallest y-coordinate.
         """
-        return self._y_coord_vars[0].values.min()
+        return self._grid.node_y.min()
     
     def transform_coordinate_system(self, source_crs: int, target_crs: int):
         """Transform the coordinates to another coordinate system.
@@ -140,7 +140,7 @@ class XBeachDataset(DatasetBase):
         self._update()
 
     def _update(self):
-        self._grid = XBeachGrid(self._dataset)
+        self._grid = RegularGrid(self._dataset)
         
     def _shift(self, variable: xr.DataArray, shift: float):
         shifted_coords_var = variable - shift
