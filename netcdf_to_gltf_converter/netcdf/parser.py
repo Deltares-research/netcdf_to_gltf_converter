@@ -97,8 +97,8 @@ class Parser:
     @staticmethod
     def _transform_grid(config: Config, dataset: DatasetBase):
         if config.crs_transformation:
-            dataset.transform_coordinate_system(config.crs_transformation.source_crs, 
-                                                config.crs_transformation.target_crs)
+            dataset.transform_coordinate_system(config.crs_transformation.source_epsg, 
+                                                config.crs_transformation.target_epsg)
         
         if config.shift_coordinates:
             dataset.shift_coordinates(dataset.min_x, dataset.min_y)

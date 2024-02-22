@@ -102,10 +102,10 @@ class ModelType(StrEnum):
 class CrsTransformation(BaseModel):
     """The configuration settings for transforming the coordinates."""
 
-    source_crs: int
+    source_epsg: int
     """int: EPSG code of the course coordinate system."""
 
-    target_crs: int
+    target_epsg: int
     """int: EPSG code of the target coordinate system."""
 
 class Variable(BaseModel):
