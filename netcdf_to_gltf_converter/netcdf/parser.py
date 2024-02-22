@@ -23,17 +23,17 @@ class Parser:
 
         self._interpolator = NearestPointInterpolator()
 
-    def parse(self, dataset: xr.Dataset, config: Config) -> List[TriangularMesh]:
-        """Parse the provided data set to a list of TriangularMeshes.
+    def parse(self, netcdf_dataset: xr.Dataset, config: Config) -> List[TriangularMesh]:
+        """Parse the provided data set to a list of TriangularMeshes as input for building the glTF data.
 
         Args:
-            dataset (xr.Dataset): The NetCDF dataset.
+            netcdf_dataset (xr.Dataset): The NetCDF dataset.
             config (Config): The converter configuration.
         """
         if config.model_type == ModelType.DHYDRO:
-            dataset = UgridDataset(dataset)
+            dataset = UgridDataset(netcdf_dataset)
         elif config.model_type == ModelType.XBEACH:
-            dataset = XBeachDataset(dataset)
+            dataset = XBeachDataset(netcdf_dataset)
         
         Parser._transform_grid(config, dataset)
 
