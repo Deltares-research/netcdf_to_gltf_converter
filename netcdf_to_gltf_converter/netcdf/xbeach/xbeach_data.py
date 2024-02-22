@@ -2,9 +2,8 @@ from typing import List
 import numpy as np
 import xarray as xr
 
-from netcdf_to_gltf_converter.netcdf.netcdf_data import DatasetBase, VariableBase, get_coordinate_variables
+from netcdf_to_gltf_converter.netcdf.netcdf_data import DatasetBase, get_coordinate_variables
 from netcdf_to_gltf_converter.netcdf.xbeach import connectivity
-from netcdf_to_gltf_converter.utils.arrays import uint32_array
 
 from xugrid.ugrid.conventions import X_STANDARD_NAMES, Y_STANDARD_NAMES
 
@@ -36,12 +35,6 @@ class XBeachGrid():
             np.ndarray: An ndarray of floats with shape (n, 2). Each row represents one node and contains the x- and y-coordinate.
         """
         return np.column_stack([self.node_x, self.node_y])
-    
-class XBeachVariable(VariableBase):
-    """Class that serves as a wrapper object for an xarray.DataArray for XBEACH output.
-    The wrapper allows for easier retrieval of relevant data.
-    """
-
 
 class XBeachDataset(DatasetBase):
     """Class that serves as a wrapper object for an xarray.Dataset with UGrid conventions.
@@ -75,30 +68,18 @@ class XBeachDataset(DatasetBase):
             float: A floating value with the smallest y-coordinate.
         """
         return self._y_coord_vars[0].values.min()
-
-    def get_variable(self, variable_name: str) -> XBeachVariable:
-        """Get the variable with the specified name from the data set.
-
-        Args:
-            variable_name (str): The variable name.
-
-        Returns:
-            UgridVariable: A UgridVariable.
-
-        Raises:
-            ValueError: When the dataset does not contain a variable with the name.
-        """
-        data = self.get_array(variable_name)
-        return XBeachVariable(data)
     
     def transform_coordinate_system(self, source_crs: int, target_crs: int):
         """Transform the coordinates to another coordinate system.
+        
         Args:
             source_crs (int): EPSG from the source coordinate system.
             target_crs (int): EPSG from the target coordinate system.
 
+        Raises:
+            NotImplementedError: Thrown because coordinate system transformation is not yet suupport for regular grids.
         """
-        pass
+        raise NotImplementedError("Coordinate system transformation is not yet suupport for regular grids.")
 
     @property
     def face_node_connectivity(self) -> np.ndarray:

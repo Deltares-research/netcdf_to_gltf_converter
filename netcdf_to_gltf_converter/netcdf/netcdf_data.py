@@ -20,13 +20,13 @@ def get_coordinate_variables(data, standard_names: tuple) -> List[xr.DataArray]:
 
 
 
-class VariableBase(ABC):
+class DataVariable():
     """Class that serves as a wrapper object for an xarray.DataArray.
     The wrapper allows for easier retrieval of relevant data.
     """
 
     def __init__(self, data: xr.DataArray) -> None:
-        """Initialize a VariableBase with the specified data.
+        """Initialize a DataVariable with the specified data.
 
         Args:
             data (xr.DataArray): The variable data.
@@ -130,20 +130,20 @@ class DatasetBase(ABC):
         self._raise_if_not_in_dataset(variable_name)
         return self._dataset[variable_name]
 
-    @abstractmethod
-    def get_variable(self, variable_name: str) -> VariableBase:
+    def get_variable(self, variable_name: str) -> DataVariable:
         """Get the variable with the specified name from the data set.
 
         Args:
             variable_name (str): The variable name.
 
         Returns:
-            VariableBase: The wrapper object for the variable.
+            DataVariable: The wrapper object for the variable.
 
         Raises:
             ValueError: When the dataset does not contain a variable with the name.
         """
-        pass
+        data = self.get_array(variable_name)
+        return DataVariable(data)
 
     def _raise_if_not_in_dataset(self, name: str):
         if name not in self._dataset:

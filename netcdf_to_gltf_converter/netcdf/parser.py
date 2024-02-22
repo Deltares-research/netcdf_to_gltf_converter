@@ -9,7 +9,7 @@ from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import UgridDataset
 from netcdf_to_gltf_converter.netcdf.xbeach.xbeach_data import XBeachDataset
 from netcdf_to_gltf_converter.netcdf.netcdf_data import (
     DatasetBase,
-    VariableBase,
+    DataVariable,
 )
 from netcdf_to_gltf_converter.preprocessing.interpolation import (
     NearestPointInterpolator,
@@ -111,7 +111,7 @@ class Parser:
         variables = [var.name for var in config.variables]
         dataset.scale_coordinates(config.scale_horizontal, config.scale_vertical, variables)
 
-    def _interpolate(self, data: VariableBase, time_index: int, dataset: DatasetBase):
+    def _interpolate(self, data: DataVariable, time_index: int, dataset: DatasetBase):
         return self._interpolator.interpolate(
             data.coordinates, data.get_data_at_time(time_index), dataset
         )

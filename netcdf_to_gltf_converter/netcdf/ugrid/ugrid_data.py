@@ -4,16 +4,7 @@ import numpy as np
 import xarray as xr
 import xugrid as xu
 
-from netcdf_to_gltf_converter.netcdf.netcdf_data import (
-    DatasetBase,
-    VariableBase,
-)
-
-class UgridVariable(VariableBase):
-    """Class that serves as a wrapper object for an xarray.DataArray with UGrid conventions.
-    The wrapper allows for easier retrieval of relevant data.
-    """
-
+from netcdf_to_gltf_converter.netcdf.netcdf_data import DatasetBase
 
 class UgridDataset(DatasetBase):
     """Class that serves as a wrapper object for an xarray.Dataset with UGrid conventions.
@@ -49,21 +40,6 @@ class UgridDataset(DatasetBase):
         """
         _, min_y, _,_ = self._grid.bounds
         return min_y
-
-    def get_variable(self, variable_name: str) -> UgridVariable:
-        """Get the variable with the specified name from the data set.
-
-        Args:
-            variable_name (str): The variable name.
-
-        Returns:
-            UgridVariable: A UgridVariable.
-
-        Raises:
-            ValueError: When the dataset does not contain a variable with the name.
-        """
-        data = self.get_array(variable_name)
-        return UgridVariable(data)
 
     def _get_ugrid2d(self) -> xu.Ugrid2d:
         for grid in self._ugrid_data_set.grids:
