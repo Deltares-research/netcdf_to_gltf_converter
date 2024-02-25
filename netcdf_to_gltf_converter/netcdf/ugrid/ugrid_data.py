@@ -84,27 +84,6 @@ class UgridDataset(DatasetBase):
             int: Integer with the fill value.
         """
         return self._grid.fill_value
-    
-    def transform_coordinate_system(self, source_epsg: int, target_epsg: int):
-        """Transform the coordinates to another coordinate system.
-        Args:
-            source_epsg (int): EPSG from the source coordinate system.
-            target_epsg (int): EPSG from the target coordinate system.
-
-        """
-        source_epsg = pyproj.CRS.from_epsg(source_epsg)
-        target_epsg = pyproj.CRS.from_epsg(target_epsg)
-                                          
-        transformer = pyproj.Transformer.from_crs(
-            crs_from=source_epsg, crs_to=target_epsg, always_xy=True
-        )
-        
-        node_x2, node_y2 = transformer.transform(self._grid.node_x, self._grid.node_y)
-        
-        self._grid.node_x = node_x2
-        self._grid.node_y = node_y2
-        
-        self._update()
         
     def shift_coordinates(self, shift_x: float, shift_y: float) -> None:
         """
