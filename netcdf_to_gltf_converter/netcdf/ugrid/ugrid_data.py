@@ -106,8 +106,8 @@ class UgridDataset(DatasetBase):
                 # Transform all z-coordinates for each xy-coordinate.
                 # Per time step, each xy-coordinate has one correponding z-coordinate.                
                 z_coordinates = variable.get_values_at_coordinate(coord_index)
-                x_coordinates = np.full(z_coordinates.size, variable.coordinates[coord_index, 0])
-                y_coordinates = np.full(z_coordinates.size, variable.coordinates[coord_index, 1])
+                x_coordinates = np.full(z_coordinates.size, variable.x_coords[coord_index])
+                y_coordinates = np.full(z_coordinates.size, variable.y_coords[coord_index])
                 
                 _, _, z_coords_transformed = transformer.transform(x_coordinates, y_coordinates, z_coordinates)
                 variable.set_values_at_coordinate(coord_index, z_coords_transformed)            

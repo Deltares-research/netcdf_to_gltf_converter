@@ -37,18 +37,31 @@ class DataVariable():
         self._y_coords_var = get_coordinate_variables(data, Y_STANDARD_NAMES)[0]
 
     @property
+    def x_coords(self) -> np.ndarray:
+        """Get the x-coordinates for this data variable.
+
+        Returns:
+            np.ndarray: A 1D np.ndarray of floats with shape (n, 1) where each row contains an x-coordinate.
+        """
+        return self._x_coords_var.values.flatten()
+    
+    @property
+    def y_coords(self) -> np.ndarray:
+        """Get the y-coordinates for this data variable.
+
+        Returns:
+            np.ndarray: A 1D np.ndarray of floats with shape (n, 1) where each row contains a y-coordinate.
+        """
+        return self._y_coords_var.values.flatten()
+    
+    @property
     def coordinates(self) -> np.ndarray:
         """Get the coordinates for this data variable.
 
         Returns:
             np.ndarray: A 2D np.ndarray of floats with shape (n, 2) where each row contains a x and y coordinate.
         """
-        def get_coordinates(standard_names: tuple):
-            return get_coordinate_variables(self._data_array, standard_names)[0].values.flatten()
-
-        x_coords = get_coordinates(X_STANDARD_NAMES)
-        y_coords = get_coordinates(Y_STANDARD_NAMES)
-        return np.column_stack([x_coords, y_coords])
+        return np.column_stack([self.x_coords, self.y_coords])
 
     @property
     def time_index_max(self) -> int:
