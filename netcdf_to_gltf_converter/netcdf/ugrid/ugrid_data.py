@@ -2,6 +2,7 @@ from typing import List
 
 import numpy as np
 import pyproj
+import pyproj.network
 import xarray as xr
 import xugrid as xu
 
@@ -93,6 +94,8 @@ class UgridDataset(DatasetBase):
             variables (List[str]): The names of the variables for which to transform the values.
 
         """
+        pyproj.network.set_network_enabled(True)
+        
         source_epsg = pyproj.CRS.from_epsg(source_epsg)
         target_epsg = pyproj.CRS.from_epsg(target_epsg)
                                           
