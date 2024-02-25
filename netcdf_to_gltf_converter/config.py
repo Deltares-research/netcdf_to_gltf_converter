@@ -99,6 +99,15 @@ class ModelType(StrEnum):
     XBEACH = "XBEACH"
     """Output from an XBEACH model (regular grid)."""
 
+class CrsTransformation(BaseModel):
+    """The configuration settings for transforming the coordinates."""
+
+    source_epsg: int
+    """int: EPSG code of the course coordinate system."""
+
+    target_epsg: int
+    """int: EPSG code of the target coordinate system."""
+
 class Variable(BaseModel):
     """Configuration properties of a variable."""
 
@@ -175,7 +184,7 @@ class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
     """int: The time index the animation should start with."""
 
     time_index_end: Optional[int]
-    """Optional[int]: The time index the animation should end with."""
+    """Optional[int]: The time index the animation should end with. Will default to the index of the last time step of the model."""
 
     times_per_frame: int
     """int: The number of time steps per animation frame."""
@@ -191,3 +200,6 @@ class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
 
     variables: List[Variable]
     """List[Variable]: List of configuration of the variables that should be converted to glTF."""
+
+    crs_transformation: Optional[CrsTransformation]
+    """Optional[CrsTransformation]: The configuration settings for transforming the coordinates to  different coordinate system."""
