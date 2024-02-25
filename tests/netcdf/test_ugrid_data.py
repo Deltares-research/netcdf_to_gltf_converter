@@ -72,3 +72,43 @@ class TestUgridDataset:
         exp_values = np.array([3, 6, 9, 12, 15, 18, 21, 24, 27])
         
         assert np.array_equal(ugrid_dataset.get_array(var_name).values, exp_values)
+
+    def test_transform_coordinate_system(self):
+        grid = Factory.create_rectilinear_grid()
+        dataset = UgridDataset(grid.to_dataset())
+
+        dataset.transform_coordinate_system(source_epsg=4979, target_epsg=7415)
+
+        exp_node_x = np.array(
+            [
+                -587775.11645603,
+                -449866.85623502,
+                -311984.18707728,
+                -581430.05137045,
+                -444702.75413226,
+                -307999.0489697,
+                -575054.4667796,
+                -439513.76262615,
+                -303994.67286041,
+            ]
+        )
+        exp_node_y = np.array(
+            [
+                -5732212.49496843,
+                -5737991.47895893,
+                -5742585.47633704,
+                -5595789.69693185,
+                -5601595.8740271,
+                -5606211.5285803,
+                -5460502.25001088,
+                -5466333.42660892,
+                -5470968.99507455,
+            ]
+        )
+        exp_node_coords = np.column_stack([exp_node_x, exp_node_y])
+        exp_face_node_connectivity = dataset.face_node_connectivity.copy()
+
+        assert np.allclose(dataset.node_coordinates, exp_node_coords)
+        assert np.array_equal(
+            dataset.face_node_connectivity, exp_face_node_connectivity
+        )
