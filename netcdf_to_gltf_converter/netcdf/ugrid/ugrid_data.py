@@ -96,12 +96,7 @@ class UgridDataset(DatasetBase):
         """
         pyproj.network.set_network_enabled(True)
         
-        source_epsg = pyproj.CRS.from_epsg(source_epsg)
-        target_epsg = pyproj.CRS.from_epsg(target_epsg)
-                                          
-        transformer = pyproj.Transformer.from_crs(
-            crs_from=source_epsg, crs_to=target_epsg, always_xy=True
-        )
+        transformer = UgridDataset._create_crs_transformer(source_epsg, target_epsg)
         
         node_x2, node_y2 = transformer.transform(self._grid.node_x, self._grid.node_y)
         
@@ -109,6 +104,16 @@ class UgridDataset(DatasetBase):
         self._grid.node_y = node_y2
         
         self._update()
+        
+    def _create_crs_transformer(source_epsg, target_epsg):
+        source_crs = pyproj.CRS.from_epsg(source_epsg)
+        target_crs = pyproj.CRS.from_epsg(target_epsg)
+        
+        transformer = pyproj.Transformer.from_crs(
+            crs_from=source_crs, crs_to=target_crs, always_xy=True
+        )
+        
+        return transformer
         
     def shift_coordinates(self, shift_x: float, shift_y: float) -> None:
         """
