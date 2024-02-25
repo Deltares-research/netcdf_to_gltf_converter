@@ -95,11 +95,7 @@ class Parser:
         return inclusive_range(start, end, config.times_per_frame)
 
     @staticmethod
-    def _transform_grid(config: Config, dataset: DatasetBase):
-        if config.crs_transformation:
-            dataset.transform_coordinate_system(config.crs_transformation.source_epsg, 
-                                                config.crs_transformation.target_epsg)
-        
+    def _transform_grid(config: Config, dataset: DatasetBase):       
         if config.shift_coordinates:
             dataset.shift_coordinates(dataset.min_x, dataset.min_y)
   
