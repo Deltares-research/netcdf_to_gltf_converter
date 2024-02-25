@@ -96,14 +96,15 @@ class Parser:
 
     @staticmethod
     def _transform_grid(config: Config, dataset: DatasetBase):
+        variables = [var.name for var in config.variables]
         if config.crs_transformation:
             dataset.transform_coordinate_system(config.crs_transformation.source_epsg, 
-                                                config.crs_transformation.target_epsg)
+                                                config.crs_transformation.target_epsg,
+                                                variables)
         
         if config.shift_coordinates:
             dataset.shift_coordinates(dataset.min_x, dataset.min_y)
-  
-        variables = [var.name for var in config.variables]
+
         dataset.scale_coordinates(config.scale_horizontal, config.scale_vertical, variables)
 
     def _interpolate(self, data: DataVariable, time_index: int, dataset: DatasetBase) -> np.ndarray:

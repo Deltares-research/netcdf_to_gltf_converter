@@ -85,11 +85,12 @@ class UgridDataset(DatasetBase):
         """
         return self._grid.fill_value
     
-    def transform_coordinate_system(self, source_epsg: int, target_epsg: int):
+    def transform_coordinate_system(self, source_epsg: int, target_epsg: int, variables: List[str]):
         """Transform the coordinates to another coordinate system.
         Args:
             source_epsg (int): EPSG from the source coordinate system.
             target_epsg (int): EPSG from the target coordinate system.
+            variables (List[str]): The names of the variables for which to transform the values.
 
         """
         source_epsg = pyproj.CRS.from_epsg(source_epsg)
