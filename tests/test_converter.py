@@ -37,3 +37,14 @@ class TestConverter:
             converter.run()
 
             assert_files_equal(gltf, reference_gltf)
+
+    def test_run_westerschelde(self):
+        netcdf = dhydro_resources / "westerschelde_map.nc"
+        reference_gltf = reference_files / "westerschelde.gltf"
+        config = dhydro_resources / "westerschelde_config.json"
+
+        with get_temp_file(reference_gltf.name) as gltf:
+            converter = Converter(netcdf, gltf, config)
+            converter.run()
+
+            assert_files_equal(gltf, reference_gltf)   
