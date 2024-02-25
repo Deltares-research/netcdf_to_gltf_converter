@@ -98,10 +98,24 @@ class UgridDataset(DatasetBase):
         
         transformer = UgridDataset._create_crs_transformer(source_epsg, target_epsg)
         
-        node_x2, node_y2 = transformer.transform(self._grid.node_x, self._grid.node_y)
+        # Transform all the z-coordinates for the selected variables.
+        for variable_name in variables:
+            variable = self.get_variable(variable_name)
+            
+            for coord_index in range(0, len(variable.coordinates)):
+                # Transform all z-coordinates for each xy-coordinate.
+                # Per time step, each xy-coordinate has one correponding z-coordinate.                
+                z_coordinates = variable.get_values_at_coordinate(coord_index)
+                x_coordinates = np.full(z_coordinates.size, variable.coordinates[coord_index, 0])
+                y_coordinates = np.full(z_coordinates.size, variable.coordinates[coord_index, 1])
+                
+                _, _, z_coords_transformed = transformer.transform(x_coordinates, y_coordinates, z_coordinates)
+                variable.set_values_at_coordinate(coord_index, z_coords_transformed)            
         
-        self._grid.node_x = node_x2
-        self._grid.node_y = node_y2
+        # Transform all xy-coordinates to new crs.
+        node_x_transformed, node_y_transformed = transformer.transform(self._grid.node_x, self._grid.node_y)
+        self._grid.node_x = node_x_transformed
+        self._grid.node_y = node_y_transformed
         
         self._update()
         

@@ -33,6 +33,8 @@ class DataVariable():
         """
         self._data_array = data
         self._time_var = get_coordinate_variables(data, ("time",))[0]
+        self._x_coords_var = get_coordinate_variables(data, X_STANDARD_NAMES)[0]
+        self._y_coords_var = get_coordinate_variables(data, Y_STANDARD_NAMES)[0]
 
     @property
     def coordinates(self) -> np.ndarray:
@@ -68,8 +70,33 @@ class DataVariable():
         """
         time_filter = {self._time_var.name : time_index}
         return self._data_array.isel(**time_filter).values.flatten()
+    
+    def get_values_at_coordinate(self, coord_index: int) -> np.ndarray:
+        """Get the values for this variable at the specified coordinate index.
 
+        Args:
+            coord_index (int): The coordinate index.
 
+        Returns:
+            np.ndarray: The values at the specified coordinate index.
+        """
+        data_on_coordinate_filter = {
+            self._x_coords_var.dims[0]: coord_index
+        }
+        return self._data_array.isel(data_on_coordinate_filter).values
+    
+    def set_values_at_coordinate(self, coord_index: int, values) -> None:
+        """Set the values for this variable at the specified coordinate index.
+
+        Args:
+            coord_index (int): The coordinate index.
+            values (_type_): The new values.
+        """
+        data_on_coordinate_filter = {
+            self._x_coords_var.dims[0]: coord_index
+        }
+        self._data_array.loc[data_on_coordinate_filter] = values
+        
 class DatasetBase(ABC):
     """Class that serves as a wrapper object for an xarray.Dataset.
     The wrapper allows for easier retrieval of relevant data.
