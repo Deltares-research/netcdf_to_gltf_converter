@@ -121,15 +121,18 @@ class XBeachDataset(DatasetBase):
         """
         return -1
     
-    def shift_coordinates(self, shift_x: float, shift_y: float) -> None:
+    def shift_coordinates(self, shift_x: float, shift_y: float, shift_z: float, variables: List[str]) -> None:
         """
-        Shift the x- and y-coordinates in the data set with the provided values.
+        Shift the x- and y-coordinates and the variable values in the data set with the provided values.
         All x-coordinates will be subtracted with `shift_x`.
         All y_coordinates will be subtracted with `shift_y`.
+        All z_coordinates will be subtracted with `shift_z`.
 
         Args:
-            shift_x (float): The value to shift back the x-coordinates with.
-            shift_y (float): The value to shift back the y-coordinates with.
+            shift_x (float): The value to shift the x-coordinates with.
+            shift_y (float): The value to shift the y-coordinates with.
+            shift_z (float): The value to shift the z-coordinates with.
+            variables (List[str]): The names of the variables for which to shift the values.
         """
 
         for x_coord_var in self._x_coord_vars:
