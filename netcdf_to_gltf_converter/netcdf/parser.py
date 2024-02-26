@@ -103,9 +103,12 @@ class Parser:
                                                 variables)
         
         if config.shift_coordinates == ShiftType.MIN:
-            dataset.shift_coordinates(dataset.min_x, dataset.min_y)
+            dataset.shift_coordinates(dataset.min_x, dataset.min_y, 0, variables=[])
         elif isinstance(config.shift_coordinates, CrsShifting):
-            dataset.shift_coordinates(config.shift_coordinates.shift_x, config.shift_coordinates.shift_y)
+            dataset.shift_coordinates(config.shift_coordinates.shift_x, 
+                                      config.shift_coordinates.shift_y, 
+                                      config.shift_coordinates.shift_z, 
+                                      variables)
 
         dataset.scale_coordinates(config.scale_horizontal, config.scale_vertical, variables)
 

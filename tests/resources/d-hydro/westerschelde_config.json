@@ -5,7 +5,8 @@
 	"times_per_frame": 1,
 	"shift_coordinates": {
 		"shift_x": 3.984524,
-		"shift_y": 51.410069
+		"shift_y": 51.410069,
+		"shift_z": 0.0
 	},
 	"scale_horizontal": 1.0,
 	"scale_vertical": 1.0,

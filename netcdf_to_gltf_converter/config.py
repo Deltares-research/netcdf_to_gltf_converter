@@ -123,6 +123,9 @@ class CrsShifting(BaseModel):
     shift_y: float
     """float: Value to shift the y-coordinates with. All y-coordinates will be subtracted with this value."""
     
+    shift_z: float
+    """float: Value to shift the variables values (z-coordinates) with. All variable values will be subtracted with this value."""
+    
 class Variable(BaseModel):
     """Configuration properties of a variable."""
 
