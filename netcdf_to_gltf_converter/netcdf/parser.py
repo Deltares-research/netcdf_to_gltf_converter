@@ -3,7 +3,7 @@ from typing import List
 import numpy as np
 import xarray as xr
 
-from netcdf_to_gltf_converter.config import Config, ModelType, Variable
+from netcdf_to_gltf_converter.config import Config, ModelType, ShiftType, Variable
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
 from netcdf_to_gltf_converter.netcdf.netcdf_data import (DatasetBase,
                                                          DataVariable)
@@ -102,7 +102,7 @@ class Parser:
                                                 config.crs_transformation.target_epsg,
                                                 variables)
         
-        if config.shift_coordinates:
+        if config.shift_coordinates == ShiftType.MIN:
             dataset.shift_coordinates(dataset.min_x, dataset.min_y)
 
         dataset.scale_coordinates(config.scale_horizontal, config.scale_vertical, variables)

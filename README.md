@@ -82,7 +82,15 @@ These steps will ensure that the converter is installed within a virtual environ
 
 - `times_per_frame`: An integer value specifying the number of time steps to be included in each frame of the glTF animation. This option is useful if you want to adjust the time resolution of the animation.
 
-- `shift_coordinates`: A boolean value indicating whether to shift the coordinates of the data during conversion. When set to `true`, the converter will shift the coordinates such that the smallest x and y become the origin (0,0).
+- `shift_coordinates` (optional): A value indicating how to shift the coordinates of the data during conversion. When set to `min`, the converter will shift the coordinates such that the smallest x and y become the origin (0,0). It is also possible to provide custom shift values for the x- and y-coordinates:
+
+```
+	"shift_coordinates": 
+	{
+		"shift_x": 3.984,
+		"shift_y": 51.410,
+	},
+```
 
 - `scale_horizontal`: A floating value indicating the scale factor for the x- and y-coordinates. It determines the scaling of the converted geometry. A value of 1.0 results in the original geometry size.
 
@@ -112,7 +120,7 @@ These steps will ensure that the converter is installed within a virtual environ
    "time_index_start":50,
    "time_index_end":100,
    "times_per_frame":3,
-   "shift_coordinates":true,
+   "shift_coordinates":"min",
    "scale_horizontal":0.5,
    "scale_vertical":0.5,
    "variables":[

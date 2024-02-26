@@ -3,7 +3,7 @@
 	"model_type": "D-HYDRO",
 	"time_index_start": 0,
 	"times_per_frame": 1,
-	"shift_coordinates": true,
+	"shift_coordinates": "min",
 	"scale_horizontal": 1.0,
 	"scale_vertical": 1.0,
 	"crs_transformation" : 
