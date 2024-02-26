@@ -33,7 +33,27 @@ class DataVariable():
         """
         self._data_array = data
         self._time_var = get_coordinate_variables(data, ("time",))[0]
+        self._x_coords_var = get_coordinate_variables(data, X_STANDARD_NAMES)[0]
+        self._y_coords_var = get_coordinate_variables(data, Y_STANDARD_NAMES)[0]
 
+    @property
+    def x_coords(self) -> np.ndarray:
+        """Get the x-coordinates for this data variable.
+
+        Returns:
+            np.ndarray: A 1D np.ndarray of floats with shape (n, 1) where each row contains an x-coordinate.
+        """
+        return self._x_coords_var.values.flatten()
+    
+    @property
+    def y_coords(self) -> np.ndarray:
+        """Get the y-coordinates for this data variable.
+
+        Returns:
+            np.ndarray: A 1D np.ndarray of floats with shape (n, 1) where each row contains a y-coordinate.
+        """
+        return self._y_coords_var.values.flatten()
+    
     @property
     def coordinates(self) -> np.ndarray:
         """Get the coordinates for this data variable.
@@ -41,12 +61,7 @@ class DataVariable():
         Returns:
             np.ndarray: A 2D np.ndarray of floats with shape (n, 2) where each row contains a x and y coordinate.
         """
-        def get_coordinates(standard_names: tuple):
-            return get_coordinate_variables(self._data_array, standard_names)[0].values.flatten()
-
-        x_coords = get_coordinates(X_STANDARD_NAMES)
-        y_coords = get_coordinates(Y_STANDARD_NAMES)
-        return np.column_stack([x_coords, y_coords])
+        return np.column_stack([self.x_coords, self.y_coords])
 
     @property
     def time_index_max(self) -> int:
@@ -68,8 +83,33 @@ class DataVariable():
         """
         time_filter = {self._time_var.name : time_index}
         return self._data_array.isel(**time_filter).values.flatten()
+    
+    def get_values_at_coordinate(self, coord_index: int) -> np.ndarray:
+        """Get the values for this variable at the specified coordinate index.
 
+        Args:
+            coord_index (int): The coordinate index.
 
+        Returns:
+            np.ndarray: The values at the specified coordinate index.
+        """
+        data_on_coordinate_filter = {
+            self._x_coords_var.dims[0]: coord_index
+        }
+        return self._data_array.isel(data_on_coordinate_filter).values
+    
+    def set_values_at_coordinate(self, coord_index: int, values) -> None:
+        """Set the values for this variable at the specified coordinate index.
+
+        Args:
+            coord_index (int): The coordinate index.
+            values (_type_): The new values.
+        """
+        data_on_coordinate_filter = {
+            self._x_coords_var.dims[0]: coord_index
+        }
+        self._data_array.loc[data_on_coordinate_filter] = values
+        
 class DatasetBase(ABC):
     """Class that serves as a wrapper object for an xarray.Dataset.
     The wrapper allows for easier retrieval of relevant data.
@@ -189,11 +229,12 @@ class DatasetBase(ABC):
         pass
     
     @abstractmethod
-    def transform_coordinate_system(self, source_epsg: int, target_epsg: int):
+    def transform_coordinate_system(self, source_epsg: int, target_epsg: int, variables: List[str]):
         """Transform the coordinates to another coordinate system.
         Args:
             source_epsg (int): EPSG from the source coordinate system.
             target_epsg (int): EPSG from the target coordinate system.
+            variables (List[str]): The names of the variables for which to transform the values.
         """
         pass
     

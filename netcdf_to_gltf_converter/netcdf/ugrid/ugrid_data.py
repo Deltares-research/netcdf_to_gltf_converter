@@ -2,10 +2,11 @@ from typing import List
 
 import numpy as np
 import pyproj
+import pyproj.network
 import xarray as xr
 import xugrid as xu
 
-from netcdf_to_gltf_converter.netcdf.netcdf_data import DatasetBase
+from netcdf_to_gltf_converter.netcdf.netcdf_data import DataVariable, DatasetBase
 
 
 class UgridDataset(DatasetBase):
@@ -85,27 +86,50 @@ class UgridDataset(DatasetBase):
         """
         return self._grid.fill_value
     
-    def transform_coordinate_system(self, source_epsg: int, target_epsg: int):
+    def transform_coordinate_system(self, source_epsg: int, target_epsg: int, variables: List[str]):
         """Transform the coordinates to another coordinate system.
         Args:
             source_epsg (int): EPSG from the source coordinate system.
             target_epsg (int): EPSG from the target coordinate system.
+            variables (List[str]): The names of the variables for which to transform the values.
 
         """
-        source_epsg = pyproj.CRS.from_epsg(source_epsg)
-        target_epsg = pyproj.CRS.from_epsg(target_epsg)
-                                          
-        transformer = pyproj.Transformer.from_crs(
-            crs_from=source_epsg, crs_to=target_epsg, always_xy=True
-        )
+        pyproj.network.set_network_enabled(True)
         
-        node_x2, node_y2 = transformer.transform(self._grid.node_x, self._grid.node_y)
+        transformer = UgridDataset._create_crs_transformer(source_epsg, target_epsg)
         
-        self._grid.node_x = node_x2
-        self._grid.node_y = node_y2
+        for variable_name in variables:
+            variable = self.get_variable(variable_name)
+            UgridDataset._transform_variable_values(transformer, variable)            
         
+        self._transform_grid_coordinates(transformer)
         self._update()
+
+    def _create_crs_transformer(source_epsg, target_epsg):
+        source_crs = pyproj.CRS.from_epsg(source_epsg)
+        target_crs = pyproj.CRS.from_epsg(target_epsg)
         
+        transformer = pyproj.Transformer.from_crs(
+            crs_from=source_crs, crs_to=target_crs, always_xy=True
+        )
+        return transformer
+
+    def _transform_variable_values(transformer: pyproj.Transformer, variable: DataVariable) -> None:
+        for coord_index in range(0, len(variable.coordinates)):
+                # Transform all z-coordinates for each xy-coordinate.
+                # Per time step, each xy-coordinate has one correponding z-coordinate.                
+            z_coordinates = variable.get_values_at_coordinate(coord_index)
+            x_coordinates = np.full(z_coordinates.size, variable.x_coords[coord_index])
+            y_coordinates = np.full(z_coordinates.size, variable.y_coords[coord_index])
+                
+            _, _, z_coords_transformed = transformer.transform(x_coordinates, y_coordinates, z_coordinates)
+            variable.set_values_at_coordinate(coord_index, z_coords_transformed)
+       
+    def _transform_grid_coordinates(self, transformer: pyproj.Transformer) -> None:
+        node_x_transformed, node_y_transformed = transformer.transform(self._grid.node_x, self._grid.node_y)
+        self._grid.node_x = node_x_transformed
+        self._grid.node_y = node_y_transformed 
+                
     def shift_coordinates(self, shift_x: float, shift_y: float) -> None:
         """
         Shift the x- and y-coordinates in the data set with the provided values.

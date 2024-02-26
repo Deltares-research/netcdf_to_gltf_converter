@@ -77,7 +77,7 @@ class TestUgridDataset:
         grid = Factory.create_rectilinear_grid()
         dataset = UgridDataset(grid.to_dataset())
 
-        dataset.transform_coordinate_system(source_epsg=4979, target_epsg=7415)
+        dataset.transform_coordinate_system(source_epsg=4979, target_epsg=7415, variables=[])
 
         exp_node_x = np.array(
             [
