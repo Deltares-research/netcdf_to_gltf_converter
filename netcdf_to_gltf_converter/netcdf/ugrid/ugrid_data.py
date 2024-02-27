@@ -111,7 +111,7 @@ class UgridDataset(DatasetBase):
             variables (List[str]): The names of the variables for which to shift the values.
         """
         for variable_name in variables:
-            self._subtract_variable_values(shift_z, variable_name)
+            self._subtract_variable_values(variable_name, shift_z)
            
         self._grid.node_x = self._grid.node_x - shift_x
         self._grid.node_y = self._grid.node_y - shift_y
@@ -132,7 +132,7 @@ class UgridDataset(DatasetBase):
         self._update()
         
         for variable_name in variables:
-            self._multiply_variable_values(scale_vertical, variable_name)
+            self._multiply_variable_values(variable_name, scale_vertical)
 
     def _create_crs_transformer(source_epsg, target_epsg):
         source_crs = pyproj.CRS.from_epsg(source_epsg)
