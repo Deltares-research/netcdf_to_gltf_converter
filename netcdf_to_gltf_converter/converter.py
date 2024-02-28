@@ -41,7 +41,7 @@ class Converter:
         self._reset_logger()
         
         time_stamp = datetime.now().strftime("%y%m%d_%H%M%S")
-        log_file = self._gltf.parent / f"gltf_converter_log_{time_stamp}.txt"
+        log_file = self._gltf.parent / f"gltf_converter_{time_stamp}.log"
         
         logging.basicConfig(
             level=logging.DEBUG,
