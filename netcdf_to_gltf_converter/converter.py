@@ -1,3 +1,5 @@
+import logging
+from datetime import datetime
 from pathlib import Path
 
 from netcdf_to_gltf_converter.config import Config
@@ -32,7 +34,27 @@ class Converter:
 
         self._importer = Importer()
         self._exporter = Exporter()
+        
+        self._configure_logging()
 
+    def _configure_logging(self) -> None:
+        self._reset_logger()
+        
+        time_stamp = datetime.now().strftime("%y%m%d_%H%M%S")
+        log_file = self._gltf.parent / f"gltf_converter_log_{time_stamp}.txt"
+        
+        logging.basicConfig(
+            level=logging.DEBUG,
+            filename=log_file,
+            filemode="w",
+            format="%(asctime)s %(levelname)-8s %(filename)-20s %(funcName)-30s %(message)s",
+            datefmt="%H:%M:%S",
+        )
+
+    def _reset_logger(self):
+        for handler in logging.root.handlers[:]:
+            logging.root.removeHandler(handler)
+            
     def run(self):
         """Run the conversion."""
 
