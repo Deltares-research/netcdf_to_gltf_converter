@@ -127,7 +127,10 @@ class XBeachDataset(DatasetBase):
 
         for y_coord_var in self._y_coord_vars:
             self._shift(y_coord_var, shift_y)
-            
+
+        for variable in variables:
+                self._shift(self.get_array(variable), shift_z)
+
         self._update()
 
     def _update(self):
