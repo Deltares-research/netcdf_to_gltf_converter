@@ -103,7 +103,7 @@ class ShiftType(StrEnum):
     """The method to shift the coordinates."""
     
     MIN = "min"
-    """The smalles x- and -y coordinate become the origin (0,0)."""
+    """The smalles x- and -y coordinate become the origin (0,0,z)."""
     
 class CrsTransformation(BaseModel):
     """The configuration settings for transforming the coordinates."""
@@ -117,6 +117,9 @@ class CrsTransformation(BaseModel):
 class CrsShifting(BaseModel):
     """The configuration settings for shifting the coordinates."""
 
+    crs_transformation: Optional[CrsTransformation]
+    """Optional[CrsTransformation]: The configuration settings for transforming the provided shift values from one coordinate system to another (e.g. from WGS84 to the model CRS)."""
+    
     shift_x: float
     """float: Value to shift the x-coordinates with. All x-coordinates will be subtracted with this value."""
 
@@ -218,6 +221,3 @@ class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
 
     variables: List[Variable]
     """List[Variable]: List of configuration of the variables that should be converted to glTF."""
-
-    crs_transformation: Optional[CrsTransformation]
-    """Optional[CrsTransformation]: The configuration settings for transforming the coordinates to  different coordinate system."""
