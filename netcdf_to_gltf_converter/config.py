@@ -109,7 +109,7 @@ class CrsTransformation(BaseModel):
     """The configuration settings for transforming the coordinates."""
 
     source_epsg: int
-    """int: EPSG code of the course coordinate system."""
+    """int: EPSG code of the source coordinate system."""
 
     target_epsg: int
     """int: EPSG code of the target coordinate system."""

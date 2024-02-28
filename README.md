@@ -12,6 +12,7 @@
   - [Installation](#installation)
   - [Usage](#usage)
   - [Configuration file](#configuration-file)
+  - [Logging](#logging)
   - [View results](#view-results)
 - [Methodology](#methodology)
 - [Limitations](#limitations)
@@ -82,16 +83,14 @@ These steps will ensure that the converter is installed within a virtual environ
 
 - `times_per_frame`: An integer value specifying the number of time steps to be included in each frame of the glTF animation. This option is useful if you want to adjust the time resolution of the animation.
 
-- `shift_coordinates` (optional): A value indicating how to shift the coordinates of the data during conversion. When set to `min`, the converter will shift the coordinates such that the smallest x and y become the origin (0,0). It is also possible to provide custom shift values for the x- and y-coordinates and the variables values (z-coordinates):
+- `shift_coordinates` (optional): A value indicating how to shift the coordinates of the data during conversion. When set to `min`, the converter will shift the coordinates such that the smallest x and y become the origin (0,0); variable values remain unchanged. It is also possible to provide custom shift values for the x- and y-coordinates and the variables values (z-coordinates):
 
-```
-	"shift_coordinates": 
-	{
-		"shift_x": 3.984,
-		"shift_y": 51.410,
-		"shift_z": 40.1
-	},
-```
+  - `crs_transformation` (optional): The configuration settings for transforming the provided shift values from one coordinate system to another. The target coordinate system should be the coordinate system of the model.
+    - `source_epsg`: EPSG code of the source coordinate system.
+    - `target_epsg`: EPSG code of the target coordinate system.
+  - `shift_x`: A floating value containing the value that should be subtracted from all x-coordinates.
+   - `shift_y`: A floating value containing the value that should be subtracted from all y-coordinates.
+   - `shift_z`: A floating value containing the value that should be subtracted from all variable values (z-coordinates).
 
 - `scale_horizontal`: A floating value indicating the scale factor for the x- and y-coordinates. It determines the scaling of the converted geometry. A value of 1.0 results in the original geometry size.
 
@@ -118,28 +117,28 @@ These steps will ensure that the converter is installed within a virtual environ
 {
    "file_version":"0.1.0",
    "model_type": "D-HYDRO",
-   "time_index_start":50,
-   "time_index_end":100,
-   "times_per_frame":3,
-   "shift_coordinates":"min",
-   "scale_horizontal":0.5,
-   "scale_vertical":0.5,
+   "time_index_start": 50,
+   "time_index_end": 100,
+   "times_per_frame": 3,
+   "shift_coordinates": "min",
+   "scale_horizontal": 0.5,
+   "scale_vertical": 0.5,
    "variables":[
       {
-         "name":"Mesh2d_waterdepth",
-         "color":[0.372, 0.635, 0.8, 1.0],
-         "metallic_factor":0.0,
-         "roughness_factor":0.15,
-         "use_threshold":false,
-         "threshold_height":0.01,
-         "threshold_color":[1.0, 1.0, 1.0, 1.0]
+         "name": "Mesh2d_waterdepth",
+         "color": [0.372, 0.635, 0.8, 1.0],
+         "metallic_factor": 0.0,
+         "roughness_factor": 0.15,
+         "use_threshold": false,
+         "threshold_height": 0.01,
+         "threshold_color": [1.0, 1.0, 1.0, 1.0]
       },
       {
-         "name":"Mesh2d_s1",
-         "color":[0.686, 0.831, 0.937, 1.0],
-         "metallic_factor":0.0,
-         "roughness_factor":0.15,
-         "use_threshold":false
+         "name": "Mesh2d_s1",
+         "color": [0.686, 0.831, 0.937, 1.0],
+         "metallic_factor": 0.0,
+         "roughness_factor": 0.15,
+         "use_threshold": false
       }
    ]
 }
@@ -148,6 +147,9 @@ These steps will ensure that the converter is installed within a virtual environ
 In the above example, we render two variables from a D-HYDRO output map netCDF file: `Mesh2d_waterdepth` and `Mesh2d_s1`. For the animation we take a subset of the time steps. The animation will start at time step with index 50 and will end at time step with index 100. The animation will have a resolution of 3 time steps. Additionally, we apply a coordinate shift to ensure that the meshes have an origin at (0,0). Furthermore, we set the scale for both the horizontal and vertical directions to 0.5, resulting in a reduction of size in all directions by a factor of two. 
 
 For the `Mesh2d_waterdepth` variable, an additional threshold mesh is rendered at a height of 0.01. Each mesh is assigned its own color, specified by the normalized red, green, blue and alpha (RGBA) values.
+
+## Logging
+During conversion, a log file is written to the output folder (folder of the resulting glTF file) with the name: `gltf_converter_<date>_<time>.log`
 
 ## View results
  Several glTF viewers exist that can be used to view the produced glTF file. Simply drag and drop the file, and the glTF file will be rendered.
