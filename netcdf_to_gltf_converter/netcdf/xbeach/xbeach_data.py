@@ -72,19 +72,6 @@ class XBeachDataset(DatasetBase):
             float: A floating value with the smallest y-coordinate.
         """
         return self._grid.node_y.min()
-    
-    def transform_coordinate_system(self, source_epsg: int, target_epsg: int, variables: List[str]):
-        """Transform the coordinates to another coordinate system.
-        
-        Args:
-            source_epsg (int): EPSG from the source coordinate system.
-            target_epsg (int): EPSG from the target coordinate system.
-            variables (List[str]): The names of the variables for which to transform the values.
-
-        Raises:
-            NotImplementedError: Thrown because coordinate system transformation is not yet suupport for regular grids.
-        """
-        raise NotImplementedError("Coordinate system transformation is not yet suupport for regular grids.")
 
     @property
     def face_node_connectivity(self) -> np.ndarray:

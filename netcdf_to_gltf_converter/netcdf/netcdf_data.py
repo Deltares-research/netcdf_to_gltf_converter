@@ -229,16 +229,6 @@ class DatasetBase(ABC):
         pass
     
     @abstractmethod
-    def transform_coordinate_system(self, source_epsg: int, target_epsg: int, variables: List[str]):
-        """Transform the coordinates to another coordinate system.
-        Args:
-            source_epsg (int): EPSG from the source coordinate system.
-            target_epsg (int): EPSG from the target coordinate system.
-            variables (List[str]): The names of the variables for which to transform the values.
-        """
-        pass
-    
-    @abstractmethod
     def shift_coordinates(self, shift_x: float, shift_y: float, shift_z: float, variables: List[str]) -> None:
         """
         Shift the x- and y-coordinates and the variable values in the data set with the provided values.
