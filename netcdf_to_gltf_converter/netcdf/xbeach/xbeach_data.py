@@ -1,4 +1,5 @@
-from typing import List
+import logging
+from typing import List, Tuple
 
 import numpy as np
 import xarray as xr
@@ -39,6 +40,15 @@ class RegularGrid():
             np.ndarray: An ndarray of floats with shape (n, 2). Each row represents one node and contains the x- and y-coordinate.
         """
         return np.column_stack([self.node_x, self.node_y])
+    
+    @property
+    def bounds(self) -> Tuple[float, float, float, float]:
+        """Get the grid bounds.
+
+        Returns:
+            Tuple[float, float, float, float]: Tuple with min x, min y, max x, max y.
+        """
+        return (self.node_x.min(), self.node_y.min(), self.node_x.max(), self.node_y.max())
 
 class XBeachDataset(DatasetBase):
     """Class that serves as a wrapper object for an xarray.Dataset with UGrid conventions.
@@ -54,6 +64,7 @@ class XBeachDataset(DatasetBase):
         dataset = dataset.fillna(0) # TODO check what to do with nan values.
         self._dataset = dataset
         self._grid = RegularGrid(dataset)
+        logging.info(f"Grid bounds: {self._grid.bounds}")
         
     @property
     def min_x(self) -> float:
@@ -135,6 +146,7 @@ class XBeachDataset(DatasetBase):
 
     def _update(self):
         self._grid = RegularGrid(self._dataset)
+        logging.info(f"New grid bounds: {self._grid.bounds}")
         
     def _shift(self, variable: xr.DataArray, shift: float):
         shifted_coords_var = variable - shift

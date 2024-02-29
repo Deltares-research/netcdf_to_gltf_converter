@@ -103,9 +103,10 @@ class Parser:
         if config.shift_coordinates:
             shift_x, shift_y, shift_z = Parser._get_shift_values(config.shift_coordinates, dataset)
             
-            logging.info(f"Shift model coordinates with: {shift_x} (x), {shift_y} (y), {shift_z} (z) ")
+            logging.info(f"Shift model coordinates with: {shift_x} (x), {shift_y} (y), {shift_z} (z)")
             dataset.shift_coordinates(shift_x, shift_y, shift_z, variables)
 
+        logging.info(f"Scale model coordinates with: {config.scale_horizontal} (x, y), {config.scale_vertical} (z)")
         dataset.scale_coordinates(config.scale_horizontal, config.scale_vertical, variables)
 
     def _get_shift_values(shift_config: Union[ShiftType, CrsShifting], dataset: DatasetBase) -> Tuple[float, float, float]:

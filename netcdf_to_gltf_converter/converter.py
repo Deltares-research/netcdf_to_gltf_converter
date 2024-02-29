@@ -41,13 +41,13 @@ class Converter:
         self._reset_logger()
         
         time_stamp = datetime.now().strftime("%y%m%d_%H%M%S")
-        log_file = self._gltf.parent / f"gltf_converter_{time_stamp}.log"
+        log_file = self._gltf.parent / f"gltf_converter_{time_stamp}_{self._gltf.stem}.log"
         
         logging.basicConfig(
             level=logging.DEBUG,
             filename=log_file,
             filemode="w",
-            format="%(asctime)s %(levelname)-8s %(filename)-20s %(funcName)-30s %(message)s",
+            format="%(asctime)s %(levelname)-8s %(filename)-20s %(funcName)-20s %(message)s",
             datefmt="%H:%M:%S",
         )
 

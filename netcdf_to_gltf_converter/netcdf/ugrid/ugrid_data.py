@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 import numpy as np
@@ -23,6 +24,7 @@ class UgridDataset(DatasetBase):
         super().__init__(dataset)
         self._ugrid_data_set = xu.UgridDataset(dataset)  
         self._grid = self._get_ugrid2d()
+        logging.info(f"Grid bounds: {self._grid.bounds}")
 
     @property
     def min_x(self) -> float:
@@ -162,3 +164,5 @@ class UgridDataset(DatasetBase):
         self._grid._clear_geometry_properties()
         self._ugrid_data_set: xu.UgridDataset = self._ugrid_data_set.ugrid.assign_node_coords().ugrid.assign_face_coords().ugrid.assign_edge_coords()
         self._dataset = self._ugrid_data_set.obj
+        
+        logging.info(f"New grid bounds: {self._grid.bounds}")
