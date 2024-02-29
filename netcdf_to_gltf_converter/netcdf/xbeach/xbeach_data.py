@@ -64,7 +64,7 @@ class XBeachDataset(DatasetBase):
         dataset = dataset.fillna(0) # TODO check what to do with nan values.
         self._dataset = dataset
         self._grid = RegularGrid(dataset)
-        logging.info(f"Grid bounds: {self._grid.bounds}")
+        self._log_grid_bounds(self._grid.bounds)
         
     @property
     def min_x(self) -> float:
@@ -146,7 +146,7 @@ class XBeachDataset(DatasetBase):
 
     def _update(self):
         self._grid = RegularGrid(self._dataset)
-        logging.info(f"New grid bounds: {self._grid.bounds}")
+        self._log_grid_bounds(self._grid.bounds)
         
     def _shift(self, variable: xr.DataArray, shift: float):
         shifted_coords_var = variable - shift

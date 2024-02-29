@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import List
+import logging
+from typing import List, Tuple
 
 import numpy as np
 import xarray as xr
@@ -109,7 +110,25 @@ class DataVariable():
             self._x_coords_var.dims[0]: coord_index
         }
         self._data_array.loc[data_on_coordinate_filter] = values
+    
+    @property
+    def min(self) -> float:
+        """Get the minimum value for this variable across all dimensions.
         
+        Returns:
+            float: The minimum variable value.
+        """
+        return self._data_array.min().values
+    
+    @property
+    def max(self) -> float:
+        """Get the maximum value for this variable across all dimensions.
+        
+        Returns:
+            float: The maximum variable value.
+        """
+        return self._data_array.max().values
+  
 class DatasetBase(ABC):
     """Class that serves as a wrapper object for an xarray.Dataset.
     The wrapper allows for easier retrieval of relevant data.
@@ -269,3 +288,6 @@ class DatasetBase(ABC):
             self.face_node_connectivity, self.fill_value
         )
         self.set_face_node_connectivity(face_node_connectivity)
+        
+    def _log_grid_bounds(self, bounds: Tuple[float, float, float, float]):
+        logging.info(f"Grid bounds: {bounds[0]} (min x), {bounds[1]} (min y), {bounds[2]} (max x), {bounds[3]} (max y)")

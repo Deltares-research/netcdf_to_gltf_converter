@@ -99,15 +99,24 @@ class Parser:
     @staticmethod
     def _transform_grid(config: Config, dataset: DatasetBase):
         variables = [var.name for var in config.variables]
+        Parser._log_variable_values(dataset, variables)
 
         if config.shift_coordinates:
             shift_x, shift_y, shift_z = Parser._get_shift_values(config.shift_coordinates, dataset)
             
-            logging.info(f"Shift model coordinates with: {shift_x} (x), {shift_y} (y), {shift_z} (z)")
+            logging.info(f"SHIFT model coordinates with: {shift_x} (x), {shift_y} (y), {shift_z} (z)")
             dataset.shift_coordinates(shift_x, shift_y, shift_z, variables)
+            Parser._log_variable_values(dataset, variables)
 
-        logging.info(f"Scale model coordinates with: {config.scale_horizontal} (x, y), {config.scale_vertical} (z)")
+        logging.info(f"SCALE model coordinates with: {config.scale_horizontal} (x, y), {config.scale_vertical} (z)")
         dataset.scale_coordinates(config.scale_horizontal, config.scale_vertical, variables)
+        Parser._log_variable_values(dataset, variables)
+
+    @staticmethod
+    def _log_variable_values(dataset: DatasetBase, variables: List[str]):
+        for variable_name in variables:
+            variable = dataset.get_variable(variable_name)
+            logging.info(f"Variable values for '{variable_name}': {variable.min} (min), {variable.max} (max)")
 
     def _get_shift_values(shift_config: Union[ShiftType, CrsShifting], dataset: DatasetBase) -> Tuple[float, float, float]:
         if shift_config == ShiftType.MIN:
