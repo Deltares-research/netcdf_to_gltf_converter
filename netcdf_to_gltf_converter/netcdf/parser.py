@@ -1,5 +1,5 @@
 import logging
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 import numpy as np
 import xarray as xr
@@ -100,25 +100,27 @@ class Parser:
     def _transform_grid(config: Config, dataset: DatasetBase):
         variables = [var.name for var in config.variables]
 
-        if config.shift_coordinates == ShiftType.MIN:
-            dataset.shift_coordinates(dataset.min_x, dataset.min_y, 0, variables=[])
-        elif isinstance(config.shift_coordinates, CrsShifting):
-            shift_x, shift_y, shift_z = Parser._get_shift_values(config.shift_coordinates)
+        if config.shift_coordinates:
+            shift_x, shift_y, shift_z = Parser._get_shift_values(config.shift_coordinates, dataset)
             
             logging.info(f"Shift model coordinates with: {shift_x} (x), {shift_y} (y), {shift_z} (z) ")
             dataset.shift_coordinates(shift_x, shift_y, shift_z, variables)
 
         dataset.scale_coordinates(config.scale_horizontal, config.scale_vertical, variables)
 
-    def _get_shift_values(shift_config: CrsShifting) -> Tuple[float, float, float]:
-        if shift_config.crs_transformation:
-            transformer = create_crs_transformer(shift_config.crs_transformation.source_epsg,
-                                                 shift_config.crs_transformation.target_epsg)
+    def _get_shift_values(shift_config: Union[ShiftType, CrsShifting], dataset: DatasetBase) -> Tuple[float, float, float]:
+        if shift_config == ShiftType.MIN:
+            return (dataset.min_x, dataset.min_y, 0.0)
+        
+        if isinstance(shift_config, CrsShifting):
+            if shift_config.crs_transformation:
+                transformer = create_crs_transformer(shift_config.crs_transformation.source_epsg,
+                                                     shift_config.crs_transformation.target_epsg)
             
-            logging.info(f"Transforming shift values from {transformer.source_crs.name} to {transformer.target_crs.name}")
-            return transformer.transform(shift_config.shift_x, shift_config.shift_y, shift_config.shift_z)
+                logging.info(f"Transforming shift values from {transformer.source_crs.name} to {transformer.target_crs.name}")
+                return transformer.transform(shift_config.shift_x, shift_config.shift_y, shift_config.shift_z)
 
-        return (shift_config.shift_x, shift_config.shift_y, shift_config.shift_z)
+            return (shift_config.shift_x, shift_config.shift_y, shift_config.shift_z)
 
     def _interpolate(self, data: DataVariable, time_index: int, dataset: DatasetBase) -> np.ndarray:
         return self._interpolator.interpolate(
