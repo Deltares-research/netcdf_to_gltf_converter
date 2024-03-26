@@ -93,14 +93,14 @@ class UgridDataset(DatasetBase):
             shift_y (float): The value to shift the y-coordinates with.
             shift_z (float): The value to shift the z-coordinates with.
             variables (List[str]): The names of the variables for which to shift the values.
-        """
-        for variable_name in variables:
-            self._subtract_variable_values(variable_name, shift_z)
-           
+        """ 
         self._grid.node_x = self._grid.node_x - shift_x
         self._grid.node_y = self._grid.node_y - shift_y
         self._update()
         
+        for variable_name in variables:
+            self._subtract_variable_values(variable_name, shift_z)
+           
     def scale_coordinates(self, scale_horizontal: float, scale_vertical: float, variables: List[str]) -> None:
         """
         Scale the x- and y-coordinates and the data values, with the scaling factors that are specified.
