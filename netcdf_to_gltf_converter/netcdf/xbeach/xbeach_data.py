@@ -1,4 +1,5 @@
-from typing import List
+import logging
+from typing import List, Tuple
 
 import numpy as np
 import xarray as xr
@@ -39,6 +40,15 @@ class RegularGrid():
             np.ndarray: An ndarray of floats with shape (n, 2). Each row represents one node and contains the x- and y-coordinate.
         """
         return np.column_stack([self.node_x, self.node_y])
+    
+    @property
+    def bounds(self) -> Tuple[float, float, float, float]:
+        """Get the grid bounds.
+
+        Returns:
+            Tuple[float, float, float, float]: Tuple with min x, min y, max x, max y.
+        """
+        return (self.node_x.min(), self.node_y.min(), self.node_x.max(), self.node_y.max())
 
 class XBeachDataset(DatasetBase):
     """Class that serves as a wrapper object for an xarray.Dataset with UGrid conventions.
@@ -54,6 +64,7 @@ class XBeachDataset(DatasetBase):
         dataset = dataset.fillna(0) # TODO check what to do with nan values.
         self._dataset = dataset
         self._grid = RegularGrid(dataset)
+        self._log_grid_bounds(self._grid.bounds)
         
     @property
     def min_x(self) -> float:
@@ -72,7 +83,7 @@ class XBeachDataset(DatasetBase):
             float: A floating value with the smallest y-coordinate.
         """
         return self._grid.node_y.min()
-    
+
     @property
     def face_node_connectivity(self) -> np.ndarray:
         """Get the face node connectivity of the grid.
@@ -108,15 +119,18 @@ class XBeachDataset(DatasetBase):
         """
         return -1
     
-    def shift_coordinates(self, shift_x: float, shift_y: float) -> None:
+    def shift_coordinates(self, shift_x: float, shift_y: float, shift_z: float, variables: List[str]) -> None:
         """
-        Shift the x- and y-coordinates in the data set with the provided values.
+        Shift the x- and y-coordinates and the variable values in the data set with the provided values.
         All x-coordinates will be subtracted with `shift_x`.
         All y_coordinates will be subtracted with `shift_y`.
+        All z_coordinates will be subtracted with `shift_z`.
 
         Args:
-            shift_x (float): The value to shift back the x-coordinates with.
-            shift_y (float): The value to shift back the y-coordinates with.
+            shift_x (float): The value to shift the x-coordinates with.
+            shift_y (float): The value to shift the y-coordinates with.
+            shift_z (float): The value to shift the z-coordinates with.
+            variables (List[str]): The names of the variables for which to shift the values.
         """
 
         for x_coord_var in self._x_coord_vars:
@@ -124,11 +138,15 @@ class XBeachDataset(DatasetBase):
 
         for y_coord_var in self._y_coord_vars:
             self._shift(y_coord_var, shift_y)
-            
+
+        for variable in variables:
+                self._shift(self.get_array(variable), shift_z)
+
         self._update()
 
     def _update(self):
         self._grid = RegularGrid(self._dataset)
+        self._log_grid_bounds(self._grid.bounds)
         
     def _shift(self, variable: xr.DataArray, shift: float):
         shifted_coords_var = variable - shift

@@ -4,7 +4,6 @@ import pytest
 from pygltflib import GLTF2
 
 from netcdf_to_gltf_converter.gltf.exporter import Exporter
-from tests.utils import get_temp_file
 
 
 class TestExporter:
@@ -21,18 +20,18 @@ class TestExporter:
             == "GLTF file cannot be exported: unsupported file type '.invalid'. Supported: .gltf, .glb"
         )
 
-    def test_export_with_glb_file(self):
+    def test_export_with_glb_file(self, tmp_path):
         gltf = GLTF2()
         exporter = Exporter()
 
-        with get_temp_file("file.glb") as file_path:
-            exporter.export(gltf, file_path)
-            assert file_path.is_file()
+        file_path = tmp_path / "file.glb"
+        exporter.export(gltf, file_path)
+        assert file_path.is_file()
 
-    def test_export_with_gltf_file(self):
+    def test_export_with_gltf_file(self, tmp_path):
         gltf = GLTF2()
         exporter = Exporter()
 
-        with get_temp_file("file.gltf") as file_path:
-            exporter.export(gltf, file_path)
-            assert file_path.is_file()
+        file_path = tmp_path / "file.gltf"
+        exporter.export(gltf, file_path)
+        assert file_path.is_file()

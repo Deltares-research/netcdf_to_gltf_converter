@@ -1,10 +1,12 @@
-from typing import List
+import logging
+from typing import List, Tuple, Union
 
 import numpy as np
 import xarray as xr
 
-from netcdf_to_gltf_converter.config import Config, ModelType, Variable
+from netcdf_to_gltf_converter.config import Config, CrsShifting, ModelType, ShiftType, Variable
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
+from netcdf_to_gltf_converter.preprocessing.crs import create_crs_transformer
 from netcdf_to_gltf_converter.netcdf.netcdf_data import (DatasetBase,
                                                          DataVariable)
 from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import UgridDataset
@@ -95,12 +97,40 @@ class Parser:
         return inclusive_range(start, end, config.times_per_frame)
 
     @staticmethod
-    def _transform_grid(config: Config, dataset: DatasetBase):       
-        if config.shift_coordinates:
-            dataset.shift_coordinates(dataset.min_x, dataset.min_y)
-  
+    def _transform_grid(config: Config, dataset: DatasetBase):
         variables = [var.name for var in config.variables]
+        Parser._log_variable_values(dataset, variables)
+
+        if config.shift_coordinates:
+            shift_x, shift_y, shift_z = Parser._get_shift_values(config.shift_coordinates, dataset)
+            
+            logging.info(f"SHIFT model coordinates with: {shift_x} (x), {shift_y} (y), {shift_z} (z)")
+            dataset.shift_coordinates(shift_x, shift_y, shift_z, variables)
+            Parser._log_variable_values(dataset, variables)
+
+        logging.info(f"SCALE model coordinates with: {config.scale_horizontal} (x, y), {config.scale_vertical} (z)")
         dataset.scale_coordinates(config.scale_horizontal, config.scale_vertical, variables)
+        Parser._log_variable_values(dataset, variables)
+
+    @staticmethod
+    def _log_variable_values(dataset: DatasetBase, variables: List[str]):
+        for variable_name in variables:
+            variable = dataset.get_variable(variable_name)
+            logging.info(f"Variable values for '{variable_name}': {variable.min} (min), {variable.max} (max)")
+
+    def _get_shift_values(shift_config: Union[ShiftType, CrsShifting], dataset: DatasetBase) -> Tuple[float, float, float]:
+        if shift_config == ShiftType.MIN:
+            return (dataset.min_x, dataset.min_y, 0.0)
+        
+        if isinstance(shift_config, CrsShifting):
+            if shift_config.crs_transformation:
+                transformer = create_crs_transformer(shift_config.crs_transformation.source_epsg,
+                                                     shift_config.crs_transformation.target_epsg)
+            
+                logging.info(f"Transforming shift values from {transformer.source_crs.name} to {transformer.target_crs.name}")
+                return transformer.transform(shift_config.shift_x, shift_config.shift_y, shift_config.shift_z)
+
+            return (shift_config.shift_x, shift_config.shift_y, shift_config.shift_z)
 
     def _interpolate(self, data: DataVariable, time_index: int, dataset: DatasetBase) -> np.ndarray:
         return self._interpolator.interpolate(
