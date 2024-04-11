@@ -118,6 +118,7 @@ class Parser:
             variable = dataset.get_variable(variable_name)
             logging.info(f"Variable values for '{variable_name}': {variable.min} (min), {variable.max} (max)")
 
+    @staticmethod
     def _get_shift_values(shift_config: Union[ShiftType, CrsShifting], dataset: DatasetBase) -> Tuple[float, float, float]:
         if shift_config == ShiftType.MIN:
             return (dataset.min_x, dataset.min_y, 0.0)
