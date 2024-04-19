@@ -1,10 +1,8 @@
 import numpy as np
-from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import UgridDataset
 
+from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import UgridDataset
 from netcdf_to_gltf_converter.preprocessing.interpolation import (
-    LinearInterpolator,
-    NearestPointInterpolator,
-)
+    LinearInterpolator, NearestPointInterpolator)
 from netcdf_to_gltf_converter.utils.arrays import float32_array
 from tests.preprocessing.utils import Factory
 

@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from netcdf_to_gltf_converter.converter import Converter
-from tests.utils import assert_files_equal, reference_files, dhydro_resources, xbeach_resources
+from tests.utils import assert_files_equal, dhydro_resources, reference_files
 
 
 class TestConverter:

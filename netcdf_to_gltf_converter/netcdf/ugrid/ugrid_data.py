@@ -1,9 +1,6 @@
-import logging
 from typing import List
 
 import numpy as np
-import pyproj
-import pyproj.network
 import xarray as xr
 import xugrid as xu
 

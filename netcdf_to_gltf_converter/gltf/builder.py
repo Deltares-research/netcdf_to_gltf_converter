@@ -2,34 +2,15 @@ import base64
 from typing import Any, List
 
 import numpy as np
-from pygltflib import (
-    ANIM_LINEAR,
-    ARRAY_BUFFER,
-    DATA_URI_HEADER,
-    ELEMENT_ARRAY_BUFFER,
-    FLOAT,
-    GLTF2,
-    SCALAR,
-    UNSIGNED_INT,
-    VEC3,
-    VEC4,
-    Accessor,
-    Animation,
-    AnimationChannel,
-    AnimationChannelTarget,
-    AnimationSampler,
-    Attributes,
-    Buffer,
-    BufferView,
-    Material,
-    Mesh,
-    Node,
-    PbrMetallicRoughness,
-    Primitive,
-    Scene,
-)
+from pygltflib import (ANIM_LINEAR, ARRAY_BUFFER, DATA_URI_HEADER,
+                       ELEMENT_ARRAY_BUFFER, FLOAT, GLTF2, SCALAR,
+                       UNSIGNED_INT, VEC3, VEC4, Accessor, Animation,
+                       AnimationChannel, AnimationChannelTarget,
+                       AnimationSampler, Attributes, Buffer, BufferView,
+                       Material, Mesh, Node, PbrMetallicRoughness, Primitive,
+                       Scene)
 
-from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
+from netcdf_to_gltf_converter.data.mesh import TriangularMesh
 from netcdf_to_gltf_converter.utils.arrays import float32_array
 
 PADDING_BYTE = b"\x00"
