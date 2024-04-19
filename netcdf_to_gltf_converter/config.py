@@ -210,8 +210,8 @@ class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
     times_per_frame: int
     """int: The number of time steps per animation frame."""
 
-    shift_coordinates: Optional[Union[str, CrsShifting]]
-    """Optional[Union[str, CrsShifting]]: The options how to shift the x- and y-coordinates. Typically used to create a reference point, such that an x and y become the origin (0,0)."""
+    shift_coordinates: Optional[Union[ShiftType, CrsShifting]]
+    """Optional[Union[ShiftType, CrsShifting]]: The options how to shift the x-, y- and optionally z-coordinates. Typically used to create a reference point, such that an x-, y- and z-coordinate become the origin (0,0,0)."""
 
     scale_horizontal: float
     """float: The horizontal scaling factor of the mesh coordinates compared to the coordinates from file."""

@@ -123,12 +123,12 @@ class XBeachDataset(DatasetBase):
         Shift the x- and y-coordinates and the variable values in the data set with the provided values.
         All x-coordinates will be subtracted with `shift_x`.
         All y_coordinates will be subtracted with `shift_y`.
-        All z_coordinates will be subtracted with `shift_z`.
+        All z_coordinates (variable values) will be subtracted with `shift_z`.
 
         Args:
             shift_x (float): The value to shift the x-coordinates with.
             shift_y (float): The value to shift the y-coordinates with.
-            shift_z (float): The value to shift the z-coordinates with.
+            shift_z (float): The value to shift the z-coordinates (variable values) with.
             variables (List[str]): The names of the variables for which to shift the values.
         """
 
