@@ -4,6 +4,7 @@ import numpy as np
 import xarray as xr
 import xugrid as xu
 
+from netcdf_to_gltf_converter.data.vector import Vec3
 from netcdf_to_gltf_converter.netcdf.netcdf_data import DatasetBase
 
 
@@ -78,25 +79,23 @@ class UgridDataset(DatasetBase):
         """
         return self._grid.fill_value
                 
-    def shift_coordinates(self, shift_x: float, shift_y: float, shift_z: float, variables: List[str]) -> None:
+    def shift_coordinates(self, shift: Vec3, variables: List[str]) -> None:
         """
-        Shift the x- and y-coordinates and the variable values in the data set with the provided values.
-        All x-coordinates will be subtracted with `shift_x`.
-        All y_coordinates will be subtracted with `shift_y`.
-        All z_coordinates (variable values) will be subtracted with `shift_z`.
+        Shift the x- and y-coordinates and the variable values in the data set with the provided shift values.
+        All x-coordinates will be subtracted with `shift.x`.
+        All y_coordinates will be subtracted with `shift.y`.
+        All z_coordinates (variable values) will be subtracted with `shift.z`.
 
         Args:
-            shift_x (float): The value to shift the x-coordinates with.
-            shift_y (float): The value to shift the y-coordinates with.
-            shift_z (float): The value to shift the z-coordinates (variable values) with.
+            shift (Vec3): Vector containing the values to shift the coordinates with.
             variables (List[str]): The names of the variables for which to shift the values.
-        """ 
-        self._grid.node_x = self._grid.node_x - shift_x
-        self._grid.node_y = self._grid.node_y - shift_y
+        """
+        self._grid.node_x = self._grid.node_x - shift.x
+        self._grid.node_y = self._grid.node_y - shift.y
         self._update()
         
         for variable_name in variables:
-            self._subtract_variable_values(variable_name, shift_z)
+            self._subtract_variable_values(variable_name, shift.z)
            
     def scale_coordinates(self, scale_horizontal: float, scale_vertical: float, variables: List[str]) -> None:
         """

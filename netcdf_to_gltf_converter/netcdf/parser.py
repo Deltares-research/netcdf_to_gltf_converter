@@ -1,5 +1,5 @@
 import logging
-from typing import List, Tuple, Union
+from typing import List, Union
 
 import numpy as np
 import xarray as xr
@@ -7,6 +7,7 @@ import xarray as xr
 from netcdf_to_gltf_converter.config import (Config, CrsShifting, ModelType,
                                              ShiftType, Variable)
 from netcdf_to_gltf_converter.data.mesh import MeshAttributes, TriangularMesh
+from netcdf_to_gltf_converter.data.vector import Vec3
 from netcdf_to_gltf_converter.netcdf.netcdf_data import (DatasetBase,
                                                          DataVariable)
 from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import UgridDataset
@@ -103,10 +104,10 @@ class Parser:
         Parser._log_variable_values(dataset, variables)
 
         if config.shift_coordinates:
-            shift_x, shift_y, shift_z = Parser._get_shift_values(config.shift_coordinates, dataset)
+            shift = Parser._get_shift_values(config.shift_coordinates, dataset)
             
-            logging.info(f"SHIFT model coordinates with: {shift_x} (x), {shift_y} (y), {shift_z} (z)")
-            dataset.shift_coordinates(shift_x, shift_y, shift_z, variables)
+            logging.info(f"SHIFT model coordinates with: {shift.x} (x), {shift.y} (y), {shift.z} (z)")
+            dataset.shift_coordinates(shift, variables)
             Parser._log_variable_values(dataset, variables)
 
         logging.info(f"SCALE model coordinates with: {config.scale_horizontal} (x, y), {config.scale_vertical} (z)")
@@ -120,9 +121,9 @@ class Parser:
             logging.info(f"Variable values for '{variable_name}': {variable.min} (min), {variable.max} (max)")
 
     @staticmethod
-    def _get_shift_values(shift_config: Union[ShiftType, CrsShifting], dataset: DatasetBase) -> Tuple[float, float, float]:
+    def _get_shift_values(shift_config: Union[ShiftType, CrsShifting], dataset: DatasetBase) -> Vec3:
         if shift_config == ShiftType.MIN:
-            return (dataset.min_x, dataset.min_y, 0.0)
+            return Vec3(dataset.min_x, dataset.min_y, 0.0)
         
         if isinstance(shift_config, CrsShifting):
             if shift_config.crs_transformation:
@@ -130,9 +131,9 @@ class Parser:
                                                      shift_config.crs_transformation.target_epsg)
             
                 logging.info(f"Transforming shift values from {transformer.source_crs.name} to {transformer.target_crs.name}")
-                return transformer.transform(shift_config.shift_x, shift_config.shift_y, shift_config.shift_z)
+                return Vec3(*transformer.transform(shift_config.shift_x, shift_config.shift_y, shift_config.shift_z))
 
-            return (shift_config.shift_x, shift_config.shift_y, shift_config.shift_z)
+            return Vec3(shift_config.shift_x, shift_config.shift_y, shift_config.shift_z)
 
     def _interpolate(self, data: DataVariable, time_index: int, dataset: DatasetBase) -> np.ndarray:
         return self._interpolator.interpolate(

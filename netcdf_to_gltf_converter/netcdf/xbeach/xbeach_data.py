@@ -4,6 +4,7 @@ import numpy as np
 import xarray as xr
 from xugrid.ugrid.conventions import X_STANDARD_NAMES, Y_STANDARD_NAMES
 
+from netcdf_to_gltf_converter.data.vector import Vec3
 from netcdf_to_gltf_converter.netcdf.netcdf_data import (
     DatasetBase, get_coordinate_variables)
 from netcdf_to_gltf_converter.preprocessing import connectivity
@@ -118,28 +119,26 @@ class XBeachDataset(DatasetBase):
         """
         return -1
     
-    def shift_coordinates(self, shift_x: float, shift_y: float, shift_z: float, variables: List[str]) -> None:
+    def shift_coordinates(self, shift: Vec3, variables: List[str]) -> None:
         """
-        Shift the x- and y-coordinates and the variable values in the data set with the provided values.
-        All x-coordinates will be subtracted with `shift_x`.
-        All y_coordinates will be subtracted with `shift_y`.
-        All z_coordinates (variable values) will be subtracted with `shift_z`.
+        Shift the x- and y-coordinates and the variable values in the data set with the provided shift values.
+        All x-coordinates will be subtracted with `shift.x`.
+        All y_coordinates will be subtracted with `shift.y`.
+        All z_coordinates (variable values) will be subtracted with `shift.z`.
 
         Args:
-            shift_x (float): The value to shift the x-coordinates with.
-            shift_y (float): The value to shift the y-coordinates with.
-            shift_z (float): The value to shift the z-coordinates (variable values) with.
+            shift (Vec3): Vector containing the values to shift the coordinates with.
             variables (List[str]): The names of the variables for which to shift the values.
         """
 
         for x_coord_var in self._x_coord_vars:
-            self._shift(x_coord_var, shift_x)
+            self._shift(x_coord_var, shift.x)
 
         for y_coord_var in self._y_coord_vars:
-            self._shift(y_coord_var, shift_y)
+            self._shift(y_coord_var, shift.y)
 
         for variable in variables:
-                self._shift(self.get_array(variable), shift_z)
+                self._shift(self.get_array(variable), shift.z)
 
         self._update()
 

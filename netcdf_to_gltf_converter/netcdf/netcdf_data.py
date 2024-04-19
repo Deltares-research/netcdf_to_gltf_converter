@@ -7,6 +7,8 @@ import xarray as xr
 import xugrid.ugrid.connectivity as connectivity
 from xugrid.ugrid.conventions import X_STANDARD_NAMES, Y_STANDARD_NAMES
 
+from netcdf_to_gltf_converter.data.vector import Vec3
+
 
 def get_coordinate_variables(data, standard_names: tuple) -> List[xr.DataArray]:
     coord_vars = []
@@ -222,17 +224,15 @@ class DatasetBase(ABC):
         pass
     
     @abstractmethod
-    def shift_coordinates(self, shift_x: float, shift_y: float, shift_z: float, variables: List[str]) -> None:
+    def shift_coordinates(self, shift: Vec3, variables: List[str]) -> None:
         """
-        Shift the x- and y-coordinates and the variable values in the data set with the provided values.
-        All x-coordinates will be subtracted with `shift_x`.
-        All y_coordinates will be subtracted with `shift_y`.
-        All z_coordinates (variable values) will be subtracted with `shift_z`.
+        Shift the x- and y-coordinates and the variable values in the data set with the provided shift values.
+        All x-coordinates will be subtracted with `shift.x`.
+        All y_coordinates will be subtracted with `shift.y`.
+        All z_coordinates (variable values) will be subtracted with `shift.z`.
 
         Args:
-            shift_x (float): The value to shift the x-coordinates with.
-            shift_y (float): The value to shift the y-coordinates with.
-            shift_z (float): The value to shift the z-coordinates (variable values) with.
+            shift (Vec3): Vector containing the values to shift the coordinates with.
             variables (List[str]): The names of the variables for which to shift the values.
         """
         pass
