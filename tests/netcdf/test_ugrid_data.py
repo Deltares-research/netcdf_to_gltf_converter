@@ -1,5 +1,7 @@
 import numpy as np
 import xarray as xr
+
+from netcdf_to_gltf_converter.data.vector import Vec3
 from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import UgridDataset
 from tests.preprocessing.utils import Factory
 
@@ -38,7 +40,8 @@ class TestUgridDataset:
         exp_node_coords = np.column_stack([exp_node_x, exp_node_y])
         exp_face_node_connectivity = dataset.face_node_connectivity.copy()
         
-        dataset.shift_coordinates(shift_x=10, shift_y=5)
+        shift = Vec3(10, 5, 0)
+        dataset.shift_coordinates(shift, variables=[])
 
         assert np.array_equal(dataset.node_coordinates, exp_node_coords)
         assert np.array_equal(dataset.face_node_connectivity, exp_face_node_connectivity)

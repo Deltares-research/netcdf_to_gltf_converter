@@ -1,8 +1,9 @@
 import numpy as np
 import xugrid as xu
 
-from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import UgridDataset
 import netcdf_to_gltf_converter.preprocessing.connectivity as connectivity
+from netcdf_to_gltf_converter.netcdf.ugrid.ugrid_data import UgridDataset
+
 
 class Factory:
     @staticmethod

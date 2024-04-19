@@ -5,22 +5,29 @@
 # Contents
 
 - [Contents](#contents)
-- [D-HYDRO netCDF output to glTF converter](#d-hydro-netcdf-output-to-gltf-converter)
+- [Disclaimer](#disclaimer)
+- [NetCDF to glTF converter](#netcdf-to-gltf-converter)
   - [Why use glTF](#why-use-gltf)
+  - [Supported models](#supported-models)
 - [User guide](#user-guide)
   - [Requirements](#requirements)
   - [Installation](#installation)
   - [Usage](#usage)
   - [Configuration file](#configuration-file)
+  - [Logging](#logging)
   - [View results](#view-results)
 - [Methodology](#methodology)
 - [Limitations](#limitations)
 - [Contributing](#contributing)
 - [Acknowledgments](#acknowledgments)
 
-# D-HYDRO netCDF output to glTF converter
+# Disclaimer
 
-This is a tool that converts D-HYDRO map output results that are stored in the netCDF file format to the glTF file format. The goal is to allow users who work with D-HYDRO results to view their data in 3D renderers using the glTF format.
+This tool is a proof-of-concept, which means it has been tested in a limited scope and may not handle all real-world cases effectively. As many cases have not been validated, conversion may fail in certain scenarios.
+
+# NetCDF to glTF converter
+
+This is a tool that converts hydrodynamical model output results that are stored in the netCDF file format to the glTF file format. The goal is to allow users to view their data in 3D renderers using the glTF format.
 
 <p align="center">
   <img src="docs/readme/img/example.gif" alt="animated" />
@@ -29,6 +36,13 @@ This is a tool that converts D-HYDRO map output results that are stored in the n
 ## Why use glTF
 [glTF (GL Transmission Format)](https://www.khronos.org/gltf/) is an open-standard file format developed by [The Khronos Group](https://www.khronos.org/). The glTF file format is used for 3D scenes and models designed for efficient transmission and loading of 3D content on the web and other real-time applications. This file format can store geometry, materials, textures, animations, and other scene data.
 glTF is used in a variety of industries and applications, including gaming, virtual and augmented reality, education, and more. It is particularly well-suited for web-based applications, as it allows 3D content to be easily and efficiently delivered over the internet, and can be rendered in real-time on a wide range of devices. 
+
+## Supported models
+
+Currently, this tool supports the conversion of the following hydrodynamical models:
+
+- D-HYDRO (map)
+- XBEACH
 
 # User guide
 ## Requirements
@@ -82,7 +96,14 @@ These steps will ensure that the converter is installed within a virtual environ
 
 - `times_per_frame`: An integer value specifying the number of time steps to be included in each frame of the glTF animation. This option is useful if you want to adjust the time resolution of the animation.
 
-- `shift_coordinates`: A boolean value indicating whether to shift the coordinates of the data during conversion. When set to `true`, the converter will shift the coordinates such that the smallest x and y become the origin (0,0).
+- `shift_coordinates` (optional): A value indicating how to shift the coordinates of the data during conversion. When set to `min`, the converter will shift the coordinates such that the smallest x and y become the origin (0,0); variable values remain unchanged. It is also possible to provide custom shift values for the x- and y-coordinates and the variable values (z-coordinates):
+
+  - `crs_transformation` (optional): The configuration settings for transforming the provided shift values from one coordinate system to another. The target coordinate system should be the coordinate system of the model.
+    - `source_epsg`: EPSG code of the source coordinate system.
+    - `target_epsg`: EPSG code of the target coordinate system.
+  - `shift_x`: A floating value containing the value that should be subtracted from all x-coordinates.
+   - `shift_y`: A floating value containing the value that should be subtracted from all y-coordinates.
+   - `shift_z`: A floating value containing the value that should be subtracted from all variable values (z-coordinates).
 
 - `scale_horizontal`: A floating value indicating the scale factor for the x- and y-coordinates. It determines the scaling of the converted geometry. A value of 1.0 results in the original geometry size.
 
@@ -109,28 +130,28 @@ These steps will ensure that the converter is installed within a virtual environ
 {
    "file_version":"0.1.0",
    "model_type": "D-HYDRO",
-   "time_index_start":50,
-   "time_index_end":100,
-   "times_per_frame":3,
-   "shift_coordinates":true,
-   "scale_horizontal":0.5,
-   "scale_vertical":0.5,
+   "time_index_start": 50,
+   "time_index_end": 100,
+   "times_per_frame": 3,
+   "shift_coordinates": "min",
+   "scale_horizontal": 0.5,
+   "scale_vertical": 0.5,
    "variables":[
       {
-         "name":"Mesh2d_waterdepth",
-         "color":[0.372, 0.635, 0.8, 1.0],
-         "metallic_factor":0.0,
-         "roughness_factor":0.15,
-         "use_threshold":false,
-         "threshold_height":0.01,
-         "threshold_color":[1.0, 1.0, 1.0, 1.0]
+         "name": "Mesh2d_waterdepth",
+         "color": [0.372, 0.635, 0.8, 1.0],
+         "metallic_factor": 0.0,
+         "roughness_factor": 0.15,
+         "use_threshold": false,
+         "threshold_height": 0.01,
+         "threshold_color": [1.0, 1.0, 1.0, 1.0]
       },
       {
-         "name":"Mesh2d_s1",
-         "color":[0.686, 0.831, 0.937, 1.0],
-         "metallic_factor":0.0,
-         "roughness_factor":0.15,
-         "use_threshold":false
+         "name": "Mesh2d_s1",
+         "color": [0.686, 0.831, 0.937, 1.0],
+         "metallic_factor": 0.0,
+         "roughness_factor": 0.15,
+         "use_threshold": false
       }
    ]
 }
@@ -140,6 +161,9 @@ In the above example, we render two variables from a D-HYDRO output map netCDF f
 
 For the `Mesh2d_waterdepth` variable, an additional threshold mesh is rendered at a height of 0.01. Each mesh is assigned its own color, specified by the normalized red, green, blue and alpha (RGBA) values.
 
+## Logging
+During conversion, a log file is written to the output folder (folder of the resulting glTF file) with the name: `gltf_converter_<date>_<time>_<gltf-name>.log`
+
 ## View results
  Several glTF viewers exist that can be used to view the produced glTF file. Simply drag and drop the file, and the glTF file will be rendered.
  * [glTF Sample Viewer](https://github.khronos.org/glTF-Sample-Viewer-Release/)
@@ -147,7 +171,7 @@ For the `Mesh2d_waterdepth` variable, an additional threshold mesh is rendered a
 
 # Methodology
 The converter operates through the following steps:
-1. If specified in the configuration file, the x- and y-coordinates are shifted such that the smallest x and y become the origin (0,0).
+1. If specified in the configuration file, the x- and y-coordinates and possibly z-coordinates (variable values) are shifted such that the dataset contains an origin point.
 2. If specified in the configuration file, the geometry is scaled with the desired scaling factor.
 3. The 2D grid from the netCDF file is triangulated, allowing it to be passed to glTF. In order to render a mesh, glTF requires a geometry definition that consists of triangles.
 4. For each specified variable in the configuration file:
@@ -188,7 +212,7 @@ If you encounter any issues or have good ideas for this project please [create a
 # Acknowledgments
 [Connec2](https://connec2.nl/) is a company specialized in cross reality (XR) technology that guided us to setup this project. 
 
-This tool was developed as part of the [D-HYDRO GUI Visualisatie & Cloud project](https://tkideltatechnologie.invoermodule.nl/project/d-hydro-gui-visualisatie-cloud/), which was funded by the fifth Top consortium for Knowledge and Innovation (TKI) programme.
+This tool was initially developed as part of the [D-HYDRO GUI Visualisatie & Cloud project](https://tkideltatechnologie.invoermodule.nl/project/d-hydro-gui-visualisatie-cloud/), which was funded by the fifth Top consortium for Knowledge and Innovation (TKI) programme.
 
 
 

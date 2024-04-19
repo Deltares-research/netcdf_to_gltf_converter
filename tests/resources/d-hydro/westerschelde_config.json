@@ -1,0 +1,24 @@
+{
+	"file_version": "0.1.0",
+	"model_type": "D-HYDRO",
+	"time_index_start": 0,
+	"times_per_frame": 1,
+	"shift_coordinates": {
+		"crs_transformation": {
+			"source_epsg": 4979,
+			"target_epsg": 7415
+		},
+		"shift_x": 3.9842655391511617,
+		"shift_y": 51.40756782573971,
+		"shift_z": 44.90722771
+	},
+	"scale_horizontal": 1.0,
+	"scale_vertical": 1.0,
+	"variables": [{
+		"name": "mesh2d_s1",
+		"color": [0.38, 0.73, 0.78, 1.0],
+		"metallic_factor": 0.0,
+		"roughness_factor": 0.11,
+		"use_threshold": false
+	}]
+}

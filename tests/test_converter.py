@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from netcdf_to_gltf_converter.converter import Converter
-from tests.utils import assert_files_equal, get_temp_file, reference_files, dhydro_resources
+from tests.utils import assert_files_equal, dhydro_resources, reference_files
 
 
 class TestConverter:
@@ -27,13 +27,24 @@ class TestConverter:
 
         assert str(error.value) == rf"Config file does not exist: {config}"
 
-    def test_run_dhydro(self):
+    def test_run_dhydro(self, tmp_path):
         netcdf = dhydro_resources / "3x3nodes_rectilinear_map.nc"
         reference_gltf = reference_files / "3x3nodes_rectilinear_map.gltf"
         config = dhydro_resources / "config.json"
 
-        with get_temp_file(reference_gltf.name) as gltf:
-            converter = Converter(netcdf, gltf, config)
-            converter.run()
+        gltf = tmp_path / reference_gltf.name
+        converter = Converter(netcdf, gltf, config)
+        converter.run()
 
-            assert_files_equal(gltf, reference_gltf)
+        assert_files_equal(gltf, reference_gltf)
+
+    def test_run_westerschelde(self, tmp_path):
+        netcdf = dhydro_resources / "westerschelde_map.nc"
+        reference_gltf = reference_files / "westerschelde.gltf"
+        config = dhydro_resources / "westerschelde_config.json"
+
+        gltf = tmp_path / reference_gltf.name
+        converter = Converter(netcdf, gltf, config)
+        converter.run()
+
+        assert_files_equal(gltf, reference_gltf)   

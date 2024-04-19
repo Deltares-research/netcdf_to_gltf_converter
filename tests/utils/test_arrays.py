@@ -1,11 +1,8 @@
 import numpy as np
 import pytest
 
-from netcdf_to_gltf_converter.utils.arrays import (
-    float32_array,
-    uint32_array,
-    validate_2d_array,
-)
+from netcdf_to_gltf_converter.utils.arrays import (float32_array, uint32_array,
+                                                   validate_2d_array)
 
 
 def test_validate_2d_array_with_unexpected_shape_raises_assertion_error():

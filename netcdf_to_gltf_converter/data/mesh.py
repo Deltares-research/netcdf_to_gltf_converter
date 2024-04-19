@@ -3,7 +3,8 @@ from typing import List
 import numpy as np
 
 from netcdf_to_gltf_converter.typing.custom_types import Color
-from netcdf_to_gltf_converter.utils.arrays import float32_array, validate_2d_array
+from netcdf_to_gltf_converter.utils.arrays import (float32_array,
+                                                   validate_2d_array)
 
 
 class MeshAttributes:

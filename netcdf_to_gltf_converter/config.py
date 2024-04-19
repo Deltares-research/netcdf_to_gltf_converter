@@ -1,7 +1,7 @@
 import logging
 from abc import ABC
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Type, TypeVar
+from typing import Any, Dict, List, Optional, Type, TypeVar, Union
 
 from packaging.version import Version
 from pydantic import BaseModel as PydanticBaseModel
@@ -99,6 +99,36 @@ class ModelType(StrEnum):
     XBEACH = "XBEACH"
     """Output from an XBEACH model (regular grid)."""
 
+class ShiftType(StrEnum):
+    """The method to shift the coordinates."""
+    
+    MIN = "min"
+    """The smalles x- and -y coordinate become the origin (0,0,z)."""
+    
+class CrsTransformation(BaseModel):
+    """The configuration settings for transforming the coordinates."""
+
+    source_epsg: int
+    """int: EPSG code of the source coordinate system."""
+
+    target_epsg: int
+    """int: EPSG code of the target coordinate system."""
+
+class CrsShifting(BaseModel):
+    """The configuration settings for shifting the coordinates."""
+
+    crs_transformation: Optional[CrsTransformation]
+    """Optional[CrsTransformation]: The configuration settings for transforming the provided shift values from one coordinate system to another (e.g. from WGS84 to the model CRS)."""
+    
+    shift_x: float
+    """float: Value to shift the x-coordinates with. All x-coordinates will be subtracted with this value."""
+
+    shift_y: float
+    """float: Value to shift the y-coordinates with. All y-coordinates will be subtracted with this value."""
+    
+    shift_z: float
+    """float: Value to shift the variables values (z-coordinates) with. All variable values will be subtracted with this value."""
+    
 class Variable(BaseModel):
     """Configuration properties of a variable."""
 
@@ -180,8 +210,8 @@ class Config(AbstractJsonConfigFile, AbstractFileVersionFile):
     times_per_frame: int
     """int: The number of time steps per animation frame."""
 
-    shift_coordinates: bool
-    """bool: Whether or not to shift the x- and y-coordinates, such that the smallest x and y become the origin (0,0)."""
+    shift_coordinates: Optional[Union[ShiftType, CrsShifting]]
+    """Optional[Union[ShiftType, CrsShifting]]: The options how to shift the x-, y- and optionally z-coordinates. Typically used to create a reference point, such that an x-, y- and z-coordinate become the origin (0,0,0)."""
 
     scale_horizontal: float
     """float: The horizontal scaling factor of the mesh coordinates compared to the coordinates from file."""

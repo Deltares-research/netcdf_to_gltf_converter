@@ -1,10 +1,13 @@
+import logging
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
 import xarray as xr
 import xugrid.ugrid.connectivity as connectivity
 from xugrid.ugrid.conventions import X_STANDARD_NAMES, Y_STANDARD_NAMES
+
+from netcdf_to_gltf_converter.data.vector import Vec3
 
 
 def get_coordinate_variables(data, standard_names: tuple) -> List[xr.DataArray]:
@@ -33,7 +36,27 @@ class DataVariable():
         """
         self._data_array = data
         self._time_var = get_coordinate_variables(data, ("time",))[0]
+        self._x_coords_var = get_coordinate_variables(data, X_STANDARD_NAMES)[0]
+        self._y_coords_var = get_coordinate_variables(data, Y_STANDARD_NAMES)[0]
 
+    @property
+    def x_coords(self) -> np.ndarray:
+        """Get the x-coordinates for this data variable.
+
+        Returns:
+            np.ndarray: A 1D np.ndarray of floats with shape (n, 1) where each row contains an x-coordinate.
+        """
+        return self._x_coords_var.values.flatten()
+    
+    @property
+    def y_coords(self) -> np.ndarray:
+        """Get the y-coordinates for this data variable.
+
+        Returns:
+            np.ndarray: A 1D np.ndarray of floats with shape (n, 1) where each row contains a y-coordinate.
+        """
+        return self._y_coords_var.values.flatten()
+    
     @property
     def coordinates(self) -> np.ndarray:
         """Get the coordinates for this data variable.
@@ -41,12 +64,7 @@ class DataVariable():
         Returns:
             np.ndarray: A 2D np.ndarray of floats with shape (n, 2) where each row contains a x and y coordinate.
         """
-        def get_coordinates(standard_names: tuple):
-            return get_coordinate_variables(self._data_array, standard_names)[0].values.flatten()
-
-        x_coords = get_coordinates(X_STANDARD_NAMES)
-        y_coords = get_coordinates(Y_STANDARD_NAMES)
-        return np.column_stack([x_coords, y_coords])
+        return np.column_stack([self.x_coords, self.y_coords])
 
     @property
     def time_index_max(self) -> int:
@@ -68,8 +86,25 @@ class DataVariable():
         """
         time_filter = {self._time_var.name : time_index}
         return self._data_array.isel(**time_filter).values.flatten()
-
-
+    
+    @property
+    def min(self) -> float:
+        """Get the minimum value for this variable across all dimensions.
+        
+        Returns:
+            float: The minimum variable value.
+        """
+        return self._data_array.min().values
+    
+    @property
+    def max(self) -> float:
+        """Get the maximum value for this variable across all dimensions.
+        
+        Returns:
+            float: The maximum variable value.
+        """
+        return self._data_array.max().values
+  
 class DatasetBase(ABC):
     """Class that serves as a wrapper object for an xarray.Dataset.
     The wrapper allows for easier retrieval of relevant data.
@@ -189,15 +224,16 @@ class DatasetBase(ABC):
         pass
     
     @abstractmethod
-    def shift_coordinates(self, shift_x: float, shift_y: float) -> None:
+    def shift_coordinates(self, shift: Vec3, variables: List[str]) -> None:
         """
-        Shift the x- and y-coordinates in the data set with the provided values.
-        All x-coordinates will be subtracted with `shift_x`.
-        All y_coordinates will be subtracted with `shift_y`.
+        Shift the x- and y-coordinates and the variable values in the data set with the provided shift values.
+        All x-coordinates will be subtracted with `shift.x`.
+        All y_coordinates will be subtracted with `shift.y`.
+        All z_coordinates (variable values) will be subtracted with `shift.z`.
 
         Args:
-            shift_x (float): The value to shift back the x-coordinates with.
-            shift_y (float): The value to shift back the y-coordinates with.
+            shift (Vec3): Vector containing the values to shift the coordinates with.
+            variables (List[str]): The names of the variables for which to shift the values.
         """
         pass
     
@@ -226,3 +262,6 @@ class DatasetBase(ABC):
             self.face_node_connectivity, self.fill_value
         )
         self.set_face_node_connectivity(face_node_connectivity)
+        
+    def _log_grid_bounds(self, bounds: Tuple[float, float, float, float]):
+        logging.info(f"Grid bounds: {bounds[0]} (min x), {bounds[1]} (min y), {bounds[2]} (max x), {bounds[3]} (max y)")
