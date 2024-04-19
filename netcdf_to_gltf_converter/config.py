@@ -121,6 +121,9 @@ class CrsTransformation(BaseModel):
         if isinstance(value, int):
             return create_crs(value)
         
+        if isinstance(value, str):
+            return create_crs(int(value))
+        
         return value
 
 class CrsShifting(BaseModel):
