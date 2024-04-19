@@ -6,3 +6,5 @@ def test_create_crs_transformer():
     
     assert transformer is not None
     assert transformer.is_network_enabled == True
+    assert transformer.source_crs.name == 'WGS 84 (with axis order normalized for visualization)'
+    assert transformer.target_crs.name == 'Amersfoort / RD New + NAP height'
