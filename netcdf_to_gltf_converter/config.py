@@ -110,25 +110,29 @@ class ShiftType(StrEnum):
 class CrsTransformation(BaseModel):
     """The configuration settings for transforming the coordinates."""
 
-    source_epsg: CRS
-    """CRS: EPSG code of the source coordinate system."""
+    source_crs: CRS
+    """CRS: The source coordinate system."""
 
-    target_epsg: CRS
-    """CRS: EPSG code of the target coordinate system."""
+    target_crs: CRS
+    """CRS: The target coordinate system."""
 
     @validator("*", pre=True)
-    def validate_epsg(cls, value):
+    def validate_epsg(cls, value) -> CRS:
         if isinstance(value, int):
             return create_crs(value)
 
         if isinstance(value, str):
-            if "+" in value:
-                parts = value.split("+", maxsplit=1)
-                return create_compound_crs(int(parts[0]), int(parts[1]))
-            return create_crs(int(value))
+            return CrsTransformation._create_crs_from_string(value)
 
         return value
 
+    @staticmethod
+    def _create_crs_from_string(value: str) -> CRS:
+        if "+" in value:
+            parts = value.split("+", maxsplit=1)
+            return create_compound_crs(int(parts[0]), int(parts[1]))
+        
+        return create_crs(int(value))
 
 class CrsShifting(BaseModel):
     """The configuration settings for shifting the coordinates."""

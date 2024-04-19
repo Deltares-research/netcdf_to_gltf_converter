@@ -8,8 +8,8 @@ def create_crs_transformer(source_crs: CRS, target_crs: CRS) -> pyproj.Transform
     """Create a coordinate transformer that transforms the coordinates from a source coordinate system to a target coordinate system.
 
     Args:
-        source_epsg (CRS): The source coordinate system.
-        target_epsg (CRS): The target coordinate system.
+        source_crs (CRS): The source coordinate system.
+        target_crs (CRS): The target coordinate system.
 
     Returns:
         pyproj.Transformer: The coordinate transformer
