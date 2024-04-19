@@ -1,9 +1,9 @@
 from pyproj import CRS
+from pyproj.crs import CompoundCRS
 
-from netcdf_to_gltf_converter.preprocessing.crs import (
-    create_crs,
-    create_crs_transformer,
-)
+from netcdf_to_gltf_converter.preprocessing.crs import (create_compound_crs,
+                                                        create_crs,
+                                                        create_crs_transformer)
 
 
 def test_create_crs_transformer():
@@ -31,3 +31,14 @@ def test_create_crs():
 
     assert isinstance(crs, CRS)
     assert crs.name == "Amersfoort / RD New + NAP height"
+
+
+def test_create_compound_crs():
+    epsg_horizontal = 32617
+    epsg_vertical = 5703
+
+    crs = create_compound_crs(epsg_horizontal, epsg_vertical)
+
+    assert isinstance(crs, CompoundCRS)
+    assert crs.name == "WGS 84 / UTM zone 17N + NAVD88 height"
+    assert crs.is_compound == True
