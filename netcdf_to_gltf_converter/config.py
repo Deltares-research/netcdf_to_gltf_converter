@@ -9,7 +9,7 @@ from pydantic import Extra, root_validator, validator
 from pyproj import CRS
 from strenum import StrEnum
 
-from netcdf_to_gltf_converter.preprocessing.crs import create_crs
+from netcdf_to_gltf_converter.preprocessing.crs import create_compound_crs, create_crs
 from netcdf_to_gltf_converter.utils.validation import in_range
 
 Color = List[float]
@@ -115,16 +115,20 @@ class CrsTransformation(BaseModel):
 
     target_epsg: CRS
     """CRS: EPSG code of the target coordinate system."""
-    
-    @validator('*', pre=True)
+
+    @validator("*", pre=True)
     def validate_epsg(cls, value):
         if isinstance(value, int):
             return create_crs(value)
-        
+
         if isinstance(value, str):
+            if "+" in value:
+                parts = value.split("+", maxsplit=1)
+                return create_compound_crs(int(parts[0]), int(parts[1]))
             return create_crs(int(value))
-        
+
         return value
+
 
 class CrsShifting(BaseModel):
     """The configuration settings for shifting the coordinates."""

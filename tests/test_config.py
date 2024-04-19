@@ -1,3 +1,5 @@
+from pyproj.crs import CompoundCRS
+
 from netcdf_to_gltf_converter.config import CrsTransformation
 
 
@@ -21,3 +23,15 @@ class TestCrsTransformation():
         
         assert crs_transformation.source_epsg.name == 'WGS 84'
         assert crs_transformation.target_epsg.name == 'Amersfoort / RD New + NAP height'
+        
+    def test_construction_with_compound_epsg_strings(self):
+        source_epsg = '4326+5773'
+        target_epsg = '32617+5703'
+        
+        crs_transformation = CrsTransformation(source_epsg=source_epsg, 
+                                               target_epsg=target_epsg)
+        
+        assert crs_transformation.source_epsg.name == 'WGS 84 + EGM96 height'
+        assert isinstance(crs_transformation.source_epsg, CompoundCRS)
+        assert crs_transformation.target_epsg.name == 'WGS 84 / UTM zone 17N + NAVD88 height'
+        assert isinstance(crs_transformation.target_epsg, CompoundCRS)
