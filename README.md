@@ -99,8 +99,8 @@ These steps will ensure that the converter is installed within a virtual environ
 - `shift_coordinates` (optional): A value indicating how to shift the coordinates of the data during conversion. When set to `min`, the converter will shift the coordinates such that the smallest x and y become the origin (0,0); variable values remain unchanged. It is also possible to provide custom shift values for the x- and y-coordinates and the variable values (z-coordinates):
 
   - `crs_transformation` (optional): The configuration settings for transforming the provided shift values from one coordinate system to another. The target coordinate system should be the coordinate system of the model.
-    - `source_epsg`: EPSG code of the source coordinate system.
-    - `target_epsg`: EPSG code of the target coordinate system.
+    - `source_crs`: EPSG code of the source coordinate system. Can also be a compound coordinate system, e.g. '32617+5703'
+    - `target_crs`: EPSG code of the target coordinate system.'Can also be a compound coordinate system, e.g. '32617+5703'
   - `shift_x`: A floating value containing the value that should be subtracted from all x-coordinates.
    - `shift_y`: A floating value containing the value that should be subtracted from all y-coordinates.
    - `shift_z`: A floating value containing the value that should be subtracted from all variable values (z-coordinates).
