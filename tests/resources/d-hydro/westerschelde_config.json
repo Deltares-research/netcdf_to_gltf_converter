@@ -5,8 +5,8 @@
 	"times_per_frame": 1,
 	"shift_coordinates": {
 		"crs_transformation": {
-			"source_epsg": 4979,
-			"target_epsg": 7415
+			"source_crs": 4979,
+			"target_crs": 7415
 		},
 		"shift_x": 3.9842655391511617,
 		"shift_y": 51.40756782573971,
