@@ -100,7 +100,7 @@ These steps will ensure that the converter is installed within a virtual environ
 
   - `crs_transformation` (optional): The configuration settings for transforming the provided shift values from one coordinate system to another. The target coordinate system should be the coordinate system of the model.
     - `source_crs`: EPSG code of the source coordinate system. Can also be a compound coordinate system, e.g. '32617+5703'
-    - `target_crs`: EPSG code of the target coordinate system.'Can also be a compound coordinate system, e.g. '32617+5703'
+    - `target_crs`: EPSG code of the target coordinate system. Can also be a compound coordinate system, e.g. '32617+5703'
   - `shift_x`: A floating value containing the value that should be subtracted from all x-coordinates.
    - `shift_y`: A floating value containing the value that should be subtracted from all y-coordinates.
    - `shift_z`: A floating value containing the value that should be subtracted from all variable values (z-coordinates).
