@@ -120,7 +120,7 @@ class XBeachDataset(DatasetBase):
         """
         return -1
 
-    def transform_vertical_coordinate_system(self, source_crs: CRS, target_crs: CRS, variables: List[str]):
+    def transform_vertical_coordinate_system(self, source_crs: CRS, target_crs: CRS, variables: List[str]) -> None:
         """Transform the vertical coordinates to another coordinate system.
 
         Args:
