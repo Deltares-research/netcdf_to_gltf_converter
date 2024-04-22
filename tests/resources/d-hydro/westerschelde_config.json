@@ -3,6 +3,10 @@
 	"model_type": "D-HYDRO",
 	"time_index_start": 0,
 	"times_per_frame": 1,
+	"vertical_crs_transformation": {
+		"source_crs": 7415,
+		"target_crs": 4979
+	},
 	"shift_coordinates": {
 		"crs_transformation": {
 			"source_crs": 4979,

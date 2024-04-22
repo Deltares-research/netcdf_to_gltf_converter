@@ -103,8 +103,15 @@ class Parser:
         variables = [var.name for var in config.variables]
         Parser._log_variable_values(dataset, variables)
 
+        if config.vertical_crs_transformation:
+            logging.info(f"TRANSFORM data values from {config.vertical_crs_transformation.source_crs.name} to {config.vertical_crs_transformation.target_crs.name}")
+            dataset.transform_vertical_coordinate_system(config.vertical_crs_transformation.source_crs, 
+                                                         config.vertical_crs_transformation.target_crs, 
+                                                         variables)
+            Parser._log_variable_values(dataset, variables)
+
         if config.shift_coordinates:
-            shift = Parser._get_shift_values(config.shift_coordinates, dataset)
+            shift = Parser._get_shift_values(config, dataset)
             
             logging.info(f"SHIFT model coordinates with: {shift.x} (x), {shift.y} (y), {shift.z} (z)")
             dataset.shift_coordinates(shift, variables)
@@ -121,7 +128,8 @@ class Parser:
             logging.info(f"Variable values for '{variable_name}': {variable.min} (min), {variable.max} (max)")
 
     @staticmethod
-    def _get_shift_values(shift_config: Union[ShiftType, CrsShifting], dataset: DatasetBase) -> Vec3:
+    def _get_shift_values(config: Config, dataset: DatasetBase) -> Vec3:
+        shift_config = config.shift_coordinates
         if shift_config == ShiftType.MIN:
             return Vec3(dataset.min_x, dataset.min_y, 0.0)
         
@@ -131,7 +139,13 @@ class Parser:
                                                      shift_config.crs_transformation.target_crs)
             
                 logging.info(f"Transforming shift values from {transformer.source_crs.name} to {transformer.target_crs.name}")
-                return Vec3(*transformer.transform(shift_config.shift_x, shift_config.shift_y, shift_config.shift_z))
+                shift_x, shift_y, shift_z = transformer.transform(shift_config.shift_x, shift_config.shift_y, shift_config.shift_z)
+                
+                vert_crs_transformation = config.vertical_crs_transformation
+                if vert_crs_transformation and vert_crs_transformation.target_crs.equals(shift_config.crs_transformation.source_crs):
+                    shift_z = shift_config.shift_z
+
+                return Vec3(shift_x, shift_y, shift_z)
 
             return Vec3(shift_config.shift_x, shift_config.shift_y, shift_config.shift_z)
 

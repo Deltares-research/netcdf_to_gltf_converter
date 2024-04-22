@@ -1,11 +1,13 @@
 from typing import List
 
 import numpy as np
+from pyproj import CRS
 import xarray as xr
 import xugrid as xu
 
 from netcdf_to_gltf_converter.data.vector import Vec3
 from netcdf_to_gltf_converter.netcdf.netcdf_data import DatasetBase
+from netcdf_to_gltf_converter.preprocessing.crs import create_crs_transformer
 
 
 class UgridDataset(DatasetBase):
@@ -22,7 +24,7 @@ class UgridDataset(DatasetBase):
         super().__init__(dataset)
         self._ugrid_data_set = xu.UgridDataset(dataset)  
         self._grid = self._get_ugrid2d()
-        super()._log_grid_bounds(self._grid.bounds)
+        self._update()
 
     @property
     def min_x(self) -> float:
@@ -78,6 +80,19 @@ class UgridDataset(DatasetBase):
             int: Integer with the fill value.
         """
         return self._grid.fill_value
+
+    def transform_vertical_coordinate_system(self, source_crs: CRS, target_crs: CRS, variables: List[str]) -> None:
+        """Transform the vertical coordinates to another coordinate system.
+
+        Args:
+            source_crs (CRS): The source coordinate system.
+            target_crs (CRS): The target coordinate system.
+            variables (List[str]): The names of the variables for which to transform the values.
+        """
+        transformer = create_crs_transformer(source_crs, target_crs)
+        for variable_name in variables:
+            variable = self.get_variable(variable_name)
+            variable.transform_data_values(transformer)
                 
     def shift_coordinates(self, shift: Vec3, variables: List[str]) -> None:
         """

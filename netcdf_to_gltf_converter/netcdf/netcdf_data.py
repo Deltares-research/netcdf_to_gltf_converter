@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from typing import List, Tuple
 
 import numpy as np
+from pyproj import CRS, Transformer
 import xarray as xr
 import xugrid.ugrid.connectivity as connectivity
 from xugrid.ugrid.conventions import X_STANDARD_NAMES, Y_STANDARD_NAMES
@@ -22,8 +23,7 @@ def get_coordinate_variables(data, standard_names: tuple) -> List[xr.DataArray]:
     return coord_vars
 
 
-
-class DataVariable():
+class DataVariable:
     """Class that serves as a wrapper object for an xarray.DataArray.
     The wrapper allows for easier retrieval of relevant data.
     """
@@ -47,7 +47,7 @@ class DataVariable():
             np.ndarray: A 1D np.ndarray of floats with shape (n, 1) where each row contains an x-coordinate.
         """
         return self._x_coords_var.values.flatten()
-    
+
     @property
     def y_coords(self) -> np.ndarray:
         """Get the y-coordinates for this data variable.
@@ -56,7 +56,7 @@ class DataVariable():
             np.ndarray: A 1D np.ndarray of floats with shape (n, 1) where each row contains a y-coordinate.
         """
         return self._y_coords_var.values.flatten()
-    
+
     @property
     def coordinates(self) -> np.ndarray:
         """Get the coordinates for this data variable.
@@ -84,27 +84,72 @@ class DataVariable():
         Returns:
             np.ndarray: A 1D np.ndarray of floats.
         """
-        time_filter = {self._time_var.name : time_index}
+        time_filter = {self._time_var.name: time_index}
         return self._data_array.isel(**time_filter).values.flatten()
-    
+
+    def _get_data_at_coordinate_index(self, coord_index: int) -> np.ndarray:
+        """Get the data values for this variable at the specified coordinate index.
+        Number of values is equal to the number of time steps.
+
+        Args:
+            coord_index (int): The coordinate index.
+
+        Returns:
+            np.ndarray: The values at the specified coordinate index.
+        """
+        filter = self._get_data_on_coordinate_filter(coord_index)
+        return self._data_array.isel(filter).values
+
+    def _set_data_at_coordinate_index(
+        self, coord_index: int, values: np.ndarray
+    ) -> None:
+        """Set the data values for this variable at the specified coordinate index.
+        Number of values should be equal to the number of time steps.
+
+        Args:
+            coord_index (int): The coordinate index.
+            values (np.ndarray): The new values.
+        """
+        filter = self._get_data_on_coordinate_filter(coord_index)
+        self._data_array.loc[filter] = values
+
+    def transform_data_values(self, crs_transformer: Transformer) -> None:
+        """Transform all data values (z-coordinates) for each xy-coordinate and for each time step.
+
+        Args:
+            crs_transformer (Transformer): The transformer to handle the coordinates' transformation.
+        """
+        for coord_index in range(0, len(self.coordinates)):                
+            z_coords = self._get_data_at_coordinate_index(coord_index)
+            x_coords = np.full(z_coords.size, self.x_coords[coord_index])
+            y_coords = np.full(z_coords.size, self.y_coords[coord_index])
+                     
+            _, _, z_coords_transformed = crs_transformer.transform(x_coords, y_coords, z_coords)
+            self._set_data_at_coordinate_index(coord_index, z_coords_transformed)
+        
     @property
     def min(self) -> float:
         """Get the minimum value for this variable across all dimensions.
-        
+
         Returns:
             float: The minimum variable value.
         """
         return self._data_array.min().values
-    
+
     @property
     def max(self) -> float:
         """Get the maximum value for this variable across all dimensions.
-        
+
         Returns:
             float: The maximum variable value.
         """
         return self._data_array.max().values
-  
+
+    def _get_data_on_coordinate_filter(self, coord_index: int):
+        filter = {self._x_coords_var.dims[0]: coord_index}
+        return filter
+
+
 class DatasetBase(ABC):
     """Class that serves as a wrapper object for an xarray.Dataset.
     The wrapper allows for easier retrieval of relevant data.
@@ -183,7 +228,7 @@ class DatasetBase(ABC):
     def _raise_if_not_in_dataset(self, name: str):
         if name not in self._dataset:
             raise ValueError(f"Variable with name {name} does not exist in dataset.")
-    
+
     @property
     @abstractmethod
     def face_node_connectivity(self) -> np.ndarray:
@@ -222,7 +267,20 @@ class DatasetBase(ABC):
             int: Integer with the fill value.
         """
         pass
-    
+
+    @abstractmethod
+    def transform_vertical_coordinate_system(
+        self, source_crs: CRS, target_crs: CRS, variables: List[str]
+    ) -> None:
+        """Transform the vertical coordinates to another coordinate system.
+
+        Args:
+            source_crs (CRS): The source coordinate system.
+            target_crs (CRS): The target coordinate system.
+            variables (List[str]): The names of the variables for which to transform the values.
+        """
+        pass
+
     @abstractmethod
     def shift_coordinates(self, shift: Vec3, variables: List[str]) -> None:
         """
@@ -236,9 +294,11 @@ class DatasetBase(ABC):
             variables (List[str]): The names of the variables for which to shift the values.
         """
         pass
-    
+
     @abstractmethod
-    def scale_coordinates(self, scale_horizontal: float, scale_vertical: float, variables: List[str]) -> None:
+    def scale_coordinates(
+        self, scale_horizontal: float, scale_vertical: float, variables: List[str]
+    ) -> None:
         """
         Scale the x- and y-coordinates and the data values, with the scaling factors that are specified.
         The original data set is updated with the new coordinates.
@@ -249,7 +309,6 @@ class DatasetBase(ABC):
             variables (List[str]): The names of the variables to scale.
         """
         pass
-    
 
     def triangulate(self):
         """Triangulate the provided grid.
@@ -262,6 +321,8 @@ class DatasetBase(ABC):
             self.face_node_connectivity, self.fill_value
         )
         self.set_face_node_connectivity(face_node_connectivity)
-        
+
     def _log_grid_bounds(self, bounds: Tuple[float, float, float, float]):
-        logging.info(f"Grid bounds: {bounds[0]} (min x), {bounds[1]} (min y), {bounds[2]} (max x), {bounds[3]} (max y)")
+        logging.info(
+            f"Grid bounds: {bounds[0]} (min x), {bounds[1]} (min y), {bounds[2]} (max x), {bounds[3]} (max y)"
+        )
