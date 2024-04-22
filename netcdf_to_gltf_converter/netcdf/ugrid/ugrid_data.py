@@ -1,6 +1,7 @@
 from typing import List
 
 import numpy as np
+from pyproj import CRS
 import xarray as xr
 import xugrid as xu
 
@@ -78,6 +79,16 @@ class UgridDataset(DatasetBase):
             int: Integer with the fill value.
         """
         return self._grid.fill_value
+
+    def transform_vertical_coordinate_system(self, source_crs: CRS, target_crs: CRS, variables: List[str]):
+        """Transform the vertical coordinates to another coordinate system.
+
+        Args:
+            source_crs (CRS): The source coordinate system.
+            target_crs (CRS): The target coordinate system.
+            variables (List[str]): The names of the variables for which to transform the values.
+        """
+        raise NotImplementedError()
                 
     def shift_coordinates(self, shift: Vec3, variables: List[str]) -> None:
         """

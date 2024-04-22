@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from typing import List, Tuple
 
 import numpy as np
+from pyproj import CRS
 import xarray as xr
 import xugrid.ugrid.connectivity as connectivity
 from xugrid.ugrid.conventions import X_STANDARD_NAMES, Y_STANDARD_NAMES
@@ -223,6 +224,17 @@ class DatasetBase(ABC):
         """
         pass
     
+    @abstractmethod
+    def transform_vertical_coordinate_system(self, source_crs: CRS, target_crs: CRS, variables: List[str]):
+        """Transform the vertical coordinates to another coordinate system.
+
+        Args:
+            source_crs (CRS): The source coordinate system.
+            target_crs (CRS): The target coordinate system.
+            variables (List[str]): The names of the variables for which to transform the values.
+        """
+        pass
+
     @abstractmethod
     def shift_coordinates(self, shift: Vec3, variables: List[str]) -> None:
         """
