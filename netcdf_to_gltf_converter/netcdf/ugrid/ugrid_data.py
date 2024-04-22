@@ -23,7 +23,7 @@ class UgridDataset(DatasetBase):
         super().__init__(dataset)
         self._ugrid_data_set = xu.UgridDataset(dataset)  
         self._grid = self._get_ugrid2d()
-        super()._log_grid_bounds(self._grid.bounds)
+        self._update()
 
     @property
     def min_x(self) -> float:
