@@ -7,6 +7,7 @@ import xugrid as xu
 
 from netcdf_to_gltf_converter.data.vector import Vec3
 from netcdf_to_gltf_converter.netcdf.netcdf_data import DatasetBase
+from netcdf_to_gltf_converter.preprocessing.crs import create_crs_transformer
 
 
 class UgridDataset(DatasetBase):
@@ -88,7 +89,10 @@ class UgridDataset(DatasetBase):
             target_crs (CRS): The target coordinate system.
             variables (List[str]): The names of the variables for which to transform the values.
         """
-        raise NotImplementedError()
+        transformer = create_crs_transformer(source_crs, target_crs)
+        for variable_name in variables:
+            variable = self.get_variable(variable_name)
+            variable.transform_data_values(transformer)
                 
     def shift_coordinates(self, shift: Vec3, variables: List[str]) -> None:
         """
