@@ -127,8 +127,8 @@ class Parser:
         
         if isinstance(shift_config, CrsShifting):
             if shift_config.crs_transformation:
-                transformer = create_crs_transformer(shift_config.crs_transformation.source_epsg,
-                                                     shift_config.crs_transformation.target_epsg)
+                transformer = create_crs_transformer(shift_config.crs_transformation.source_crs,
+                                                     shift_config.crs_transformation.target_crs)
             
                 logging.info(f"Transforming shift values from {transformer.source_crs.name} to {transformer.target_crs.name}")
                 return Vec3(*transformer.transform(shift_config.shift_x, shift_config.shift_y, shift_config.shift_z))
