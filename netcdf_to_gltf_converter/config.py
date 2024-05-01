@@ -129,8 +129,8 @@ class CrsTransformation(BaseModel):
     @staticmethod
     def _create_crs_from_string(value: str) -> CRS:
         if "+" in value:
-            parts = value.split("+", maxsplit=1)
-            return create_compound_crs(int(parts[0]), int(parts[1]))
+            crs1, crs2 = value.split("+", maxsplit=1)
+            return create_compound_crs(int(crs1), int(crs2))
         
         return create_crs(int(value))
 
