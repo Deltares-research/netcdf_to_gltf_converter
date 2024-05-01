@@ -52,14 +52,14 @@ Currently, this tool supports the conversion of the following hydrodynamical mod
 ## Installation
 To install the converter, follow these steps:
 
-1. Install dependency manager [Poetry](https://python-poetry.org/docs/):
+1. Install dependency manager [Poetry](https://python-poetry.org/docs/)
 
 **Windows (PowerShell)**
 ```
 (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
 ```
 
-**Linux, macOS, Windows (WSL)**
+**Linux, Windows (WSL)**
 ```
 curl -sSL https://install.python-poetry.org | python3 -
 ```
