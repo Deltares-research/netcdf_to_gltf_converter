@@ -14,7 +14,11 @@ from netcdf_to_gltf_converter.data.mesh import TriangularMesh
 from netcdf_to_gltf_converter.utils.arrays import float32_array
 
 PADDING_BYTE = b"\x00"
-
+ROTATION_MATRIX = [1, 0, 0, 0, 
+                   0, 0, -1, 0, 
+                   0, 1, 0, 0, 
+                   0, 0, 0, 1]
+"""Rotation matrix to flip the y and z axes."""
 
 def add(list: List, item: Any) -> int:
     index = len(list)
@@ -47,7 +51,7 @@ class GLTFBuilder:
         material = Material(pbrMetallicRoughness=material_model)
         material_index = add(self._gltf.materials, material)
         mesh_index = add(self._gltf.meshes, Mesh())
-        node_index = add(self._gltf.nodes, Node(mesh=mesh_index))
+        node_index = add(self._gltf.nodes, Node(mesh=mesh_index, matrix=ROTATION_MATRIX))
         scene = self._gltf.scenes[self._scene_index]
         scene.nodes.append(node_index)
 
