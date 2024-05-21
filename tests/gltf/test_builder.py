@@ -379,7 +379,7 @@ class TestGLTFBuilder:
                     "translation": None,
                     "scale": None,
                     "children": [],
-                    "matrix": [1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+                    "matrix": [-0.9998477, 0, 0.0174524, 0, 0.0174524, 0, 0.9998477, 0, 0, 1, 0, 0, 0, 0, 0, 1],
                     "camera": None,
                     "name": None,
                 }
