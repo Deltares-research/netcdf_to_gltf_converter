@@ -14,11 +14,11 @@ from netcdf_to_gltf_converter.data.mesh import TriangularMesh
 from netcdf_to_gltf_converter.utils.arrays import float32_array
 
 PADDING_BYTE = b"\x00"
-ROTATION_MATRIX = [1, 0, 0, 0, 
-                   0, 0, -1, 0, 
-                   0, 1, 0, 0, 
-                   0, 0, 0, 1]
-"""Rotation matrix to flip the y and z axes."""
+ROTATION_MATRIX = [-0.9998477, 0, 0.0174524, 0,
+                    0.0174524, 0, 0.9998477, 0,
+                    0, 1, 0, 0,
+                    0, 0, 0, 1]
+"""Rotation matrix to flip the y and z axes and rotate the model 179 degrees around the up-axis."""
 
 def add(list: List, item: Any) -> int:
     index = len(list)
